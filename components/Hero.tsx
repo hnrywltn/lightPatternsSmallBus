@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowDown } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import EdisonBulb from "./EdisonBulb";
 
 const navLinks = [
@@ -37,18 +37,6 @@ export default function Hero() {
           </a>
         ))}
       </motion.div>
-
-      {/* ── Top-right CTA ── */}
-      <motion.a
-        href="#pricing"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-        className="absolute top-20 right-8 z-20 hidden md:flex items-center gap-2 px-4 py-2 rounded-full border-2 border-amber-900/30 text-amber-900 text-xs font-bold uppercase tracking-widest hover:bg-amber-900/10 transition-colors"
-      >
-        Get started
-        <ArrowRight className="w-3 h-3" />
-      </motion.a>
 
       {/* ── Large Edison Bulb — centrepiece ── */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -98,8 +86,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* ── Gradient fade into dark site below ── */}
-      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#0c0a07] via-[#0c0a07]/60 to-transparent" />
     </section>
   );
 }
