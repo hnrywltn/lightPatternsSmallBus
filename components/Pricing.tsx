@@ -119,7 +119,7 @@ const addons = [
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="py-32 px-6">
+    <section id="pricing" className="bg-[#0c0a07] py-32 px-8 lg:px-16">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
@@ -130,11 +130,11 @@ export default function Pricing() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-amber-400 text-sm font-medium uppercase tracking-widest mb-4">
+          <p className="text-amber-400 text-sm font-semibold uppercase tracking-widest mb-4">
             Pricing
           </p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-[#f2ede4] tracking-tight mb-4">
-            Simple, transparent pricing
+          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black text-[#f2ede4] tracking-tight leading-none mb-6">
+            Simple,<br /><span className="text-amber-400">transparent.</span>
           </h2>
           <p className="text-[#f2ede4]/40 max-w-xl mx-auto">
             A one-time build fee to get your site built right. A low monthly

@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     q: "What counts as a bug vs. a content change?",
-    a: "A bug is anything broken — a form not submitting, a layout breaking on mobile, a page not loading. Those are fixed at no charge during your first year. A content change is intentional updates: new copy, new photos, adding a page. Those are quoted per job after your first year (or immediately on Essential after year one).",
+    a: "A bug is anything broken — a form not submitting, a layout breaking on mobile, a page not loading. Those are fixed at no charge during your first year. A content change is an intentional update: new copy, new photos, adding a page. Those are quoted per job.",
   },
   {
     q: "What happens after my first year?",
@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     q: "Do I need to own my domain?",
-    a: "You can use a domain you already own, or we can help you purchase one. Either way, you always retain ownership of your domain.",
+    a: "You can use a domain you already own, or we can help you purchase one. Either way, you always retain full ownership of your domain.",
   },
   {
     q: "What if I'm not happy with the design?",
@@ -38,14 +38,14 @@ const faqs = [
 function Item({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-b border-white/5">
+    <div className="border-b border-amber-900/15">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between py-5 text-left gap-4"
+        className="w-full flex items-center justify-between py-6 text-left gap-4"
       >
-        <span className="text-[#f2ede4]/80 font-medium">{q}</span>
+        <span className="text-amber-950 font-semibold text-lg">{q}</span>
         <motion.div animate={{ rotate: open ? 45 : 0 }} transition={{ duration: 0.2 }}>
-          <Plus className="w-4 h-4 text-[#f2ede4]/40 shrink-0" />
+          <Plus className="w-5 h-5 text-amber-800/50 shrink-0" />
         </motion.div>
       </button>
       <AnimatePresence>
@@ -57,7 +57,7 @@ function Item({ q, a }: { q: string; a: string }) {
             transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
-            <p className="pb-5 text-[#f2ede4]/40 text-sm leading-relaxed">{a}</p>
+            <p className="pb-6 text-amber-900/60 text-sm leading-relaxed max-w-2xl">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -67,33 +67,38 @@ function Item({ q, a }: { q: string; a: string }) {
 
 export default function FAQ() {
   return (
-    <section id="faq" className="py-32 px-6">
-      <div className="max-w-3xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <p className="text-amber-400 text-sm font-medium uppercase tracking-widest mb-4">
-            FAQ
-          </p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-[#f2ede4] tracking-tight">
-            Common questions
-          </h2>
-        </motion.div>
+    <section id="faq" className="bg-amber-400 py-32 px-8 lg:px-16">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-16">
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          {faqs.map((item) => (
-            <Item key={item.q} {...item} />
-          ))}
-        </motion.div>
+          {/* Sticky header col */}
+          <div className="lg:col-span-2">
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="text-5xl sm:text-6xl font-black text-amber-950 tracking-tight leading-none lg:sticky lg:top-24"
+            >
+              Common<br />
+              <span className="text-amber-700">questions.</span>
+            </motion.h2>
+          </div>
+
+          {/* Accordion col */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-3"
+          >
+            {faqs.map((item) => (
+              <Item key={item.q} {...item} />
+            ))}
+          </motion.div>
+
+        </div>
       </div>
     </section>
   );

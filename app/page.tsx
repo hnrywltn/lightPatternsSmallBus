@@ -1,5 +1,7 @@
 import Navbar from "@/components/Navbar";
+import SideTab from "@/components/SideTab";
 import Hero from "@/components/Hero";
+import Statement from "@/components/Statement";
 import HowItWorks from "@/components/HowItWorks";
 import Portfolio from "@/components/Portfolio";
 import Pricing from "@/components/Pricing";
@@ -11,8 +13,10 @@ export default function Home() {
   return (
     <>
       <Navbar />
+      <SideTab />
       <main className="flex-1">
         <Hero />
+        <Statement />
         <HowItWorks />
         <Portfolio />
         <Pricing />
