@@ -113,7 +113,7 @@ export default function EdisonBulb({ className }: { className?: string }) {
             so it's bright upper-left, nearly invisible lower-right. */}
         <circle
           cx={CX} cy={CY} r={R}
-          stroke="#000" strokeWidth="3"
+          stroke="#000" strokeWidth="3" strokeOpacity="0.1"
         />
 
         {/* ── GLASS SPECULAR HIGHLIGHTS — clipped inside globe ── */}
