@@ -76,12 +76,10 @@ export default function EdisonBulb({ className }: { className?: string }) {
             <stop offset="100%" stopColor="#070707" />
           </linearGradient>
 
-          {/* Rim gradient — dark brown for contrast against amber background */}
-          <linearGradient id="ep-rim" x1="20%" y1="0%" x2="80%" y2="100%">
-            <stop offset="0%"   stopColor="#7c3200" stopOpacity="0.55" />
-            <stop offset="40%"  stopColor="#5a2000" stopOpacity="0.45" />
-            <stop offset="75%"  stopColor="#3b1200" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#3b1200" stopOpacity="0.25" />
+          {/* Rim — solid black for now */}
+          <linearGradient id="ep-rim" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"   stopColor="#000000" stopOpacity="1" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="1" />
           </linearGradient>
         </defs>
 
@@ -115,7 +113,7 @@ export default function EdisonBulb({ className }: { className?: string }) {
             so it's bright upper-left, nearly invisible lower-right. */}
         <circle
           cx={CX} cy={CY} r={R}
-          stroke="url(#ep-rim)" strokeWidth="3"
+          stroke="#000" strokeWidth="3"
         />
 
         {/* ── GLASS SPECULAR HIGHLIGHTS — clipped inside globe ── */}
