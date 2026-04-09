@@ -78,10 +78,10 @@ export default function EdisonBulb({ className }: { className?: string }) {
 
           {/* Non-uniform rim gradient — bright upper-left, fades clockwise */}
           <linearGradient id="ep-rim" x1="20%" y1="0%" x2="80%" y2="100%">
-            <stop offset="0%"   stopColor="#ffffff" stopOpacity="0.9"  />
-            <stop offset="40%"  stopColor="#fff4d0" stopOpacity="0.65" />
-            <stop offset="75%"  stopColor="#e8c060" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#c09040" stopOpacity="0.2"  />
+            <stop offset="0%"   stopColor="#ffd080" stopOpacity="0.9"  />
+            <stop offset="40%"  stopColor="#c87830" stopOpacity="0.7"  />
+            <stop offset="75%"  stopColor="#a06020" stopOpacity="0.45" />
+            <stop offset="100%" stopColor="#a06020" stopOpacity="0.25" />
           </linearGradient>
         </defs>
 
