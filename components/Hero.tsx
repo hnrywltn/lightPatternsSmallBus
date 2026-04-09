@@ -1,115 +1,105 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowDown } from "lucide-react";
+import EdisonBulb from "./EdisonBulb";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  show: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, delay: i * 0.12, ease: [0.25, 0.4, 0.25, 1] as [number, number, number, number] },
-  }),
-};
+const navLinks = [
+  { label: "How It Works", href: "#how-it-works" },
+  { label: "Portfolio", href: "#portfolio" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "FAQ", href: "#faq" },
+];
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background glow — warm amber/gold Edison tones */}
+    <section className="relative min-h-screen overflow-hidden bg-amber-400">
+      {/* Subtle radial warmth — brighter center */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-amber-700/20 rounded-full blur-[140px]" />
-        <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-orange-700/10 rounded-full blur-[100px]" />
-        <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-yellow-600/8 rounded-full blur-[80px]" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-yellow-300/40 rounded-full blur-[120px]" />
       </div>
 
-      {/* Warm grid overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.025]"
-        style={{
-          backgroundImage:
-            "linear-gradient(#f2ede4 1px, transparent 1px), linear-gradient(90deg, #f2ede4 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
-        }}
-      />
-
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-        {/* Badge */}
-        <motion.div
-          custom={0}
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 text-sm mb-8"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Professional websites for small businesses</span>
-        </motion.div>
-
-        {/* Headline */}
-        <motion.h1
-          custom={1}
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#f2ede4] leading-[1.05] mb-6"
-        >
-          Your business deserves
-          <br />
-          <span className="bg-gradient-to-r from-amber-300 via-yellow-300 to-orange-300 bg-clip-text text-transparent">
-            a beautiful website
-          </span>
-        </motion.h1>
-
-        {/* Sub */}
-        <motion.p
-          custom={2}
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          className="text-lg text-[#f2ede4]/50 max-w-2xl mx-auto mb-10 leading-relaxed"
-        >
-          We design and build high-performance websites for small businesses,
-          then keep them running, updated, and growing — all for one simple
-          monthly subscription.
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          custom={3}
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          className="flex flex-col sm:flex-row gap-4 justify-center"
-        >
+      {/* ── Left side vertical nav ── */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.7, delay: 0.4 }}
+        className="absolute left-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-5 z-20"
+      >
+        {navLinks.map((link) => (
           <a
-            href="#pricing"
-            className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold transition-all duration-200 shadow-lg shadow-amber-600/25 hover:shadow-amber-500/40"
+            key={link.href}
+            href={link.href}
+            className="text-xs font-medium text-amber-900/60 hover:text-amber-900 tracking-widest uppercase transition-colors writing-mode-vertical"
+            style={{ writingMode: "vertical-rl", textOrientation: "mixed", transform: "rotate(180deg)" }}
           >
-            See plans & pricing
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            {link.label}
           </a>
-          <a
-            href="#portfolio"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-[#f2ede4]/10 hover:border-[#f2ede4]/20 text-[#f2ede4]/80 hover:text-[#f2ede4] font-medium transition-all duration-200 hover:bg-[#f2ede4]/5"
-          >
-            View our work
-          </a>
-        </motion.div>
+        ))}
+      </motion.div>
 
-        {/* Social proof */}
-        <motion.p
-          custom={4}
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          className="mt-10 text-sm text-[#f2ede4]/30"
-        >
-          Trusted by 50+ small businesses across the country
-        </motion.p>
+      {/* ── Top-right CTA ── */}
+      <motion.a
+        href="#pricing"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+        className="absolute top-20 right-8 z-20 hidden md:flex items-center gap-2 px-4 py-2 rounded-full border-2 border-amber-900/30 text-amber-900 text-xs font-bold uppercase tracking-widest hover:bg-amber-900/10 transition-colors"
+      >
+        Get started
+        <ArrowRight className="w-3 h-3" />
+      </motion.a>
+
+      {/* ── Large Edison Bulb — centrepiece ── */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <EdisonBulb className="w-64 sm:w-80 lg:w-[26rem] xl:w-[30rem] drop-shadow-2xl" />
       </div>
 
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#0c0a07] to-transparent" />
+      {/* ── Bottom-left headline (beans.agency style) ── */}
+      <div className="absolute bottom-0 inset-x-0 px-8 pb-12 lg:px-16">
+        <div className="flex flex-col sm:flex-row items-end justify-between gap-6 max-w-7xl mx-auto">
+          {/* Headline */}
+          <div>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.4, 0.25, 1] as [number, number, number, number] }}
+              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight text-amber-950 leading-[0.95]"
+            >
+              We are<br />
+              Light Patterns<span className="text-amber-700">®</span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+              className="mt-3 text-amber-900/60 text-sm max-w-xs leading-relaxed"
+            >
+              Beautiful websites for small businesses —
+              built once, kept running.
+            </motion.p>
+          </div>
+
+          {/* Scroll indicator */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="flex items-center gap-2 text-amber-900/40 text-xs uppercase tracking-widest shrink-0 pb-1"
+          >
+            <span>Scroll</span>
+            <motion.div
+              animate={{ y: [0, 4, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <ArrowDown className="w-3.5 h-3.5" />
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* ── Gradient fade into dark site below ── */}
+      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#0c0a07] via-[#0c0a07]/60 to-transparent" />
     </section>
   );
 }
