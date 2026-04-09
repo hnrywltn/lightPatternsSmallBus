@@ -114,10 +114,10 @@ export default function EdisonBulb({ className }: { className?: string }) {
         </g>
 
         {/* ── FILAMENT SUPPORT WIRES ── */}
-        <line x1="145" y1="132" x2="145" y2="192" stroke="#555" strokeWidth="1.2" opacity="0.5" />
-        <line x1="235" y1="132" x2="235" y2="192" stroke="#555" strokeWidth="1.2" opacity="0.5" />
-        <line x1="145" y1="132" x2="235" y2="132" stroke="#444" strokeWidth="1"   opacity="0.4" />
-        <line x1="145" y1="366" x2="235" y2="366" stroke="#444" strokeWidth="1"   opacity="0.35" />
+        <line x1="168" y1="130" x2="168" y2="192" stroke="#555" strokeWidth="1.2" opacity="0.5" />
+        <line x1="212" y1="130" x2="212" y2="192" stroke="#555" strokeWidth="1.2" opacity="0.5" />
+        <line x1="168" y1="132" x2="212" y2="132" stroke="#444" strokeWidth="1"   opacity="0.4" />
+        <line x1="168" y1="366" x2="212" y2="366" stroke="#444" strokeWidth="1"   opacity="0.35" />
 
         {/* ── SPIRAL FILAMENT — 4 glow layers ── */}
         <motion.path d={SPIRAL} stroke="#FF5500" strokeWidth="38"
