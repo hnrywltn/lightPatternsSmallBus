@@ -9,42 +9,36 @@ const projects = [
     category: "Floral Shop",
     description: "Elegant e-commerce site with custom booking system.",
     gradient: "from-rose-500/30 to-pink-600/10",
-    accent: "rose",
   },
   {
     name: "Ironwood Coffee",
     category: "Café",
     description: "Brand-forward site with menu and loyalty program integration.",
     gradient: "from-amber-600/30 to-orange-700/10",
-    accent: "amber",
   },
   {
     name: "Peak Legal",
     category: "Law Firm",
     description: "Trust-building professional site with client portal.",
-    gradient: "from-sky-500/30 to-blue-700/10",
-    accent: "sky",
+    gradient: "from-stone-400/20 to-stone-600/10",
   },
   {
     name: "Solstice Spa",
     category: "Wellness",
     description: "Calming, animated site with online booking integration.",
     gradient: "from-emerald-500/30 to-teal-700/10",
-    accent: "emerald",
   },
   {
     name: "Anchor & Oak",
     category: "Restaurant",
     description: "Full-screen visuals, reservations, and weekly specials.",
-    gradient: "from-violet-500/30 to-purple-700/10",
-    accent: "violet",
+    gradient: "from-amber-700/30 to-yellow-900/10",
   },
   {
     name: "Meridian Fitness",
     category: "Gym",
     description: "Class scheduling, membership tiers, and trainer profiles.",
-    gradient: "from-red-500/30 to-orange-600/10",
-    accent: "red",
+    gradient: "from-orange-500/30 to-red-700/10",
   },
 ];
 
@@ -60,10 +54,10 @@ export default function Portfolio() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-violet-400 text-sm font-medium uppercase tracking-widest mb-4">
+          <p className="text-amber-400 text-sm font-medium uppercase tracking-widest mb-4">
             Portfolio
           </p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white tracking-tight">
+          <h2 className="text-4xl sm:text-5xl font-bold text-[#f2ede4] tracking-tight">
             Sites we&apos;ve built
           </h2>
         </motion.div>
@@ -77,7 +71,7 @@ export default function Portfolio() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="group relative overflow-hidden rounded-2xl border border-white/5 hover:border-white/10 bg-white/[0.02] transition-all duration-300 cursor-pointer"
+              className="group relative overflow-hidden rounded-2xl border border-white/5 hover:border-amber-500/20 bg-white/[0.02] transition-all duration-300 cursor-pointer"
             >
               {/* Mock site preview */}
               <div
@@ -103,12 +97,12 @@ export default function Portfolio() {
 
               <div className="p-5">
                 <div className="flex items-start justify-between mb-1">
-                  <h3 className="text-white font-semibold">{p.name}</h3>
-                  <span className="text-xs text-white/30 bg-white/5 px-2 py-0.5 rounded-full">
+                  <h3 className="text-[#f2ede4] font-semibold">{p.name}</h3>
+                  <span className="text-xs text-[#f2ede4]/30 bg-white/5 px-2 py-0.5 rounded-full">
                     {p.category}
                   </span>
                 </div>
-                <p className="text-white/40 text-sm">{p.description}</p>
+                <p className="text-[#f2ede4]/40 text-sm">{p.description}</p>
               </div>
             </motion.div>
           ))}

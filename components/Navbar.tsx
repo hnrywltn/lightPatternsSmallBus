@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X, Lightbulb } from "lucide-react";
 
 const links = [
   { label: "How It Works", href: "#how-it-works" },
@@ -28,17 +28,17 @@ export default function Navbar() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#05050a]/80 backdrop-blur-xl border-b border-white/5"
+          ? "bg-[#0c0a07]/80 backdrop-blur-xl border-b border-white/5"
           : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Logo */}
         <a href="#" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
-            <Zap className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 rounded-lg bg-amber-600 flex items-center justify-center shadow-lg shadow-amber-600/30">
+            <Lightbulb className="w-4 h-4 text-white" />
           </div>
-          <span className="font-semibold text-white tracking-tight">
+          <span className="font-semibold text-[#f2ede4] tracking-tight">
             Light Patterns
           </span>
         </a>
@@ -49,7 +49,7 @@ export default function Navbar() {
             <a
               key={l.href}
               href={l.href}
-              className="text-sm text-white/60 hover:text-white transition-colors"
+              className="text-sm text-[#f2ede4]/60 hover:text-[#f2ede4] transition-colors"
             >
               {l.label}
             </a>
@@ -60,13 +60,13 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           <a
             href="#pricing"
-            className="text-sm text-white/60 hover:text-white transition-colors"
+            className="text-sm text-[#f2ede4]/60 hover:text-[#f2ede4] transition-colors"
           >
             Sign in
           </a>
           <a
             href="#pricing"
-            className="text-sm px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-medium transition-colors"
+            className="text-sm px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium transition-colors shadow-lg shadow-amber-600/20"
           >
             Get started
           </a>
@@ -74,7 +74,7 @@ export default function Navbar() {
 
         {/* Mobile menu toggle */}
         <button
-          className="md:hidden text-white/70 hover:text-white"
+          className="md:hidden text-[#f2ede4]/70 hover:text-[#f2ede4]"
           onClick={() => setOpen(!open)}
         >
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -88,7 +88,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#05050a]/95 backdrop-blur-xl border-b border-white/5"
+            className="md:hidden bg-[#0c0a07]/95 backdrop-blur-xl border-b border-white/5"
           >
             <div className="px-6 py-4 flex flex-col gap-4">
               {links.map((l) => (
@@ -96,14 +96,14 @@ export default function Navbar() {
                   key={l.href}
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="text-white/70 hover:text-white transition-colors"
+                  className="text-[#f2ede4]/70 hover:text-[#f2ede4] transition-colors"
                 >
                   {l.label}
                 </a>
               ))}
               <a
                 href="#pricing"
-                className="mt-2 text-center px-4 py-2.5 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-medium transition-colors"
+                className="mt-2 text-center px-4 py-2.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium transition-colors"
               >
                 Get started
               </a>

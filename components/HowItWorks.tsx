@@ -30,7 +30,7 @@ const steps = [
     step: "04",
     title: "We keep it running",
     description:
-      "Your subscription covers updates, security, performance monitoring, and content changes — so you never touch a line of code.",
+      "Your subscription covers hosting, security, monitoring, and your Notion dashboard — and your first year includes support and updates.",
   },
 ];
 
@@ -55,13 +55,13 @@ export default function HowItWorks() {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <p className="text-violet-400 text-sm font-medium uppercase tracking-widest mb-4">
+          <p className="text-amber-400 text-sm font-medium uppercase tracking-widest mb-4">
             How it works
           </p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white tracking-tight">
+          <h2 className="text-4xl sm:text-5xl font-bold text-[#f2ede4] tracking-tight">
             From idea to live site
             <br />
-            <span className="text-white/40">in four steps</span>
+            <span className="text-[#f2ede4]/40">in four steps</span>
           </h2>
         </motion.div>
 
@@ -75,20 +75,20 @@ export default function HowItWorks() {
               initial="hidden"
               whileInView="show"
               viewport={{ once: true }}
-              className="relative group p-6 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] hover:border-violet-500/20 transition-all duration-300"
+              className="relative group p-6 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-amber-500/[0.04] hover:border-amber-500/20 transition-all duration-300"
             >
               {/* Step number */}
-              <span className="absolute top-5 right-5 text-4xl font-bold text-white/5 group-hover:text-violet-500/10 transition-colors select-none">
+              <span className="absolute top-5 right-5 text-4xl font-bold text-white/5 group-hover:text-amber-500/10 transition-colors select-none">
                 {s.step}
               </span>
 
               {/* Icon */}
-              <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center mb-5">
-                <s.icon className="w-5 h-5 text-violet-400" />
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center mb-5">
+                <s.icon className="w-5 h-5 text-amber-400" />
               </div>
 
-              <h3 className="text-white font-semibold mb-2">{s.title}</h3>
-              <p className="text-white/40 text-sm leading-relaxed">
+              <h3 className="text-[#f2ede4] font-semibold mb-2">{s.title}</h3>
+              <p className="text-[#f2ede4]/40 text-sm leading-relaxed">
                 {s.description}
               </p>
             </motion.div>

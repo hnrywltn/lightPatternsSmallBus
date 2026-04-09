@@ -15,19 +15,19 @@ const fadeUp = {
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background glow orbs */}
+      {/* Background glow — warm amber/gold Edison tones */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-violet-700/20 rounded-full blur-[120px]" />
-        <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-indigo-600/15 rounded-full blur-[100px]" />
-        <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-violet-500/10 rounded-full blur-[80px]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-amber-700/20 rounded-full blur-[140px]" />
+        <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-orange-700/10 rounded-full blur-[100px]" />
+        <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-yellow-600/8 rounded-full blur-[80px]" />
       </div>
 
-      {/* Grid overlay */}
+      {/* Warm grid overlay */}
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.025]"
         style={{
           backgroundImage:
-            "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+            "linear-gradient(#f2ede4 1px, transparent 1px), linear-gradient(90deg, #f2ede4 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }}
       />
@@ -39,7 +39,7 @@ export default function Hero() {
           variants={fadeUp}
           initial="hidden"
           animate="show"
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-sm mb-8"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 text-sm mb-8"
         >
           <Sparkles className="w-3.5 h-3.5" />
           <span>Professional websites for small businesses</span>
@@ -51,11 +51,11 @@ export default function Hero() {
           variants={fadeUp}
           initial="hidden"
           animate="show"
-          className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05] mb-6"
+          className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#f2ede4] leading-[1.05] mb-6"
         >
           Your business deserves
           <br />
-          <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-amber-300 via-yellow-300 to-orange-300 bg-clip-text text-transparent">
             a beautiful website
           </span>
         </motion.h1>
@@ -66,7 +66,7 @@ export default function Hero() {
           variants={fadeUp}
           initial="hidden"
           animate="show"
-          className="text-lg text-white/50 max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-lg text-[#f2ede4]/50 max-w-2xl mx-auto mb-10 leading-relaxed"
         >
           We design and build high-performance websites for small businesses,
           then keep them running, updated, and growing — all for one simple
@@ -83,14 +83,14 @@ export default function Hero() {
         >
           <a
             href="#pricing"
-            className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold transition-all duration-200 shadow-lg shadow-violet-600/25 hover:shadow-violet-500/40"
+            className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold transition-all duration-200 shadow-lg shadow-amber-600/25 hover:shadow-amber-500/40"
           >
             See plans & pricing
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </a>
           <a
             href="#portfolio"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-white/10 hover:border-white/20 text-white/80 hover:text-white font-medium transition-all duration-200 hover:bg-white/5"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-[#f2ede4]/10 hover:border-[#f2ede4]/20 text-[#f2ede4]/80 hover:text-[#f2ede4] font-medium transition-all duration-200 hover:bg-[#f2ede4]/5"
           >
             View our work
           </a>
@@ -102,14 +102,14 @@ export default function Hero() {
           variants={fadeUp}
           initial="hidden"
           animate="show"
-          className="mt-10 text-sm text-white/30"
+          className="mt-10 text-sm text-[#f2ede4]/30"
         >
           Trusted by 50+ small businesses across the country
         </motion.p>
       </div>
 
       {/* Bottom fade */}
-      <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#05050a] to-transparent" />
+      <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#0c0a07] to-transparent" />
     </section>
   );
 }

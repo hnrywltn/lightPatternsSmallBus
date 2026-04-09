@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #05050a;
-  --foreground: #f0f0f5;
+  --background: #0c0a07;
+  --foreground: #f2ede4;
 }
 
 @theme inline {
@@ -19,19 +19,17 @@ body {
   overflow-x: hidden;
 }
 
-/* Smooth scroll */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #05050a;
+  background: #0c0a07;
 }
 ::-webkit-scrollbar-thumb {
-  background: #7c3aed;
+  background: #d97706;
   border-radius: 3px;
 }

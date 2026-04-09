@@ -18,8 +18,12 @@ const faqs = [
     a: "Most sites are live within 10–14 business days. Complex projects (e-commerce, custom integrations) may take 3–4 weeks. We'll give you a timeline before we start.",
   },
   {
-    q: "What does 'content updates' mean?",
-    a: "Need to change your hours, swap a photo, update your menu, or add a new team member? That's a content update. On Starter you get 2/mo; Growth and Pro are unlimited.",
+    q: "What counts as a bug vs. a content change?",
+    a: "A bug is anything broken — a form not submitting, a layout breaking on mobile, a page not loading. Those are fixed at no charge during your first year. A content change is intentional updates: new copy, new photos, adding a page. Those are quoted per job after your first year (or immediately on Essential after year one).",
+  },
+  {
+    q: "What happens after my first year?",
+    a: "Your monthly subscription stays the same — hosting, security, and your Notion dashboard are always included. Content updates and changes simply move to a per-job quote, so you only pay when you need something.",
   },
   {
     q: "Do I need to own my domain?",
@@ -39,9 +43,9 @@ function Item({ q, a }: { q: string; a: string }) {
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-5 text-left gap-4"
       >
-        <span className="text-white/80 font-medium">{q}</span>
+        <span className="text-[#f2ede4]/80 font-medium">{q}</span>
         <motion.div animate={{ rotate: open ? 45 : 0 }} transition={{ duration: 0.2 }}>
-          <Plus className="w-4 h-4 text-white/40 shrink-0" />
+          <Plus className="w-4 h-4 text-[#f2ede4]/40 shrink-0" />
         </motion.div>
       </button>
       <AnimatePresence>
@@ -53,7 +57,7 @@ function Item({ q, a }: { q: string; a: string }) {
             transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
-            <p className="pb-5 text-white/40 text-sm leading-relaxed">{a}</p>
+            <p className="pb-5 text-[#f2ede4]/40 text-sm leading-relaxed">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -72,10 +76,10 @@ export default function FAQ() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-violet-400 text-sm font-medium uppercase tracking-widest mb-4">
+          <p className="text-amber-400 text-sm font-medium uppercase tracking-widest mb-4">
             FAQ
           </p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white tracking-tight">
+          <h2 className="text-4xl sm:text-5xl font-bold text-[#f2ede4] tracking-tight">
             Common questions
           </h2>
         </motion.div>
