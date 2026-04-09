@@ -15,9 +15,9 @@ export default function Hero() {
       {/* ── Large Edison Bulb — centrepiece ── */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <motion.div
-          initial={{ rotate: -45 }}
+          initial={{ rotate: -65 }}
           animate={{ rotate: 0 }}
-          transition={{ type: "spring", stiffness: 10, damping: 3, mass: 3 }}
+          transition={{ type: "spring", stiffness: 6, damping: 2, mass: 5 }}
           style={{ transformOrigin: "top center" }}
         >
           <EdisonBulb className="w-64 sm:w-80 lg:w-[26rem] xl:w-[30rem] drop-shadow-2xl" />
