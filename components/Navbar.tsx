@@ -9,9 +9,10 @@ const links = [
   { label: "Pricing", href: "#pricing" },
   { label: "Portfolio", href: "#portfolio" },
   { label: "FAQ", href: "#faq" },
+  { label: "Blog", href: "/blog" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ forceDark = false }: { forceDark?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -22,7 +23,8 @@ export default function Navbar() {
   }, []);
 
   // Over the amber hero: dark text. Once scrolled into dark sections: light text.
-  const onAmber = !scrolled;
+  // forceDark: used on non-homepage pages that have a dark background from the start.
+  const onAmber = !forceDark && !scrolled;
 
   return (
     <motion.nav
@@ -37,7 +39,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2">
+        <a href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-amber-600 flex items-center justify-center shadow-lg shadow-amber-600/30">
             <Lightbulb className="w-4 h-4 text-white" />
           </div>

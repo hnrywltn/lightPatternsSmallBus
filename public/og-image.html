@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 1200px;
+      height: 630px;
+      overflow: hidden;
+      background: #0c0a07;
+      font-family: 'Inter', sans-serif;
+      position: relative;
+    }
+
+    /* Warm glow orb — top right */
+    .glow {
+      position: absolute;
+      top: -160px;
+      right: -80px;
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, #f59e0b55 0%, #d9770622 50%, transparent 75%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Subtle grid lines */
+    .grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(242,237,228,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(242,237,228,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* Edison bulb SVG placeholder — simple geometric bulb */
+    .bulb-wrap {
+      position: absolute;
+      right: 96px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.9;
+    }
+
+    .content {
+      position: absolute;
+      left: 80px;
+      bottom: 72px;
+    }
+
+    .eyebrow {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #f59e0b;
+      margin-bottom: 16px;
+    }
+
+    .headline {
+      font-size: 76px;
+      font-weight: 900;
+      line-height: 0.93;
+      color: #f2ede4;
+      letter-spacing: -0.03em;
+    }
+
+    .headline .reg {
+      color: #d97706;
+      font-size: 52px;
+      vertical-align: super;
+    }
+
+    .tagline {
+      margin-top: 20px;
+      font-size: 18px;
+      color: rgba(242, 237, 228, 0.45);
+      font-weight: 400;
+      max-width: 420px;
+      line-height: 1.5;
+    }
+
+    .url {
+      position: absolute;
+      bottom: 36px;
+      right: 80px;
+      font-size: 13px;
+      color: rgba(242, 237, 228, 0.25);
+      letter-spacing: 0.08em;
+    }
+
+    /* Divider line */
+    .line {
+      position: absolute;
+      left: 80px;
+      top: 0;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent 0%, #f59e0b 30%, #d97706 70%, transparent 100%);
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <div class="line"></div>
+
+  <!-- Edison bulb SVG -->
+  <div class="bulb-wrap">
+    <svg width="260" height="360" viewBox="0 0 260 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Glow behind bulb -->
+      <ellipse cx="130" cy="155" rx="110" ry="110" fill="#f59e0b" fill-opacity="0.08"/>
+      <ellipse cx="130" cy="155" rx="70" ry="70" fill="#fcd34d" fill-opacity="0.10"/>
+
+      <!-- Bulb globe -->
+      <path d="M130 30 C70 30 30 75 30 130 C30 175 55 210 90 230 L90 255 L170 255 L170 230 C205 210 230 175 230 130 C230 75 190 30 130 30Z"
+        fill="#1a1408" stroke="#f59e0b" stroke-width="1.5" stroke-opacity="0.4"/>
+
+      <!-- Filament glow -->
+      <ellipse cx="130" cy="160" rx="28" ry="28" fill="#fbbf24" fill-opacity="0.18"/>
+
+      <!-- Filament -->
+      <path d="M116 185 L116 155 L122 148 L130 160 L138 148 L144 155 L144 185"
+        stroke="#fcd34d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <circle cx="130" cy="160" r="5" fill="#fde68a" fill-opacity="0.9"/>
+
+      <!-- Support wires -->
+      <line x1="116" y1="185" x2="116" y2="220" stroke="#f59e0b" stroke-width="1" stroke-opacity="0.3"/>
+      <line x1="144" y1="185" x2="144" y2="220" stroke="#f59e0b" stroke-width="1" stroke-opacity="0.3"/>
+
+      <!-- Neck -->
+      <rect x="105" y="255" width="50" height="20" rx="2" fill="#0c0a07" stroke="#f59e0b" stroke-width="1" stroke-opacity="0.3"/>
+      <rect x="100" y="275" width="60" height="14" rx="2" fill="#0c0a07" stroke="#f59e0b" stroke-width="1" stroke-opacity="0.3"/>
+      <rect x="105" y="289" width="50" height="12" rx="2" fill="#0c0a07" stroke="#f59e0b" stroke-width="1" stroke-opacity="0.25"/>
+
+      <!-- Base -->
+      <rect x="112" y="301" width="36" height="28" rx="3" fill="#111008" stroke="#f59e0b" stroke-width="1" stroke-opacity="0.2"/>
+    </svg>
+  </div>
+
+  <div class="content">
+    <div class="eyebrow">Light Patterns</div>
+    <div class="headline">
+      Beautiful websites<br />for small businesses<span class="reg">®</span>
+    </div>
+    <div class="tagline">Built once, kept running — so you can focus on your business.</div>
+  </div>
+
+  <div class="url">lightpatternsonline.com</div>
+</body>
+</html>
