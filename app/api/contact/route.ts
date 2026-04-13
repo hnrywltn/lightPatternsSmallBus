@@ -177,24 +177,10 @@ export async function POST(req: NextRequest) {
         <!-- Optional extra info -->
         <tr><td style="background:#faf9f7;border-top:1px solid #f0ede8;padding:32px 40px;">
           <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#a0998c;">Optional — help us prepare</p>
-          <p style="margin:0 0 20px;font-size:13px;color:#a0998c;line-height:1.5;">
-            If you'd like to give us a head start, hit reply and share any of the following. No pressure — we'll cover everything when we connect.
+          <p style="margin:0 0 24px;font-size:13px;color:#a0998c;line-height:1.6;">
+            Got 2 minutes? Fill out a quick form to help us hit the ground running. The more context you share, the better our first conversation will be — but it's totally optional.
           </p>
-          <table width="100%" cellpadding="0" cellspacing="0">
-            ${[
-              ["Do you have an existing website?", "If so, share the URL and tell us what you like or dislike about it."],
-              ["Do you have a logo or brand assets?", "Colors, fonts, or any visual direction you have in mind."],
-              ["Who are your customers?", "A quick description of who you're trying to reach."],
-              ["Any sites you admire?", "Doesn't have to be in your industry — just ones whose look or feel you like."],
-              ["What's your timeline?", "Is there a launch date or event you're working toward?"],
-            ].map(([q, hint]) => `
-            <tr>
-              <td style="padding:10px 0;border-bottom:1px solid #f0ede8;">
-                <p style="margin:0 0 2px;font-size:13px;font-weight:700;color:#3d3730;">${q}</p>
-                <p style="margin:0;font-size:12px;color:#b0a99f;">${hint}</p>
-              </td>
-            </tr>`).join("")}
-          </table>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSddGi0AElRozx3U4ZAm3S1liDiSgUkROA3_Qanj77MqlnWZ-g/viewform?usp=publish-editor" style="display:inline-block;background:#0c0a07;color:#f2ede4;font-size:13px;font-weight:800;text-decoration:none;padding:12px 24px;border-radius:10px;">Fill out the prep form →</a>
         </td></tr>
 
         <!-- Footer CTA -->
