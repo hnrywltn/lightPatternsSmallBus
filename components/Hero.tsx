@@ -17,8 +17,8 @@ export default function Hero() {
         <motion.div
           initial={{ rotate: -65 }}
           animate={{ rotate: 0 }}
-          transition={{ type: "spring", stiffness: 6, damping: 2, mass: 5 }}
-          style={{ transformOrigin: "top center" }}
+          transition={{ type: "spring", stiffness: 12, damping: 4, mass: 3 }}
+          style={{ transformOrigin: "top center", willChange: "transform" }}
         >
           <EdisonBulb className="w-64 sm:w-80 lg:w-[26rem] xl:w-[30rem] drop-shadow-2xl" />
         </motion.div>
