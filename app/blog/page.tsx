@@ -6,10 +6,10 @@ export const metadata: Metadata = {
   description:
     "Thoughts on ethical design, dark patterns, and building a more honest web.",
   alternates: {
-    canonical: "https://light-patterns.com/blog",
+    canonical: "https://lightpatternsonline.com/blog",
   },
   openGraph: {
-    url: "https://light-patterns.com/blog",
+    url: "https://lightpatternsonline.com/blog",
     title: "Blog — Light Patterns",
     description:
       "Thoughts on ethical design, dark patterns, and building a more honest web.",

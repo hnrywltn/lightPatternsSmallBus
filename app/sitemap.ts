@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { posts } from "@/lib/blog";
 
-const siteUrl = "https://light-patterns.com";
+const siteUrl = "https://lightpatternsonline.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const blogEntries = posts.map((post) => ({
