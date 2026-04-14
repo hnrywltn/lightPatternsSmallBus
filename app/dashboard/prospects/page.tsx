@@ -22,18 +22,47 @@ const MIN_RATING_OPTIONS = [
   { label: "4.5+", value: 4.5 },
 ];
 
+type PresenceFilter = "any" | "yes" | "no";
+
+function PresencePills({
+  value,
+  onChange,
+}: {
+  value: PresenceFilter;
+  onChange: (v: PresenceFilter) => void;
+}) {
+  return (
+    <div className="flex gap-1">
+      {(["any", "yes", "no"] as PresenceFilter[]).map((opt) => (
+        <button
+          key={opt}
+          onClick={() => onChange(opt)}
+          className={`text-xs px-2.5 py-1 rounded-lg capitalize transition-colors ${
+            value === opt
+              ? "bg-amber-600 text-white"
+              : "bg-white/5 text-[#f2ede4]/50 hover:text-[#f2ede4] hover:bg-white/8"
+          }`}
+        >
+          {opt}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function ProspectsPage() {
   const [zip, setZip] = useState("");
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [prospects, setProspects] = useState<Prospect[]>([]);
-  const [totalFound, setTotalFound] = useState<number | null>(null);
 
-  // Filters
+  // Filters — website defaults to "no" since that's the core use case
   const [minReviews, setMinReviews] = useState(0);
   const [minRating, setMinRating] = useState(0);
-  const [hasPhone, setHasPhone] = useState(false);
+  const [hasPhone, setHasPhone] = useState<PresenceFilter>("any");
+  const [hasWebsite, setHasWebsite] = useState<PresenceFilter>("no");
+  const [hasEmail, setHasEmail] = useState<PresenceFilter>("any");
   const [typeFilter, setTypeFilter] = useState("");
 
   // const [emails, setEmails] = useState<Record<string, string>>({});
@@ -45,7 +74,6 @@ export default function ProspectsPage() {
     setLoading(true);
     setError("");
     setProspects([]);
-    setTotalFound(null);
     setTypeFilter("");
 
     const params = new URLSearchParams({ zip });
@@ -58,13 +86,11 @@ export default function ProspectsPage() {
       setError(data.error ?? "Search failed.");
     } else {
       setProspects(data.prospects);
-      setTotalFound(data.total);
     }
 
     setLoading(false);
   }
 
-  // Unique business types from results for the type filter
   const types = useMemo(() => {
     const set = new Set(prospects.map((p) => p.type).filter(Boolean));
     return Array.from(set).sort();
@@ -74,19 +100,32 @@ export default function ProspectsPage() {
     return prospects.filter((p) => {
       if (minReviews > 0 && p.reviews < minReviews) return false;
       if (minRating > 0 && p.rating < minRating) return false;
-      if (hasPhone && !p.phone) return false;
+      if (hasPhone === "yes" && !p.phone) return false;
+      if (hasPhone === "no" && p.phone) return false;
+      if (hasWebsite === "yes" && !p.site) return false;
+      if (hasWebsite === "no" && p.site) return false;
+      if (hasEmail === "yes" && !p.email) return false;
+      if (hasEmail === "no" && p.email) return false;
       if (typeFilter && p.type !== typeFilter) return false;
       return true;
     });
-  }, [prospects, minReviews, minRating, hasPhone, typeFilter]);
+  }, [prospects, minReviews, minRating, hasPhone, hasWebsite, hasEmail, typeFilter]);
 
-  const hasSearched = totalFound !== null;
-  const filtersActive = minReviews > 0 || minRating > 0 || hasPhone || typeFilter !== "";
+  const hasSearched = prospects.length > 0 || error !== "";
+  const filtersActive =
+    minReviews > 0 ||
+    minRating > 0 ||
+    hasPhone !== "any" ||
+    hasWebsite !== "no" ||
+    hasEmail !== "any" ||
+    typeFilter !== "";
 
   function resetFilters() {
     setMinReviews(0);
     setMinRating(0);
-    setHasPhone(false);
+    setHasPhone("any");
+    setHasWebsite("no");
+    setHasEmail("any");
     setTypeFilter("");
   }
 
@@ -95,7 +134,7 @@ export default function ProspectsPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-[#f2ede4]">Prospect Finder</h1>
         <p className="text-sm text-[#f2ede4]/40 mt-1">
-          Find businesses with no website.
+          Find businesses by zip code and filter by what they have or don&apos;t have.
         </p>
       </div>
 
@@ -148,93 +187,93 @@ export default function ProspectsPage() {
         </div>
       </form>
 
-      {/* Filters — shown after search */}
-      {hasSearched && prospects.length > 0 && (
-        <div className="bg-white/[0.03] border border-white/8 rounded-2xl px-5 py-4 mb-6 flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2 text-xs text-[#f2ede4]/40">
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span className="uppercase tracking-wide font-medium">Filter</span>
-          </div>
+      {/* Filters */}
+      <div className="bg-white/[0.03] border border-white/8 rounded-2xl px-5 py-4 mb-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+        <div className="flex items-center gap-2 text-xs text-[#f2ede4]/40">
+          <SlidersHorizontal className="w-3.5 h-3.5" />
+          <span className="uppercase tracking-wide font-medium">Filter</span>
+        </div>
 
-          {/* Min reviews */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[#f2ede4]/40 w-14">Website</span>
+          <PresencePills value={hasWebsite} onChange={setHasWebsite} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[#f2ede4]/40 w-14">Email</span>
+          <PresencePills value={hasEmail} onChange={setHasEmail} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[#f2ede4]/40 w-14">Phone</span>
+          <PresencePills value={hasPhone} onChange={setHasPhone} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[#f2ede4]/40 w-14">Reviews</span>
+          <div className="flex gap-1">
+            {MIN_REVIEWS_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setMinReviews(opt.value)}
+                className={`text-xs px-2.5 py-1 rounded-lg transition-colors ${
+                  minReviews === opt.value
+                    ? "bg-amber-600 text-white"
+                    : "bg-white/5 text-[#f2ede4]/50 hover:text-[#f2ede4] hover:bg-white/8"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[#f2ede4]/40 w-14">Rating</span>
+          <div className="flex gap-1">
+            {MIN_RATING_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setMinRating(opt.value)}
+                className={`text-xs px-2.5 py-1 rounded-lg transition-colors ${
+                  minRating === opt.value
+                    ? "bg-amber-600 text-white"
+                    : "bg-white/5 text-[#f2ede4]/50 hover:text-[#f2ede4] hover:bg-white/8"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {types.length > 1 && (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[#f2ede4]/40">Reviews</span>
-            <div className="flex gap-1">
-              {MIN_REVIEWS_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => setMinReviews(opt.value)}
-                  className={`text-xs px-2.5 py-1 rounded-lg transition-colors ${
-                    minReviews === opt.value
-                      ? "bg-amber-600 text-white"
-                      : "bg-white/5 text-[#f2ede4]/50 hover:text-[#f2ede4] hover:bg-white/8"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Min rating */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-[#f2ede4]/40">Rating</span>
-            <div className="flex gap-1">
-              {MIN_RATING_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => setMinRating(opt.value)}
-                  className={`text-xs px-2.5 py-1 rounded-lg transition-colors ${
-                    minRating === opt.value
-                      ? "bg-amber-600 text-white"
-                      : "bg-white/5 text-[#f2ede4]/50 hover:text-[#f2ede4] hover:bg-white/8"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Has phone */}
-          <button
-            onClick={() => setHasPhone((v) => !v)}
-            className={`text-xs px-2.5 py-1 rounded-lg transition-colors ${
-              hasPhone
-                ? "bg-amber-600 text-white"
-                : "bg-white/5 text-[#f2ede4]/50 hover:text-[#f2ede4] hover:bg-white/8"
-            }`}
-          >
-            Has phone
-          </button>
-
-          {/* Type filter */}
-          {types.length > 1 && (
+            <span className="text-xs text-[#f2ede4]/40 w-14">Type</span>
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               className="text-xs bg-white/5 border border-white/10 rounded-lg px-2.5 py-1 text-[#f2ede4]/60 focus:outline-none focus:border-amber-600/60 transition-colors"
             >
-              <option value="">All types</option>
+              <option value="">All</option>
               {types.map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>
               ))}
             </select>
-          )}
+          </div>
+        )}
 
-          {/* Reset */}
-          {filtersActive && (
-            <button
-              onClick={resetFilters}
-              className="text-xs text-[#f2ede4]/30 hover:text-[#f2ede4]/60 transition-colors ml-auto"
-            >
-              Reset
-            </button>
-          )}
-        </div>
-      )}
+        {filtersActive && (
+          <button
+            onClick={resetFilters}
+            className="text-xs text-[#f2ede4]/30 hover:text-[#f2ede4]/60 transition-colors ml-auto"
+          >
+            Reset
+          </button>
+        )}
+      </div>
 
       {error && (
         <div className="mb-4 flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
@@ -249,35 +288,33 @@ export default function ProspectsPage() {
           <div className="flex items-center justify-between mb-4">
             <div className="text-sm text-[#f2ede4]/50">
               <span className="text-[#f2ede4] font-medium">{filtered.length}</span>
-              {filtersActive && (
+              {filtersActive && prospects.length !== filtered.length && (
                 <span className="text-white/30"> of {prospects.length}</span>
               )}{" "}
-              without a website
-              {totalFound !== null && (
-                <span className="text-white/30"> · {totalFound} total found</span>
-              )}
+              results
+              {/* Add to Resend button — re-enable when ready
+              {selectedWithEmail.length > 0 && (
+                <button onClick={handleAddToAudience} ...>
+                  Add {selectedWithEmail.length} to Resend
+                </button>
+              )} */}
             </div>
-
-            {/* Add to Resend button — re-enable when ready
-            {selectedWithEmail.length > 0 && (
-              <button onClick={handleAddToAudience} ...>
-                Add {selectedWithEmail.length} to Resend
-              </button>
-            )} */}
           </div>
 
           {filtered.length === 0 ? (
             <div className="text-center py-16 text-[#f2ede4]/30 text-sm">
               {prospects.length === 0
-                ? "No businesses without a website found in this area."
+                ? "No results found for this search."
                 : "No results match the current filters."}
             </div>
           ) : (
             <div className="bg-white/[0.03] border border-white/8 rounded-2xl overflow-hidden">
-              <div className="grid grid-cols-[1fr_1fr_8rem_2.5rem] gap-4 px-5 py-3 border-b border-white/6 text-xs text-[#f2ede4]/30 uppercase tracking-wide font-medium">
+              <div className="grid grid-cols-[1fr_1fr_7rem_7rem_7rem_2.5rem] gap-4 px-5 py-3 border-b border-white/6 text-xs text-[#f2ede4]/30 uppercase tracking-wide font-medium">
                 <div>Business</div>
                 <div>Address</div>
                 <div>Phone</div>
+                <div>Website</div>
+                <div>Email</div>
                 <div></div>
               </div>
 
@@ -285,7 +322,7 @@ export default function ProspectsPage() {
                 {filtered.map((p) => (
                   <div
                     key={p.place_id}
-                    className="grid grid-cols-[1fr_1fr_8rem_2.5rem] gap-4 px-5 py-4 items-center hover:bg-white/[0.02] transition-colors"
+                    className="grid grid-cols-[1fr_1fr_7rem_7rem_7rem_2.5rem] gap-4 px-5 py-4 items-center hover:bg-white/[0.02] transition-colors"
                   >
                     <div className="min-w-0">
                       <div className="text-sm text-[#f2ede4] font-medium truncate">
@@ -306,7 +343,26 @@ export default function ProspectsPage() {
                     </div>
 
                     <div className="text-xs text-[#f2ede4]/50 min-w-0 truncate">
-                      {p.phone || "—"}
+                      {p.phone || <span className="text-white/20">—</span>}
+                    </div>
+
+                    <div className="text-xs min-w-0 truncate">
+                      {p.site ? (
+                        <a
+                          href={p.site}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-amber-500/70 hover:text-amber-400 truncate block"
+                        >
+                          {p.site.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                        </a>
+                      ) : (
+                        <span className="text-white/20">—</span>
+                      )}
+                    </div>
+
+                    <div className="text-xs text-[#f2ede4]/50 min-w-0 truncate">
+                      {p.email || <span className="text-white/20">—</span>}
                     </div>
 
                     <div className="flex justify-center">

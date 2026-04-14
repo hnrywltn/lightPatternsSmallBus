@@ -6,6 +6,8 @@ export interface Prospect {
   type: string;
   full_address: string;
   phone: string;
+  site: string;
+  email: string;
   rating: number;
   reviews: number;
   google_maps_url: string;
@@ -28,7 +30,7 @@ export async function GET(request: NextRequest) {
   url.searchParams.set("async", "false");
   url.searchParams.set(
     "fields",
-    "place_id,name,type,full_address,phone,site,rating,reviews,google_maps_url"
+    "place_id,name,type,full_address,phone,site,email,rating,reviews,google_maps_url"
   );
 
   const res = await fetch(url.toString(), {
@@ -45,19 +47,18 @@ export async function GET(request: NextRequest) {
   const json = await res.json();
   const raw: Record<string, unknown>[] = json?.data?.[0] ?? [];
 
-  // Filter to businesses with no website
-  const prospects: Prospect[] = raw
-    .filter((b) => !b.site)
-    .map((b) => ({
-      place_id: String(b.place_id ?? ""),
-      name: String(b.name ?? ""),
-      type: String(b.type ?? ""),
-      full_address: String(b.full_address ?? ""),
-      phone: String(b.phone ?? ""),
-      rating: Number(b.rating ?? 0),
-      reviews: Number(b.reviews ?? 0),
-      google_maps_url: String(b.google_maps_url ?? ""),
-    }));
+  const prospects: Prospect[] = raw.map((b) => ({
+    place_id: String(b.place_id ?? ""),
+    name: String(b.name ?? ""),
+    type: String(b.type ?? ""),
+    full_address: String(b.full_address ?? ""),
+    phone: String(b.phone ?? ""),
+    site: String(b.site ?? ""),
+    email: String(b.email ?? ""),
+    rating: Number(b.rating ?? 0),
+    reviews: Number(b.reviews ?? 0),
+    google_maps_url: String(b.google_maps_url ?? ""),
+  }));
 
-  return NextResponse.json({ prospects, total: raw.length });
+  return NextResponse.json({ prospects });
 }
