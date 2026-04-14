@@ -17,8 +17,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No contacts provided" }, { status: 400 });
   }
 
+  const audienceId = process.env.RESEND_OUTREACH_AUDIENCE_ID!;
+
   const results = await Promise.all(
     contacts.map(async ({ name, email }) => {
+      // Add to outreach audience
+      await fetch(`https://api.resend.com/audiences/${audienceId}/contacts`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, first_name: name, unsubscribed: false }),
+      });
+
+      // Send the email
       const { error } = await resend.emails.send({
         from: "Light Patterns <hello@lightpatternsonline.com>",
         to: email,
