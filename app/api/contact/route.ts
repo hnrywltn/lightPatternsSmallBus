@@ -48,5 +48,16 @@ export async function POST(req: NextRequest) {
     console.error("Resend confirmation error:", confirmError);
   }
 
+  // Add to Leads audience
+  if (process.env.RESEND_LEADS_AUDIENCE_ID) {
+    await resend.contacts.create({
+      email,
+      firstName: name.split(" ")[0],
+      lastName: name.split(" ").slice(1).join(" ") || undefined,
+      audienceId: process.env.RESEND_LEADS_AUDIENCE_ID,
+      unsubscribed: false,
+    }).catch((e) => console.error("Failed to add lead to audience:", e));
+  }
+
   return NextResponse.json({ ok: true });
 }

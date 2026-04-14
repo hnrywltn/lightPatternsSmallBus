@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No contacts provided" }, { status: 400 });
   }
 
-  const audienceId = process.env.RESEND_AUDIENCE_ID!;
+  const audienceId = process.env.RESEND_OUTREACH_AUDIENCE_ID!;
   const apiKey = process.env.RESEND_API_KEY!;
 
   const results = await Promise.all(

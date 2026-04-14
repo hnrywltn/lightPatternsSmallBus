@@ -12,15 +12,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid email address." }, { status: 400 });
   }
 
-  if (!resend || !process.env.RESEND_AUDIENCE_ID) {
-    // Not yet configured — accept the request silently so the UI works in dev
-    console.warn("Resend not configured. Set RESEND_API_KEY and RESEND_AUDIENCE_ID.");
+  if (!resend || !process.env.RESEND_LEADS_AUDIENCE_ID) {
+    console.warn("Resend not configured. Set RESEND_API_KEY and RESEND_LEADS_AUDIENCE_ID.");
     return NextResponse.json({ ok: true });
   }
 
   const { error } = await resend.contacts.create({
     email,
-    audienceId: process.env.RESEND_AUDIENCE_ID,
+    audienceId: process.env.RESEND_LEADS_AUDIENCE_ID,
     unsubscribed: false,
   });
 
