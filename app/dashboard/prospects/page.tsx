@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Search, ExternalLink, Loader2, X, SlidersHorizontal } from "lucide-react";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { Search, ExternalLink, Loader2, X, SlidersHorizontal, Pencil, Check, ListPlus, Users } from "lucide-react";
 import type { Prospect } from "@/app/api/prospects/search/route";
-
-// type Status = "idle" | "adding" | "added" | "error";
 
 const BUSINESS_TYPES = [
   { label: "All types", value: "" },
@@ -50,6 +48,27 @@ const MIN_RATING_OPTIONS = [
 
 type PresenceFilter = "any" | "yes" | "no";
 
+export interface SavedContact {
+  place_id: string;
+  name: string;
+  email: string;
+  phone: string;
+  full_address: string;
+  type: string;
+}
+
+const LS_EMAILS_KEY = "lp_prospect_emails";
+const LS_LIST_KEY = "lp_prospect_list";
+
+function loadFromLS<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 function PresencePills({
   value,
   onChange,
@@ -76,6 +95,63 @@ function PresencePills({
   );
 }
 
+function InlineEmail({
+  value,
+  onSave,
+}: {
+  value: string;
+  onSave: (v: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editing) inputRef.current?.focus();
+  }, [editing]);
+
+  function save() {
+    onSave(draft.trim());
+    setEditing(false);
+  }
+
+  function cancel() {
+    setDraft(value);
+    setEditing(false);
+  }
+
+  if (editing) {
+    return (
+      <input
+        ref={inputRef}
+        type="email"
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={save}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") save();
+          if (e.key === "Escape") cancel();
+        }}
+        className="w-full bg-white/8 border border-amber-600/40 rounded px-2 py-1 text-[#f2ede4] text-xs focus:outline-none"
+      />
+    );
+  }
+
+  return (
+    <button
+      onClick={() => { setDraft(value); setEditing(true); }}
+      className="group flex items-center gap-1.5 w-full text-left"
+    >
+      {value ? (
+        <span className="text-xs text-[#f2ede4]/60 truncate">{value}</span>
+      ) : (
+        <span className="text-xs text-white/20 italic">+ add email</span>
+      )}
+      <Pencil className="w-3 h-3 text-white/20 group-hover:text-white/50 shrink-0 transition-colors" />
+    </button>
+  );
+}
+
 export default function ProspectsPage() {
   const [zip, setZip] = useState("");
   const [categorySelect, setCategorySelect] = useState("");
@@ -84,17 +160,28 @@ export default function ProspectsPage() {
   const [error, setError] = useState("");
   const [prospects, setProspects] = useState<Prospect[]>([]);
 
-  // Filters — website defaults to "no" since that's the core use case
+  // Persisted emails keyed by place_id
+  const [emails, setEmails] = useState<Record<string, string>>({});
+  // Persisted saved contact list
+  const [savedList, setSavedList] = useState<SavedContact[]>([]);
+  // Selected rows
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  // Show saved list panel
+  const [showList, setShowList] = useState(false);
+
+  // Load persisted data on mount
+  useEffect(() => {
+    setEmails(loadFromLS<Record<string, string>>(LS_EMAILS_KEY, {}));
+    setSavedList(loadFromLS<SavedContact[]>(LS_LIST_KEY, []));
+  }, []);
+
+  // Filters
   const [minReviews, setMinReviews] = useState(0);
   const [minRating, setMinRating] = useState(0);
   const [hasPhone, setHasPhone] = useState<PresenceFilter>("any");
   const [hasWebsite, setHasWebsite] = useState<PresenceFilter>("no");
   const [hasEmail, setHasEmail] = useState<PresenceFilter>("any");
   const [typeFilter, setTypeFilter] = useState("");
-
-  // const [emails, setEmails] = useState<Record<string, string>>({});
-  // const [selected, setSelected] = useState<Set<string>>(new Set());
-  // const [statuses, setStatuses] = useState<Record<string, Status>>({});
 
   const isCustom = categorySelect === "__custom__";
   const effectiveCategory = isCustom ? customCategory : categorySelect;
@@ -104,6 +191,7 @@ export default function ProspectsPage() {
     setLoading(true);
     setError("");
     setProspects([]);
+    setSelected(new Set());
     setTypeFilter("");
 
     const params = new URLSearchParams({ zip });
@@ -119,6 +207,78 @@ export default function ProspectsPage() {
     }
 
     setLoading(false);
+  }
+
+  function saveEmail(place_id: string, email: string) {
+    setEmails((prev) => {
+      const next = { ...prev, [place_id]: email };
+      localStorage.setItem(LS_EMAILS_KEY, JSON.stringify(next));
+      return next;
+    });
+    // If this prospect is already in the saved list, update its email
+    setSavedList((prev) => {
+      const updated = prev.map((c) =>
+        c.place_id === place_id ? { ...c, email } : c
+      );
+      if (updated.some((c) => c.place_id === place_id)) {
+        localStorage.setItem(LS_LIST_KEY, JSON.stringify(updated));
+        return updated;
+      }
+      return prev;
+    });
+  }
+
+  function toggleSelect(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+
+  function toggleAll() {
+    if (selected.size === filtered.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(filtered.map((p) => p.place_id)));
+    }
+  }
+
+  function addToList() {
+    const toAdd = filtered
+      .filter((p) => selected.has(p.place_id))
+      .map((p) => ({
+        place_id: p.place_id,
+        name: p.name,
+        email: emails[p.place_id] ?? "",
+        phone: p.phone,
+        full_address: p.full_address,
+        type: p.type,
+      }));
+
+    setSavedList((prev) => {
+      const existingIds = new Set(prev.map((c) => c.place_id));
+      const merged = [
+        ...prev.map((c) => {
+          const update = toAdd.find((a) => a.place_id === c.place_id);
+          return update ? { ...c, ...update } : c;
+        }),
+        ...toAdd.filter((a) => !existingIds.has(a.place_id)),
+      ];
+      localStorage.setItem(LS_LIST_KEY, JSON.stringify(merged));
+      return merged;
+    });
+
+    setSelected(new Set());
+    setShowList(true);
+  }
+
+  function removeFromList(place_id: string) {
+    setSavedList((prev) => {
+      const next = prev.filter((c) => c.place_id !== place_id);
+      localStorage.setItem(LS_LIST_KEY, JSON.stringify(next));
+      return next;
+    });
   }
 
   const types = useMemo(() => {
@@ -142,6 +302,7 @@ export default function ProspectsPage() {
   }, [prospects, minReviews, minRating, hasPhone, hasWebsite, hasEmail, typeFilter]);
 
   const hasSearched = prospects.length > 0 || error !== "";
+  const allSelected = filtered.length > 0 && selected.size === filtered.length;
   const filtersActive =
     minReviews > 0 ||
     minRating > 0 ||
@@ -159,14 +320,68 @@ export default function ProspectsPage() {
     setTypeFilter("");
   }
 
+  const savedIds = new Set(savedList.map((c) => c.place_id));
+
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-[#f2ede4]">Prospect Finder</h1>
-        <p className="text-sm text-[#f2ede4]/40 mt-1">
-          Find businesses by zip code and filter by what they have or don&apos;t have.
-        </p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-[#f2ede4]">Prospect Finder</h1>
+          <p className="text-sm text-[#f2ede4]/40 mt-1">
+            Find businesses by zip code and filter by what they have or don&apos;t have.
+          </p>
+        </div>
+        <button
+          onClick={() => setShowList((v) => !v)}
+          className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-medium transition-colors ${
+            showList
+              ? "bg-amber-600/10 border-amber-600/30 text-amber-500"
+              : "bg-white/[0.03] border-white/8 text-[#f2ede4]/50 hover:text-[#f2ede4]"
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          List
+          {savedList.length > 0 && (
+            <span className="text-xs bg-amber-600 text-white rounded-full px-1.5 py-0.5 leading-none">
+              {savedList.length}
+            </span>
+          )}
+        </button>
       </div>
+
+      {/* Saved list panel */}
+      {showList && (
+        <div className="bg-white/[0.03] border border-white/8 rounded-2xl mb-6 overflow-hidden">
+          <div className="px-5 py-4 border-b border-white/6 flex items-center justify-between">
+            <h2 className="text-sm font-medium text-[#f2ede4]">Saved List</h2>
+            <span className="text-xs text-[#f2ede4]/30">{savedList.length} contacts</span>
+          </div>
+          {savedList.length === 0 ? (
+            <div className="px-5 py-8 text-center text-xs text-[#f2ede4]/30">
+              No contacts saved yet. Select rows and click &quot;Add to list.&quot;
+            </div>
+          ) : (
+            <div className="divide-y divide-white/5">
+              {savedList.map((c) => (
+                <div key={c.place_id} className="grid grid-cols-[1fr_1fr_7rem_2rem] gap-4 px-5 py-3 items-center">
+                  <div className="min-w-0">
+                    <div className="text-sm text-[#f2ede4] font-medium truncate">{c.name}</div>
+                    <div className="text-xs text-[#f2ede4]/30 truncate">{c.type}</div>
+                  </div>
+                  <div className="text-xs text-[#f2ede4]/50 truncate">{c.email || <span className="text-white/20 italic">no email</span>}</div>
+                  <div className="text-xs text-[#f2ede4]/50 truncate">{c.phone || "—"}</div>
+                  <button
+                    onClick={() => removeFromList(c.place_id)}
+                    className="text-white/20 hover:text-red-400 transition-colors justify-self-center"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Search form */}
       <form
@@ -226,11 +441,7 @@ export default function ProspectsPage() {
             disabled={loading}
             className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-amber-600 hover:bg-amber-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium text-sm transition-colors shadow-lg shadow-amber-600/20"
           >
-            {loading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Search className="w-4 h-4" />
-            )}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
             {loading ? "Searching…" : "Search"}
           </button>
         </div>
@@ -306,9 +517,7 @@ export default function ProspectsPage() {
             >
               <option value="">All</option>
               {types.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
+                <option key={t} value={t}>{t}</option>
               ))}
             </select>
           </div>
@@ -342,12 +551,16 @@ export default function ProspectsPage() {
               )}{" "}
               results
             </div>
-            {/* Add to Resend button — re-enable when ready
-            {selectedWithEmail.length > 0 && (
-              <button onClick={handleAddToAudience} ...>
-                Add {selectedWithEmail.length} to Resend
+
+            {selected.size > 0 && (
+              <button
+                onClick={addToList}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium transition-colors shadow-lg shadow-amber-600/20"
+              >
+                <ListPlus className="w-3.5 h-3.5" />
+                Add {selected.size} to list
               </button>
-            )} */}
+            )}
           </div>
 
           {filtered.length === 0 ? (
@@ -358,76 +571,84 @@ export default function ProspectsPage() {
             </div>
           ) : (
             <div className="bg-white/[0.03] border border-white/8 rounded-2xl overflow-hidden">
-              <div className="grid grid-cols-[1fr_1fr_7rem_7rem_7rem_2.5rem] gap-4 px-5 py-3 border-b border-white/6 text-xs text-[#f2ede4]/30 uppercase tracking-wide font-medium">
+              <div className="grid grid-cols-[2rem_1fr_1fr_7rem_9rem_2.5rem] gap-4 px-5 py-3 border-b border-white/6 text-xs text-[#f2ede4]/30 uppercase tracking-wide font-medium">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={toggleAll}
+                    className="accent-amber-600 w-3.5 h-3.5 cursor-pointer"
+                  />
+                </div>
                 <div>Business</div>
                 <div>Address</div>
                 <div>Phone</div>
-                <div>Website</div>
                 <div>Email</div>
                 <div></div>
               </div>
 
               <div className="divide-y divide-white/5">
-                {filtered.map((p) => (
-                  <div
-                    key={p.place_id}
-                    className="grid grid-cols-[1fr_1fr_7rem_7rem_7rem_2.5rem] gap-4 px-5 py-4 items-center hover:bg-white/[0.02] transition-colors"
-                  >
-                    <div className="min-w-0">
-                      <div className="text-sm text-[#f2ede4] font-medium truncate">
-                        {p.name}
+                {filtered.map((p) => {
+                  const inList = savedIds.has(p.place_id);
+                  return (
+                    <div
+                      key={p.place_id}
+                      className={`grid grid-cols-[2rem_1fr_1fr_7rem_9rem_2.5rem] gap-4 px-5 py-3.5 items-center hover:bg-white/[0.02] transition-colors ${
+                        inList ? "bg-amber-600/[0.03]" : ""
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={selected.has(p.place_id)}
+                          onChange={() => toggleSelect(p.place_id)}
+                          className="accent-amber-600 w-3.5 h-3.5 cursor-pointer"
+                        />
                       </div>
-                      <div className="text-xs text-[#f2ede4]/30 truncate mt-0.5">
-                        {p.type}
-                        {p.rating > 0 && (
-                          <span className="ml-2">
-                            ★ {p.rating.toFixed(1)} ({p.reviews})
-                          </span>
+
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-[#f2ede4] font-medium truncate">{p.name}</span>
+                          {inList && <Check className="w-3 h-3 text-amber-500 shrink-0" />}
+                        </div>
+                        <div className="text-xs text-[#f2ede4]/30 truncate mt-0.5">
+                          {p.type}
+                          {p.rating > 0 && (
+                            <span className="ml-2">★ {p.rating.toFixed(1)} ({p.reviews})</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="text-xs text-[#f2ede4]/50 min-w-0 truncate">
+                        {p.full_address}
+                      </div>
+
+                      <div className="text-xs text-[#f2ede4]/50 min-w-0 truncate">
+                        {p.phone || <span className="text-white/20">—</span>}
+                      </div>
+
+                      <div className="min-w-0">
+                        <InlineEmail
+                          value={emails[p.place_id] ?? p.email ?? ""}
+                          onSave={(v) => saveEmail(p.place_id, v)}
+                        />
+                      </div>
+
+                      <div className="flex justify-center">
+                        {p.google_maps_url && (
+                          <a
+                            href={p.google_maps_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#f2ede4]/20 hover:text-[#f2ede4]/60 transition-colors"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
                         )}
                       </div>
                     </div>
-
-                    <div className="text-xs text-[#f2ede4]/50 min-w-0 truncate">
-                      {p.full_address}
-                    </div>
-
-                    <div className="text-xs text-[#f2ede4]/50 min-w-0 truncate">
-                      {p.phone || <span className="text-white/20">—</span>}
-                    </div>
-
-                    <div className="text-xs min-w-0 truncate">
-                      {p.site ? (
-                        <a
-                          href={p.site}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-amber-500/70 hover:text-amber-400 truncate block"
-                        >
-                          {p.site.replace(/^https?:\/\//, "").replace(/\/$/, "")}
-                        </a>
-                      ) : (
-                        <span className="text-white/20">—</span>
-                      )}
-                    </div>
-
-                    <div className="text-xs text-[#f2ede4]/50 min-w-0 truncate">
-                      {p.email || <span className="text-white/20">—</span>}
-                    </div>
-
-                    <div className="flex justify-center">
-                      {p.google_maps_url && (
-                        <a
-                          href={p.google_maps_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[#f2ede4]/20 hover:text-[#f2ede4]/60 transition-colors"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
