@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
   const url = new URL("https://api.app.outscraper.com/maps/search-v2");
   url.searchParams.set("query", query);
-  url.searchParams.set("limit", "50");
+  url.searchParams.set("limit", "500");
   url.searchParams.set("async", "false");
   url.searchParams.set(
     "fields",
