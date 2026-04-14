@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
-import { Search, ExternalLink, Loader2, X, SlidersHorizontal, Pencil, Check, ListPlus, Users } from "lucide-react";
+import { Search, ExternalLink, Loader2, X, SlidersHorizontal, Pencil, Check, ListPlus, Users, Send } from "lucide-react";
 import type { Prospect } from "@/app/api/prospects/search/route";
 
 const BUSINESS_TYPES = [
@@ -168,6 +168,9 @@ export default function ProspectsPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   // Show saved list panel
   const [showList, setShowList] = useState(false);
+  // Send state: record of email -> 'sending' | 'sent' | 'error'
+  const [sendStatuses, setSendStatuses] = useState<Record<string, "sending" | "sent" | "error">>({});
+  const [sending, setSending] = useState(false);
 
   // Load persisted data on mount
   useEffect(() => {
@@ -281,6 +284,32 @@ export default function ProspectsPage() {
     });
   }
 
+  async function sendEmails() {
+    const toSend = savedList.filter(
+      (c) => c.email && sendStatuses[c.email] !== "sent"
+    );
+    if (!toSend.length) return;
+
+    setSending(true);
+    const pending: Record<string, "sending"> = {};
+    toSend.forEach((c) => (pending[c.email] = "sending"));
+    setSendStatuses((prev) => ({ ...prev, ...pending }));
+
+    const res = await fetch("/api/prospects/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contacts: toSend.map((c) => ({ name: c.name, email: c.email })) }),
+    });
+    const data = await res.json();
+
+    const updated: Record<string, "sent" | "error"> = {};
+    data.results?.forEach(({ email, success }: { email: string; success: boolean }) => {
+      updated[email] = success ? "sent" : "error";
+    });
+    setSendStatuses((prev) => ({ ...prev, ...updated }));
+    setSending(false);
+  }
+
   const types = useMemo(() => {
     const set = new Set(prospects.map((p) => p.type).filter(Boolean));
     return Array.from(set).sort();
@@ -353,8 +382,20 @@ export default function ProspectsPage() {
       {showList && (
         <div className="bg-white/[0.03] border border-white/8 rounded-2xl mb-6 overflow-hidden">
           <div className="px-5 py-4 border-b border-white/6 flex items-center justify-between">
-            <h2 className="text-sm font-medium text-[#f2ede4]">Saved List</h2>
-            <span className="text-xs text-[#f2ede4]/30">{savedList.length} contacts</span>
+            <div className="flex items-center gap-3">
+              <h2 className="text-sm font-medium text-[#f2ede4]">Saved List</h2>
+              <span className="text-xs text-[#f2ede4]/30">{savedList.length} contacts</span>
+            </div>
+            {savedList.some((c) => c.email && sendStatuses[c.email] !== "sent") && (
+              <button
+                onClick={sendEmails}
+                disabled={sending}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white text-xs font-medium transition-colors shadow-lg shadow-amber-600/20"
+              >
+                {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                {sending ? "Sending…" : `Send ${savedList.filter((c) => c.email && sendStatuses[c.email] !== "sent").length} emails`}
+              </button>
+            )}
           </div>
           {savedList.length === 0 ? (
             <div className="px-5 py-8 text-center text-xs text-[#f2ede4]/30">
@@ -362,22 +403,30 @@ export default function ProspectsPage() {
             </div>
           ) : (
             <div className="divide-y divide-white/5">
-              {savedList.map((c) => (
-                <div key={c.place_id} className="grid grid-cols-[1fr_1fr_7rem_2rem] gap-4 px-5 py-3 items-center">
-                  <div className="min-w-0">
-                    <div className="text-sm text-[#f2ede4] font-medium truncate">{c.name}</div>
-                    <div className="text-xs text-[#f2ede4]/30 truncate">{c.type}</div>
+              {savedList.map((c) => {
+                const status = c.email ? sendStatuses[c.email] : undefined;
+                return (
+                  <div key={c.place_id} className="grid grid-cols-[1fr_1fr_7rem_5rem_2rem] gap-4 px-5 py-3 items-center">
+                    <div className="min-w-0">
+                      <div className="text-sm text-[#f2ede4] font-medium truncate">{c.name}</div>
+                      <div className="text-xs text-[#f2ede4]/30 truncate">{c.type}</div>
+                    </div>
+                    <div className="text-xs text-[#f2ede4]/50 truncate">{c.email || <span className="text-white/20 italic">no email</span>}</div>
+                    <div className="text-xs text-[#f2ede4]/50 truncate">{c.phone || "—"}</div>
+                    <div className="text-xs">
+                      {status === "sending" && <span className="flex items-center gap-1 text-amber-500"><Loader2 className="w-3 h-3 animate-spin" /> Sending</span>}
+                      {status === "sent" && <span className="flex items-center gap-1 text-emerald-400"><Check className="w-3 h-3" /> Sent</span>}
+                      {status === "error" && <span className="text-red-400">Failed</span>}
+                    </div>
+                    <button
+                      onClick={() => removeFromList(c.place_id)}
+                      className="text-white/20 hover:text-red-400 transition-colors justify-self-center"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
                   </div>
-                  <div className="text-xs text-[#f2ede4]/50 truncate">{c.email || <span className="text-white/20 italic">no email</span>}</div>
-                  <div className="text-xs text-[#f2ede4]/50 truncate">{c.phone || "—"}</div>
-                  <button
-                    onClick={() => removeFromList(c.place_id)}
-                    className="text-white/20 hover:text-red-400 transition-colors justify-self-center"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

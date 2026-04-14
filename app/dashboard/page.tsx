@@ -1,20 +1,13 @@
 import Link from "next/link";
-import { Mail, Search, Users, BarChart2 } from "lucide-react";
+import { Search, Users, BarChart2 } from "lucide-react";
 
 const tools = [
   {
     icon: Search,
     title: "Prospect Finder",
-    description: "Search for businesses with no website by city and category.",
+    description: "Search for businesses with no website, build a list, and send cold outreach.",
     href: "/dashboard/prospects",
     status: "active",
-  },
-  {
-    icon: Mail,
-    title: "Cold Email",
-    description: "Draft, queue, and send personalized outreach emails.",
-    href: "/dashboard/email",
-    status: "coming soon",
   },
   {
     icon: Users,
