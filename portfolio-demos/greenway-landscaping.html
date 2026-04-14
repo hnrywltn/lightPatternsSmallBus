@@ -32,7 +32,8 @@
     display: flex; align-items: flex-end;
     padding: 0;
   }
-  .hero-bg-img { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 200px; opacity: 0.04; }
+  .hero-bg-img { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; }
+  .hero-bg-img img { height: 90%; width: auto; object-fit: contain; opacity: 0.55; margin-right: -40px; margin-bottom: -20px; }
   .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,36,16,0.97) 0%, rgba(26,36,16,0.5) 50%, rgba(26,36,16,0.2) 100%); }
   .hero-content { position: relative; padding: 80px 52px; display: grid; grid-template-columns: 2fr 1fr; gap: 64px; align-items: end; width: 100%; }
   .hero-tag { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 100px; margin-bottom: 28px; letter-spacing: 0.05em; }
@@ -105,7 +106,7 @@
 </nav>
 
 <section class="hero">
-  <div class="hero-bg-img">🌳</div>
+  <div class="hero-bg-img"><img src="assets/landscaping-plant.png" alt="Lush green plant" /></div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div>
