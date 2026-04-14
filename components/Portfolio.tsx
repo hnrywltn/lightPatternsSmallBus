@@ -8,45 +8,33 @@ import Image from "next/image";
 const projects = [
   {
     name: "Atlas Barbershop",
-    category: "Barbershop",
-    description: "Dark editorial aesthetic with services, hours, and booking.",
     image: "/portfolio/atlas-barbershop.png",
-    size: "large",
+    href: "/portfolio-demos/atlas-barbershop.html",
   },
   {
     name: "Bright Side Plumbing",
-    category: "Home Services",
-    description: "Trust-forward design with emergency line and service cards.",
     image: "/portfolio/bright-side-plumbing.png",
-    size: "small",
+    href: "/portfolio-demos/bright-side-plumbing.html",
   },
   {
     name: "Greenway Landscaping",
-    category: "Landscaping",
-    description: "Bold outdoor aesthetic with process flow and service grid.",
     image: "/portfolio/greenway-landscaping.png",
-    size: "small",
+    href: "/portfolio-demos/greenway-landscaping.html",
   },
   {
     name: "Bloom Nail Studio",
-    category: "Nail Studio",
-    description: "Minimal luxury with full service menu and online booking.",
     image: "/portfolio/bloom-nail-studio.png",
-    size: "large",
+    href: "/portfolio-demos/bloom-nail-studio.html",
   },
   {
     name: "Iron & Oak Fitness",
-    category: "Fitness Studio",
-    description: "High-energy layout with class schedule and membership tiers.",
     image: "/portfolio/iron-oak-fitness.png",
-    size: "small",
+    href: "/portfolio-demos/iron-oak-fitness.html",
   },
   {
     name: "Pepper & Salt Café",
-    category: "Café",
-    description: "Warm, editorial feel with all-day menu and ordering.",
     image: "/portfolio/pepper-salt-cafe.png",
-    size: "small",
+    href: "/portfolio-demos/pepper-salt-cafe.html",
   },
 ];
 
@@ -83,13 +71,16 @@ export default function Portfolio() {
         {/* 2-column gallery grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {projects.map((project, i) => (
-            <motion.div
+            <motion.a
               key={project.name}
+              href={project.href}
+              target="_blank"
+              rel="noopener noreferrer"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: (i % 2) * 0.1 }}
-              className="group relative aspect-video overflow-hidden rounded-2xl cursor-pointer shadow-lg"
+              className="group relative aspect-video overflow-hidden rounded-2xl cursor-pointer shadow-lg block"
             >
               <Image
                 src={project.image}
@@ -104,7 +95,7 @@ export default function Portfolio() {
                   <ArrowUpRight className="w-5 h-5 text-white" />
                 </div>
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
 
