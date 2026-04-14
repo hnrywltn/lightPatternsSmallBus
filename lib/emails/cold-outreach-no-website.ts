@@ -38,9 +38,18 @@ export function coldOutreachNoWebsiteEmail({ businessName, ownerName, unsubscrib
           <p style="margin:0 0 16px;font-size:15px;color:#3d3730;line-height:1.7;">
             We're Light Patterns — a small web studio that just opened up, and we're looking to work with great local businesses in the area. We noticed ${businessName} doesn't have a website yet, and we think we could help.
           </p>
-          <p style="margin:0 0 24px;font-size:15px;color:#3d3730;line-height:1.7;">
+          <p style="margin:0 0 16px;font-size:15px;color:#3d3730;line-height:1.7;">
             We'd love to build you something you're proud of — fast to launch, easy to maintain, and built to show up when customers search for you.
           </p>
+
+          <!-- Launch offer -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#0c0a07;border-radius:12px;margin-bottom:24px;">
+            <tr><td style="padding:18px 24px;">
+              <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#f59e0b;">Launch offer</p>
+              <p style="margin:0 0 6px;font-size:15px;font-weight:800;color:#f2ede4;line-height:1.4;">Because we're just getting started, we're offering up to 50% off for our first clients.</p>
+              <p style="margin:0;font-size:12px;color:#f2ede4;opacity:0.4;line-height:1.5;">Reply to this email and mention the offer — we'll work something out.</p>
+            </td></tr>
+          </table>
 
           <!-- Pricing highlight -->
           <table width="100%" cellpadding="0" cellspacing="0" style="background:#fffbf2;border:1px solid #f59e0b33;border-radius:12px;margin-bottom:24px;">
