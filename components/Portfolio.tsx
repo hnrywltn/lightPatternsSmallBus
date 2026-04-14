@@ -2,51 +2,102 @@
 
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import Image from "next/image";
 
 const projects = [
   {
-    name: "Bloom Florals",
-    category: "Floral Shop",
-    description: "Elegant e-commerce with custom booking.",
-    gradient: "from-rose-400/60 to-pink-600/30",
+    name: "Atlas Barbershop",
+    category: "Barbershop",
+    description: "Dark editorial aesthetic with services, hours, and booking.",
+    image: "/portfolio/atlas-barbershop.png",
     size: "large",
   },
   {
-    name: "Ironwood Coffee",
+    name: "Bright Side Plumbing",
+    category: "Home Services",
+    description: "Trust-forward design with emergency line and service cards.",
+    image: "/portfolio/bright-side-plumbing.png",
+    size: "small",
+  },
+  {
+    name: "Greenway Landscaping",
+    category: "Landscaping",
+    description: "Bold outdoor aesthetic with process flow and service grid.",
+    image: "/portfolio/greenway-landscaping.png",
+    size: "small",
+  },
+  {
+    name: "Bloom Nail Studio",
+    category: "Nail Studio",
+    description: "Minimal luxury with full service menu and online booking.",
+    image: "/portfolio/bloom-nail-studio.png",
+    size: "large",
+  },
+  {
+    name: "Iron & Oak Fitness",
+    category: "Fitness Studio",
+    description: "High-energy layout with class schedule and membership tiers.",
+    image: "/portfolio/iron-oak-fitness.png",
+    size: "small",
+  },
+  {
+    name: "Pepper & Salt Café",
     category: "Café",
-    description: "Brand-forward with menu integration.",
-    gradient: "from-amber-700/60 to-orange-800/30",
-    size: "small",
-  },
-  {
-    name: "Peak Legal",
-    category: "Law Firm",
-    description: "Professional site with client portal.",
-    gradient: "from-stone-500/50 to-stone-700/30",
-    size: "small",
-  },
-  {
-    name: "Solstice Spa",
-    category: "Wellness",
-    description: "Calming animations with online booking.",
-    gradient: "from-emerald-500/60 to-teal-700/30",
-    size: "large",
-  },
-  {
-    name: "Anchor & Oak",
-    category: "Restaurant",
-    description: "Full-screen visuals and reservations.",
-    gradient: "from-amber-800/60 to-yellow-900/30",
-    size: "small",
-  },
-  {
-    name: "Meridian Fitness",
-    category: "Gym",
-    description: "Class scheduling and membership tiers.",
-    gradient: "from-orange-500/60 to-red-700/30",
+    description: "Warm, editorial feel with all-day menu and ordering.",
+    image: "/portfolio/pepper-salt-cafe.png",
     size: "small",
   },
 ];
+
+function ProjectCard({
+  project,
+  className,
+  delay = 0,
+  large = false,
+}: {
+  project: (typeof projects)[0];
+  className?: string;
+  delay?: number;
+  large?: boolean;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay }}
+      className={`group relative overflow-hidden rounded-3xl bg-amber-950 border-2 border-amber-900/20 cursor-pointer ${large ? "min-h-72" : "min-h-32"} ${className ?? ""}`}
+    >
+      <Image
+        src={project.image}
+        alt={project.name}
+        fill
+        className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+        sizes="(max-width: 1024px) 100vw, 60vw"
+      />
+      {/* Dark gradient overlay so text is always readable */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
+      <div className="absolute inset-0 p-6 flex flex-col justify-between">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-widest text-white/70 bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full">
+            {project.category}
+          </span>
+          <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <ArrowUpRight className="w-4 h-4 text-white" />
+          </div>
+        </div>
+        <div>
+          <h3 className={`font-black text-white mb-1 ${large ? "text-2xl" : "text-lg"}`}>
+            {project.name}
+          </h3>
+          <p className={`text-white/60 ${large ? "text-sm" : "text-xs"}`}>
+            {project.description}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function Portfolio() {
   return (
@@ -82,112 +133,20 @@ export default function Portfolio() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
 
           {/* Row 1: 1 large + 2 small */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-7 group relative overflow-hidden rounded-3xl bg-amber-950 border-2 border-amber-900/20 cursor-pointer min-h-72"
-          >
-            <div className={`absolute inset-0 bg-gradient-to-br ${projects[0].gradient}`} />
-            <div className="absolute inset-0 p-8 flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-widest text-white/40 bg-white/10 px-3 py-1 rounded-full">
-                  {projects[0].category}
-                </span>
-                <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ArrowUpRight className="w-4 h-4 text-white" />
-                </div>
-              </div>
-              <div>
-                <h3 className="text-2xl font-black text-white mb-1">{projects[0].name}</h3>
-                <p className="text-white/50 text-sm">{projects[0].description}</p>
-              </div>
-            </div>
-          </motion.div>
+          <ProjectCard project={projects[0]} className="lg:col-span-7" delay={0} large />
 
           <div className="lg:col-span-5 grid grid-cols-1 gap-4">
-            {[projects[1], projects[2]].map((p, i) => (
-              <motion.div
-                key={p.name}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: (i + 1) * 0.1 }}
-                className="group relative overflow-hidden rounded-3xl bg-amber-950 border-2 border-amber-900/20 cursor-pointer min-h-32"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${p.gradient}`} />
-                <div className="absolute inset-0 p-6 flex flex-col justify-between">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase tracking-widest text-white/40 bg-white/10 px-3 py-1 rounded-full">
-                      {p.category}
-                    </span>
-                    <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ArrowUpRight className="w-3 h-3 text-white" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-black text-white">{p.name}</h3>
-                    <p className="text-white/40 text-xs">{p.description}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+            <ProjectCard project={projects[1]} delay={0.1} />
+            <ProjectCard project={projects[2]} delay={0.2} />
           </div>
 
           {/* Row 2: 2 small + 1 large */}
           <div className="lg:col-span-5 grid grid-cols-1 gap-4">
-            {[projects[4], projects[5]].map((p, i) => (
-              <motion.div
-                key={p.name}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                className="group relative overflow-hidden rounded-3xl bg-amber-950 border-2 border-amber-900/20 cursor-pointer min-h-32"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${p.gradient}`} />
-                <div className="absolute inset-0 p-6 flex flex-col justify-between">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase tracking-widest text-white/40 bg-white/10 px-3 py-1 rounded-full">
-                      {p.category}
-                    </span>
-                    <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ArrowUpRight className="w-3 h-3 text-white" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-black text-white">{p.name}</h3>
-                    <p className="text-white/40 text-xs">{p.description}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+            <ProjectCard project={projects[4]} delay={0} />
+            <ProjectCard project={projects[5]} delay={0.1} />
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-7 group relative overflow-hidden rounded-3xl bg-amber-950 border-2 border-amber-900/20 cursor-pointer min-h-72"
-          >
-            <div className={`absolute inset-0 bg-gradient-to-br ${projects[3].gradient}`} />
-            <div className="absolute inset-0 p-8 flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-widest text-white/40 bg-white/10 px-3 py-1 rounded-full">
-                  {projects[3].category}
-                </span>
-                <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ArrowUpRight className="w-4 h-4 text-white" />
-                </div>
-              </div>
-              <div>
-                <h3 className="text-2xl font-black text-white mb-1">{projects[3].name}</h3>
-                <p className="text-white/50 text-sm">{projects[3].description}</p>
-              </div>
-            </div>
-          </motion.div>
+          <ProjectCard project={projects[3]} className="lg:col-span-7" delay={0.2} large />
 
         </div>
       </div>
