@@ -39,11 +39,16 @@ export default function InviteClient() {
       body: JSON.stringify({ email }),
     });
 
-    const data = await res.json();
+    let data: { error?: string } = {};
+    try {
+      data = await res.json();
+    } catch {
+      // empty or non-JSON response
+    }
 
     if (!res.ok) {
       setStatus("error");
-      setErrorMsg(data.error);
+      setErrorMsg(data.error ?? "Something went wrong. Is DATABASE_URL configured?");
       return;
     }
 

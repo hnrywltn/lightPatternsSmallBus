@@ -1,4 +1,9 @@
-import pool from "./db";
+import { config } from "dotenv";
+import { resolve } from "path";
+config({ path: resolve(process.cwd(), ".env.local") });
+
+import { Pool } from "pg";
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 async function migrate() {
   const client = await pool.connect();
