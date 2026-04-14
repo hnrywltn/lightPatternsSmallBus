@@ -72,6 +72,13 @@ export function coldOutreachNoWebsiteEmail({ businessName, ownerName, unsubscrib
           <a href="https://lightpatternsonline.com/#pricing" style="display:inline-block;background:#f5f4f0;color:#3d3730;font-size:13px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:10px;border:1px solid #e5e0d8;">See all plans</a>
         </td></tr>
 
+        <!-- Prep form -->
+        <tr><td style="background:#faf9f7;border-top:1px solid #f0ede8;padding:28px 40px;">
+          <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#a0998c;">Got 2 minutes?</p>
+          <p style="margin:0 0 16px;font-size:13px;color:#6b5f55;line-height:1.6;">Fill out a quick form and we'll put together some ideas for ${businessName} before we even talk. No commitment — just a head start.</p>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSddGi0AElRozx3U4ZAm3S1liDiSgUkROA3_Qanj77MqlnWZ-g/viewform?usp=publish-editor" style="display:inline-block;background:#0c0a07;color:#f2ede4;font-size:13px;font-weight:800;text-decoration:none;padding:12px 24px;border-radius:10px;">Fill out the form →</a>
+        </td></tr>
+
         <!-- Footer -->
         <tr><td style="padding:24px 40px 0;text-align:center;">
           <p style="margin:0 0 4px;font-size:12px;color:#c0b9b0;">Light Patterns — lightpatternsonline.com</p>
