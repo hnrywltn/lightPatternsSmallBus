@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Iron & Oak Fitness — Strength. Community. Results.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #0c0c0c; color: #f0ece4; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 18px 52px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(12,12,12,0.95); backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(240,236,228,0.07);
+  }
+  .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 0.08em; color: #f0ece4; text-decoration: none; }
+  .nav-logo span { color: #e07b2a; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-size: 13px; color: rgba(240,236,228,0.45); text-decoration: none; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  .nav-links a:hover { color: #e07b2a; }
+  .nav-join { background: #e07b2a; color: #0c0c0c; padding: 10px 22px; border-radius: 4px; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; }
+
+  .hero {
+    min-height: 100vh;
+    background: #0c0c0c;
+    position: relative; overflow: hidden;
+    display: flex; align-items: center;
+    padding: 80px 52px 60px;
+  }
+  .hero-lines {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(90deg, rgba(240,236,228,0.02) 0px, rgba(240,236,228,0.02) 1px, transparent 1px, transparent 80px);
+  }
+  .hero-glow { position: absolute; top: 0; right: 0; width: 700px; height: 700px; background: radial-gradient(circle at 80% 30%, rgba(224,123,42,0.12) 0%, transparent 60%); pointer-events: none; }
+  .hero-inner { position: relative; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #e07b2a; margin-bottom: 20px; }
+  .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: 100px; line-height: 0.9; color: #f0ece4; margin-bottom: 28px; }
+  .hero-title span { color: #e07b2a; }
+  .hero-sub { font-size: 16px; color: rgba(240,236,228,0.45); line-height: 1.75; max-width: 420px; margin-bottom: 40px; }
+  .hero-ctas { display: flex; gap: 14px; margin-bottom: 52px; }
+  .btn-orange { background: #e07b2a; color: #0c0c0c; padding: 14px 32px; border-radius: 4px; font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; }
+  .btn-outline-light { border: 1px solid rgba(240,236,228,0.2); color: rgba(240,236,228,0.75); padding: 14px 28px; border-radius: 4px; font-size: 14px; font-weight: 500; text-decoration: none; }
+  .hero-perks { display: flex; gap: 32px; }
+  .perk { display: flex; align-items: center; gap: 10px; }
+  .perk-icon { color: #e07b2a; font-size: 16px; }
+  .perk-text { font-size: 13px; color: rgba(240,236,228,0.4); font-weight: 500; }
+  .hero-right { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-block { background: rgba(240,236,228,0.04); border: 1px solid rgba(240,236,228,0.08); border-radius: 10px; padding: 28px 24px; }
+  .stat-block.orange { background: rgba(224,123,42,0.1); border-color: rgba(224,123,42,0.2); }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: #f0ece4; line-height: 1; }
+  .stat-block.orange .stat-num { color: #e07b2a; }
+  .stat-label { font-size: 11px; color: rgba(240,236,228,0.35); margin-top: 6px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .stat-block.orange .stat-label { color: rgba(224,123,42,0.6); }
+  .hero-img-block { grid-column: span 2; background: rgba(240,236,228,0.04); border: 1px solid rgba(240,236,228,0.08); border-radius: 10px; height: 140px; display: flex; align-items: center; justify-content: center; gap: 16px; color: rgba(240,236,228,0.15); font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .classes { padding: 96px 52px; background: #111; }
+  .classes-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 48px; }
+  .classes-title { font-family: 'Bebas Neue', sans-serif; font-size: 54px; color: #f0ece4; letter-spacing: 0.04em; }
+  .classes-title span { color: #e07b2a; }
+  .classes-sub { font-size: 14px; color: rgba(240,236,228,0.35); max-width: 400px; line-height: 1.6; }
+  .classes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .class-card { border-radius: 10px; overflow: hidden; position: relative; cursor: pointer; }
+  .class-card-bg { height: 240px; display: flex; align-items: center; justify-content: center; font-size: 56px; }
+  .class-card-bg.strength { background: linear-gradient(135deg, #1a1010, #2d1c0e); }
+  .class-card-bg.hiit { background: linear-gradient(135deg, #1a1208, #2d2010); }
+  .class-card-bg.yoga { background: linear-gradient(135deg, #0e1018, #141828); }
+  .class-card-body { background: rgba(240,236,228,0.05); border: 1px solid rgba(240,236,228,0.07); border-top: none; padding: 20px; }
+  .class-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.06em; color: #f0ece4; margin-bottom: 4px; }
+  .class-level { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; margin-bottom: 10px; }
+  .class-level.all { background: rgba(224,123,42,0.15); color: #e07b2a; }
+  .class-level.intermediate { background: rgba(240,236,228,0.08); color: rgba(240,236,228,0.5); }
+  .class-level.advanced { background: rgba(224,42,42,0.1); color: #e04242; }
+  .class-desc { font-size: 12px; color: rgba(240,236,228,0.35); line-height: 1.6; }
+
+  .membership { padding: 96px 52px; background: #0c0c0c; }
+  .mem-header { text-align: center; margin-bottom: 56px; }
+  .mem-pre { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #e07b2a; margin-bottom: 12px; }
+  .mem-title { font-family: 'Bebas Neue', sans-serif; font-size: 56px; letter-spacing: 0.04em; color: #f0ece4; }
+  .mem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .mem-card { background: rgba(240,236,228,0.04); border: 1px solid rgba(240,236,228,0.08); border-radius: 10px; padding: 36px 28px; }
+  .mem-card.featured { background: #e07b2a; border-color: #e07b2a; }
+  .mem-tier { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(240,236,228,0.4); margin-bottom: 16px; }
+  .mem-card.featured .mem-tier { color: rgba(12,12,12,0.6); }
+  .mem-price { font-family: 'Bebas Neue', sans-serif; font-size: 60px; color: #f0ece4; line-height: 1; }
+  .mem-card.featured .mem-price { color: #0c0c0c; }
+  .mem-period { font-size: 13px; color: rgba(240,236,228,0.3); margin-bottom: 28px; }
+  .mem-card.featured .mem-period { color: rgba(12,12,12,0.5); }
+  .mem-features { list-style: none; margin-bottom: 32px; display: grid; gap: 10px; }
+  .mem-features li { font-size: 14px; color: rgba(240,236,228,0.55); display: flex; align-items: center; gap: 10px; }
+  .mem-card.featured .mem-features li { color: rgba(12,12,12,0.75); }
+  .mem-features li::before { content: '✓'; color: #e07b2a; font-weight: 700; font-size: 12px; }
+  .mem-card.featured .mem-features li::before { color: #0c0c0c; }
+  .mem-btn { display: block; text-align: center; padding: 13px; border-radius: 4px; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; background: rgba(240,236,228,0.08); color: #f0ece4; }
+  .mem-card.featured .mem-btn { background: #0c0c0c; color: #f0ece4; }
+
+  footer { background: #080808; padding: 48px 52px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(240,236,228,0.06); }
+  .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #f0ece4; letter-spacing: 0.08em; }
+  .footer-logo span { color: #e07b2a; }
+  .footer-addr { font-size: 13px; color: rgba(240,236,228,0.25); text-align: center; line-height: 1.7; }
+  .footer-copy { font-size: 12px; color: rgba(240,236,228,0.15); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Iron <span>&</span> Oak</a>
+  <div class="nav-links">
+    <a href="#">Classes</a>
+    <a href="#">Membership</a>
+    <a href="#">Coaches</a>
+    <a href="#">Schedule</a>
+  </div>
+  <a href="#" class="nav-join">Join Now</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-lines"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">Fitness Studio · Est. 2018</div>
+      <h1 class="hero-title">BUILT<br/>TO<br/><span>LAST.</span></h1>
+      <p class="hero-sub">Strength training, HIIT, and yoga under one roof. Real coaches, real community, real results.</p>
+      <div class="hero-ctas">
+        <a href="#" class="btn-orange">Start Free Week</a>
+        <a href="#" class="btn-outline-light">View Schedule</a>
+      </div>
+      <div class="hero-perks">
+        <div class="perk"><span class="perk-icon">⚡</span><span class="perk-text">No contracts</span></div>
+        <div class="perk"><span class="perk-icon">⚡</span><span class="perk-text">All levels welcome</span></div>
+        <div class="perk"><span class="perk-icon">⚡</span><span class="perk-text">Free first week</span></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="stat-block orange">
+        <div class="stat-num">600+</div>
+        <div class="stat-label">Active members</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">30+</div>
+        <div class="stat-label">Weekly classes</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Coaches on staff</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">4.9★</div>
+        <div class="stat-label">Google rating</div>
+      </div>
+      <div class="hero-img-block">🏋️ Photo coming soon</div>
+    </div>
+  </div>
+</section>
+
+<section class="classes">
+  <div class="classes-header">
+    <div>
+      <h2 class="classes-title">Our <span>Classes</span></h2>
+    </div>
+    <p class="classes-sub">Something for every level and every goal. 30+ classes per week across three disciplines.</p>
+  </div>
+  <div class="classes-grid">
+    <div class="class-card">
+      <div class="class-card-bg strength">🏋️</div>
+      <div class="class-card-body">
+        <div class="class-name">Strength & Conditioning</div>
+        <div class="class-level all">All Levels</div>
+        <div class="class-desc">Barbell, kettlebell, and bodyweight work. Periodized programming so you keep making progress.</div>
+      </div>
+    </div>
+    <div class="class-card">
+      <div class="class-card-bg hiit">🔥</div>
+      <div class="class-card-body">
+        <div class="class-name">HIIT & Conditioning</div>
+        <div class="class-level intermediate">Intermediate</div>
+        <div class="class-desc">High-intensity intervals designed to torch calories and build endurance. 45-minute format.</div>
+      </div>
+    </div>
+    <div class="class-card">
+      <div class="class-card-bg yoga">🧘</div>
+      <div class="class-card-body">
+        <div class="class-name">Power Yoga</div>
+        <div class="class-level all">All Levels</div>
+        <div class="class-desc">Athletic vinyasa flow that builds strength and mobility. The best complement to your lifting days.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="membership">
+  <div class="mem-header">
+    <div class="mem-pre">Simple pricing</div>
+    <h2 class="mem-title">Pick Your Plan</h2>
+  </div>
+  <div class="mem-grid">
+    <div class="mem-card">
+      <div class="mem-tier">Starter</div>
+      <div class="mem-price">$49</div>
+      <div class="mem-period">per month</div>
+      <ul class="mem-features">
+        <li>8 classes per month</li>
+        <li>Access all class types</li>
+        <li>Locker room access</li>
+        <li>No enrollment fee</li>
+      </ul>
+      <a href="#" class="mem-btn">Get Started</a>
+    </div>
+    <div class="mem-card featured">
+      <div class="mem-tier">Unlimited</div>
+      <div class="mem-price">$89</div>
+      <div class="mem-period">per month · most popular</div>
+      <ul class="mem-features">
+        <li>Unlimited classes</li>
+        <li>Priority booking</li>
+        <li>Guest pass (1/month)</li>
+        <li>10% retail discount</li>
+        <li>Free nutrition consult</li>
+      </ul>
+      <a href="#" class="mem-btn">Join Now</a>
+    </div>
+    <div class="mem-card">
+      <div class="mem-tier">Founding</div>
+      <div class="mem-price">$119</div>
+      <div class="mem-period">per month</div>
+      <ul class="mem-features">
+        <li>Everything in Unlimited</li>
+        <li>Monthly 1:1 with a coach</li>
+        <li>Programming app access</li>
+        <li>3 guest passes/month</li>
+      </ul>
+      <a href="#" class="mem-btn">Get Started</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Iron <span>&</span> Oak</div>
+  <div class="footer-addr">1840 Industrial Blvd · (555) 477-2200<br/>Mon–Fri 5:30am–9pm · Sat–Sun 7am–6pm</div>
+  <div class="footer-copy">© 2025 Iron & Oak Fitness</div>
+</footer>
+
+</body>
+</html>

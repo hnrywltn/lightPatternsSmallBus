@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Atlas Barbershop — Classic Cuts, Modern Feel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #0f0d0b; color: #f2ede4; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 20px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(15,13,11,0.95), transparent);
+  }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; letter-spacing: 0.04em; color: #f2ede4; text-decoration: none; }
+  .nav-links { display: flex; gap: 36px; }
+  .nav-links a { font-size: 13px; color: rgba(242,237,228,0.6); text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: #c9a96e; }
+  .nav-book { background: #c9a96e; color: #0f0d0b; padding: 10px 22px; border-radius: 4px; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; }
+
+  .hero {
+    height: 100vh; min-height: 700px;
+    display: flex; align-items: center;
+    background: #0f0d0b;
+    position: relative; overflow: hidden;
+    padding: 0 48px;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(201,169,110,0.08) 0%, transparent 60%);
+  }
+  .hero-line {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(to bottom, transparent, #c9a96e 30%, #c9a96e 70%, transparent);
+    margin-left: 280px;
+  }
+  .hero-content { position: relative; max-width: 560px; }
+  .hero-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #c9a96e; margin-bottom: 24px; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: 72px; font-weight: 900; line-height: 1.0; color: #f2ede4; margin-bottom: 24px; }
+  .hero-title span { color: #c9a96e; font-style: italic; }
+  .hero-sub { font-size: 16px; color: rgba(242,237,228,0.5); line-height: 1.7; margin-bottom: 40px; max-width: 400px; }
+  .hero-cta { display: flex; gap: 16px; align-items: center; }
+  .btn-primary { background: #c9a96e; color: #0f0d0b; padding: 14px 32px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; border-radius: 4px; }
+  .btn-ghost { color: rgba(242,237,228,0.6); font-size: 13px; text-decoration: none; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px; }
+  .hero-hours { position: absolute; right: 48px; bottom: 60px; text-align: right; }
+  .hero-hours-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(242,237,228,0.3); margin-bottom: 8px; }
+  .hero-hours-item { font-size: 13px; color: rgba(242,237,228,0.6); margin-bottom: 4px; }
+
+  .services { padding: 120px 48px; background: #0f0d0b; }
+  .section-header { display: flex; align-items: baseline; gap: 24px; margin-bottom: 64px; }
+  .section-num { font-size: 11px; color: #c9a96e; letter-spacing: 0.15em; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 42px; color: #f2ede4; }
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .service-card { background: #171410; padding: 40px 36px; border: 1px solid rgba(242,237,228,0.06); }
+  .service-card:hover { border-color: rgba(201,169,110,0.3); }
+  .service-price { font-size: 32px; font-weight: 300; color: #c9a96e; margin-bottom: 12px; }
+  .service-name { font-family: 'Playfair Display', serif; font-size: 20px; color: #f2ede4; margin-bottom: 12px; }
+  .service-desc { font-size: 13px; color: rgba(242,237,228,0.4); line-height: 1.7; }
+
+  .about { padding: 120px 48px; background: #13110e; display: grid; grid-template-columns: 1fr 1fr; gap: 96px; align-items: center; }
+  .about-badge { display: inline-block; background: rgba(201,169,110,0.1); border: 1px solid rgba(201,169,110,0.2); color: #c9a96e; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; padding: 6px 14px; border-radius: 2px; margin-bottom: 28px; }
+  .about-title { font-family: 'Playfair Display', serif; font-size: 44px; line-height: 1.15; color: #f2ede4; margin-bottom: 24px; }
+  .about-text { font-size: 15px; color: rgba(242,237,228,0.5); line-height: 1.8; margin-bottom: 16px; }
+  .about-stat { display: flex; gap: 48px; margin-top: 40px; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 48px; color: #c9a96e; }
+  .stat-label { font-size: 12px; color: rgba(242,237,228,0.4); margin-top: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .about-img { background: #1e1a15; border-radius: 2px; height: 480px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(242,237,228,0.06); }
+  .about-img-inner { text-align: center; color: rgba(242,237,228,0.15); }
+  .about-img-inner div { font-size: 64px; margin-bottom: 12px; }
+  .about-img-inner p { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  footer { background: #0a0806; padding: 48px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(242,237,228,0.06); }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 20px; color: #f2ede4; }
+  .footer-addr { font-size: 13px; color: rgba(242,237,228,0.3); text-align: center; line-height: 1.7; }
+  .footer-copy { font-size: 12px; color: rgba(242,237,228,0.2); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Atlas</a>
+  <div class="nav-links">
+    <a href="#">Services</a>
+    <a href="#">About</a>
+    <a href="#">Gallery</a>
+    <a href="#">Contact</a>
+  </div>
+  <a href="#" class="nav-book">Book Now</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Est. 2019 — Downtown</div>
+    <h1 class="hero-title">Sharp<br/>cuts.<br/><span>Honest</span><br/>craft.</h1>
+    <p class="hero-sub">A neighborhood barbershop built on precision, conversation, and the belief that a great haircut changes your whole day.</p>
+    <div class="hero-cta">
+      <a href="#" class="btn-primary">Book a Cut</a>
+      <a href="#" class="btn-ghost">See Services →</a>
+    </div>
+  </div>
+  <div class="hero-hours">
+    <div class="hero-hours-label">Hours</div>
+    <div class="hero-hours-item">Mon – Fri &nbsp; 9am – 7pm</div>
+    <div class="hero-hours-item">Saturday &nbsp; 9am – 5pm</div>
+    <div class="hero-hours-item">Sunday &nbsp; Closed</div>
+  </div>
+</section>
+
+<section class="services">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Services</h2>
+  </div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-price">$35</div>
+      <div class="service-name">Classic Cut</div>
+      <div class="service-desc">Scissor or clipper cut, hot towel finish, and styled to your preference.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-price">$25</div>
+      <div class="service-name">Beard Trim</div>
+      <div class="service-desc">Shape, line, and condition. Hot lather straight-razor finish.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-price">$55</div>
+      <div class="service-name">Cut & Beard</div>
+      <div class="service-desc">The full service. Cut, shave, hot towel, and a cold drink.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-price">$20</div>
+      <div class="service-name">Kids Cut</div>
+      <div class="service-desc">For the little ones. Patient, fun, and quick.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-price">$45</div>
+      <div class="service-name">Head Shave</div>
+      <div class="service-desc">Full head razor shave with hot lather and moisturizing finish.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-price">$15</div>
+      <div class="service-name">Line Up</div>
+      <div class="service-desc">Edge up your neckline, temples, and part. Clean and sharp.</div>
+    </div>
+  </div>
+</section>
+
+<section class="about">
+  <div>
+    <div class="about-badge">Our Story</div>
+    <h2 class="about-title">A shop built for the neighborhood.</h2>
+    <p class="about-text">Atlas opened in 2019 in the heart of downtown with one goal: give people a place to get a real haircut from someone who actually gives a damn.</p>
+    <p class="about-text">No apps, no wait lists, no nonsense. Walk in, sit down, leave looking sharp.</p>
+    <div class="about-stat">
+      <div>
+        <div class="stat-num">5k+</div>
+        <div class="stat-label">Cuts per year</div>
+      </div>
+      <div>
+        <div class="stat-num">4.9</div>
+        <div class="stat-label">Google rating</div>
+      </div>
+      <div>
+        <div class="stat-num">6yrs</div>
+        <div class="stat-label">In business</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-img">
+    <div class="about-img-inner">
+      <div>✂</div>
+      <p>Photo coming soon</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Atlas Barbershop</div>
+  <div class="footer-addr">142 Main Street, Downtown<br/>Open Mon–Sat · (555) 401-2290</div>
+  <div class="footer-copy">© 2025 Atlas Barbershop</div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pepper & Salt Café — All-Day Breakfast & Coffee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #faf7f2; color: #2c2417; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 18px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(250,247,242,0.95); backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(44,36,23,0.08);
+  }
+  .nav-logo { font-family: 'Lora', serif; font-size: 20px; font-weight: 600; color: #2c2417; text-decoration: none; }
+  .nav-logo span { font-style: italic; color: #8b5e3c; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-size: 14px; color: rgba(44,36,23,0.55); text-decoration: none; }
+  .nav-links a:hover { color: #8b5e3c; }
+  .nav-order { background: #2c2417; color: #faf7f2; padding: 10px 22px; border-radius: 100px; font-size: 13px; font-weight: 500; text-decoration: none; }
+
+  .hero {
+    min-height: 100vh; padding: 140px 48px 80px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    background: #faf7f2;
+  }
+  .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: #f0e6d6; color: #8b5e3c; font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 100px; margin-bottom: 28px; }
+  .hero-tag-dot { width: 6px; height: 6px; background: #8b5e3c; border-radius: 50%; }
+  .hero-title { font-family: 'Lora', serif; font-size: 60px; line-height: 1.1; color: #2c2417; margin-bottom: 20px; }
+  .hero-title em { font-style: italic; color: #8b5e3c; }
+  .hero-sub { font-size: 16px; color: rgba(44,36,23,0.55); line-height: 1.75; margin-bottom: 36px; max-width: 380px; }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-dark { background: #2c2417; color: #faf7f2; padding: 13px 28px; border-radius: 100px; font-size: 14px; font-weight: 500; text-decoration: none; }
+  .btn-outline { border: 1.5px solid rgba(44,36,23,0.2); color: #2c2417; padding: 13px 28px; border-radius: 100px; font-size: 14px; text-decoration: none; }
+  .hero-img { background: #e8ddd0; border-radius: 24px; height: 520px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .hero-img-inner { text-align: center; color: rgba(44,36,23,0.3); }
+  .hero-img-inner div { font-size: 80px; margin-bottom: 12px; }
+  .hero-img-inner p { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .hero-badge { position: absolute; bottom: 24px; left: 24px; background: #faf7f2; border-radius: 12px; padding: 14px 18px; box-shadow: 0 4px 20px rgba(44,36,23,0.12); }
+  .hero-badge-num { font-family: 'Lora', serif; font-size: 24px; color: #8b5e3c; }
+  .hero-badge-label { font-size: 11px; color: rgba(44,36,23,0.4); margin-top: 2px; }
+
+  .menu { padding: 100px 48px; background: #fff; }
+  .menu-header { text-align: center; margin-bottom: 64px; }
+  .menu-tag { font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: #8b5e3c; margin-bottom: 12px; }
+  .menu-title { font-family: 'Lora', serif; font-size: 44px; color: #2c2417; }
+  .menu-tabs { display: flex; justify-content: center; gap: 4px; background: #f0e6d6; padding: 5px; border-radius: 100px; display: inline-flex; margin: 0 auto 56px; }
+  .tab { padding: 8px 22px; border-radius: 100px; font-size: 13px; font-weight: 500; cursor: pointer; color: rgba(44,36,23,0.5); }
+  .tab.active { background: #2c2417; color: #faf7f2; }
+  .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(44,36,23,0.06); border-radius: 12px; overflow: hidden; }
+  .menu-item { background: #fff; padding: 28px 32px; display: flex; justify-content: space-between; align-items: start; gap: 24px; }
+  .menu-item:hover { background: #faf7f2; }
+  .menu-item-info {}
+  .menu-item-name { font-family: 'Lora', serif; font-size: 17px; color: #2c2417; margin-bottom: 6px; }
+  .menu-item-desc { font-size: 13px; color: rgba(44,36,23,0.45); line-height: 1.6; max-width: 280px; }
+  .menu-item-tag { display: inline-block; background: #f0e6d6; color: #8b5e3c; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 100px; margin-top: 8px; }
+  .menu-item-price { font-family: 'Lora', serif; font-size: 18px; color: #8b5e3c; white-space: nowrap; flex-shrink: 0; }
+
+  .about { padding: 100px 48px; background: #2c2417; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .about-label { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(250,247,242,0.4); margin-bottom: 20px; }
+  .about-title { font-family: 'Lora', serif; font-size: 44px; color: #faf7f2; line-height: 1.2; margin-bottom: 24px; }
+  .about-title em { font-style: italic; color: #c8956a; }
+  .about-text { font-size: 15px; color: rgba(250,247,242,0.5); line-height: 1.8; margin-bottom: 16px; }
+  .about-hours { margin-top: 40px; border-top: 1px solid rgba(250,247,242,0.1); padding-top: 32px; }
+  .hours-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(250,247,242,0.06); font-size: 14px; }
+  .hours-day { color: rgba(250,247,242,0.5); }
+  .hours-time { color: rgba(250,247,242,0.85); }
+  .about-img-side { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .about-img-block { background: #3d3022; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  .about-img-block:first-child { grid-column: span 2; height: 220px; }
+  .about-img-block:not(:first-child) { height: 160px; }
+  .about-img-block div { font-size: 40px; }
+
+  footer { background: #faf7f2; padding: 48px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(44,36,23,0.08); }
+  .footer-logo { font-family: 'Lora', serif; font-size: 18px; color: #2c2417; }
+  .footer-logo span { font-style: italic; color: #8b5e3c; }
+  .footer-addr { font-size: 13px; color: rgba(44,36,23,0.4); text-align: center; line-height: 1.7; }
+  .footer-copy { font-size: 12px; color: rgba(44,36,23,0.3); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Pepper <span>&</span> Salt</a>
+  <div class="nav-links">
+    <a href="#">Menu</a>
+    <a href="#">About</a>
+    <a href="#">Hours</a>
+    <a href="#">Find Us</a>
+  </div>
+  <a href="#" class="nav-order">Order Online</a>
+</nav>
+
+<section class="hero">
+  <div>
+    <div class="hero-tag"><span class="hero-tag-dot"></span> Open 7am – 3pm Daily</div>
+    <h1 class="hero-title">All-day<br/>breakfast,<br/><em>done right.</em></h1>
+    <p class="hero-sub">Local ingredients, honest cooking, and coffee worth waking up for. We've been feeding this neighborhood since 2017.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-dark">See the Menu</a>
+      <a href="#" class="btn-outline">Order Pickup</a>
+    </div>
+  </div>
+  <div class="hero-img">
+    <div class="hero-img-inner">
+      <div>☕</div>
+      <p>Photo coming soon</p>
+    </div>
+    <div class="hero-badge">
+      <div class="hero-badge-num">4.8★</div>
+      <div class="hero-badge-label">1,200+ reviews</div>
+    </div>
+  </div>
+</section>
+
+<section class="menu">
+  <div class="menu-header">
+    <div class="menu-tag">What we serve</div>
+    <h2 class="menu-title">The Menu</h2>
+  </div>
+  <div style="text-align:center">
+    <div class="menu-tabs">
+      <div class="tab active">Breakfast</div>
+      <div class="tab">Lunch</div>
+      <div class="tab">Drinks</div>
+    </div>
+  </div>
+  <div class="menu-grid">
+    <div class="menu-item">
+      <div class="menu-item-info">
+        <div class="menu-item-name">Avocado Toast</div>
+        <div class="menu-item-desc">Sourdough, whipped ricotta, smashed avo, chili flakes, poached egg.</div>
+        <div class="menu-item-tag">Fan Favorite</div>
+      </div>
+      <div class="menu-item-price">$14</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-info">
+        <div class="menu-item-name">Stacked Pancakes</div>
+        <div class="menu-item-desc">Buttermilk stack, maple butter, fresh berries, whipped cream.</div>
+      </div>
+      <div class="menu-item-price">$13</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-info">
+        <div class="menu-item-name">The Classic Plate</div>
+        <div class="menu-item-desc">Two eggs any style, bacon or sausage, home fries, toast.</div>
+        <div class="menu-item-tag">All Day</div>
+      </div>
+      <div class="menu-item-price">$12</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-info">
+        <div class="menu-item-name">Green Shakshuka</div>
+        <div class="menu-item-desc">Poached eggs in spiced tomatillo sauce, feta, herb oil, pita.</div>
+        <div class="menu-item-tag">Chef's Pick</div>
+      </div>
+      <div class="menu-item-price">$15</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-info">
+        <div class="menu-item-name">French Toast</div>
+        <div class="menu-item-desc">Thick-cut brioche, cinnamon custard, seasonal compote, powdered sugar.</div>
+      </div>
+      <div class="menu-item-price">$13</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-info">
+        <div class="menu-item-name">Breakfast Burrito</div>
+        <div class="menu-item-desc">Scrambled eggs, black beans, roasted pepper, cheddar, salsa verde.</div>
+      </div>
+      <div class="menu-item-price">$14</div>
+    </div>
+  </div>
+</section>
+
+<section class="about">
+  <div>
+    <div class="about-label">Our story</div>
+    <h2 class="about-title">A neighborhood<br/>table since <em>2017.</em></h2>
+    <p class="about-text">We started Pepper & Salt in a 400 sq ft space with six tables and a used espresso machine. Eight years later we've moved to a bigger spot — but the food hasn't changed.</p>
+    <p class="about-text">Everything is made from scratch. We source from farms within 60 miles when the season allows. And yes, the coffee is really that good.</p>
+    <div class="about-hours">
+      <div class="hours-row"><span class="hours-day">Mon – Fri</span><span class="hours-time">7am – 3pm</span></div>
+      <div class="hours-row"><span class="hours-day">Saturday</span><span class="hours-time">7am – 4pm</span></div>
+      <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-time">8am – 2pm</span></div>
+    </div>
+  </div>
+  <div class="about-img-side">
+    <div class="about-img-block"><div>🍳</div></div>
+    <div class="about-img-block"><div>☕</div></div>
+    <div class="about-img-block"><div>🌿</div></div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Pepper <span>&</span> Salt</div>
+  <div class="footer-addr">88 Elm Street · Open 7 days a week<br/>(555) 212-4490 · hello@peppersaltcafe.com</div>
+  <div class="footer-copy">© 2025 Pepper & Salt Café</div>
+</footer>
+
+</body>
+</html>
