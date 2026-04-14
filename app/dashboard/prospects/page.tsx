@@ -6,6 +6,32 @@ import type { Prospect } from "@/app/api/prospects/search/route";
 
 // type Status = "idle" | "adding" | "added" | "error";
 
+const BUSINESS_TYPES = [
+  { label: "All types", value: "" },
+  { label: "Restaurant", value: "restaurant" },
+  { label: "Bar / Cafe", value: "bar cafe" },
+  { label: "Hair Salon", value: "hair salon" },
+  { label: "Barbershop", value: "barbershop" },
+  { label: "Nail Salon", value: "nail salon" },
+  { label: "Spa / Beauty", value: "spa beauty salon" },
+  { label: "Auto Repair", value: "auto repair shop" },
+  { label: "Plumber", value: "plumber" },
+  { label: "Electrician", value: "electrician" },
+  { label: "HVAC", value: "hvac contractor" },
+  { label: "Landscaping", value: "landscaping lawn care" },
+  { label: "Cleaning Service", value: "cleaning service" },
+  { label: "Contractor", value: "general contractor" },
+  { label: "Painter", value: "painter" },
+  { label: "Roofing", value: "roofing contractor" },
+  { label: "Dentist", value: "dentist" },
+  { label: "Chiropractor", value: "chiropractor" },
+  { label: "Gym / Fitness", value: "gym fitness" },
+  { label: "Retail Shop", value: "retail store" },
+  { label: "Laundromat", value: "laundromat" },
+  { label: "Daycare", value: "daycare" },
+  { label: "Custom…", value: "__custom__" },
+];
+
 const MIN_REVIEWS_OPTIONS = [
   { label: "Any", value: 0 },
   { label: "5+", value: 5 },
@@ -52,7 +78,8 @@ function PresencePills({
 
 export default function ProspectsPage() {
   const [zip, setZip] = useState("");
-  const [category, setCategory] = useState("");
+  const [categorySelect, setCategorySelect] = useState("");
+  const [customCategory, setCustomCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [prospects, setProspects] = useState<Prospect[]>([]);
@@ -69,6 +96,9 @@ export default function ProspectsPage() {
   // const [selected, setSelected] = useState<Set<string>>(new Set());
   // const [statuses, setStatuses] = useState<Record<string, Status>>({});
 
+  const isCustom = categorySelect === "__custom__";
+  const effectiveCategory = isCustom ? customCategory : categorySelect;
+
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -77,7 +107,7 @@ export default function ProspectsPage() {
     setTypeFilter("");
 
     const params = new URLSearchParams({ zip });
-    if (category.trim()) params.set("category", category.trim());
+    if (effectiveCategory.trim()) params.set("category", effectiveCategory.trim());
 
     const res = await fetch(`/api/prospects/search?${params}`);
     const data = await res.json();
@@ -143,7 +173,7 @@ export default function ProspectsPage() {
         onSubmit={handleSearch}
         className="bg-white/[0.03] border border-white/8 rounded-2xl p-6 mb-4 flex flex-col sm:flex-row gap-3"
       >
-        <div className="flex flex-col gap-1.5 flex-1">
+        <div className="flex flex-col gap-1.5 w-40 shrink-0">
           <label className="text-xs text-[#f2ede4]/40 uppercase tracking-wide font-medium">
             Zip Code
           </label>
@@ -159,16 +189,35 @@ export default function ProspectsPage() {
 
         <div className="flex flex-col gap-1.5 flex-1">
           <label className="text-xs text-[#f2ede4]/40 uppercase tracking-wide font-medium">
-            Category <span className="normal-case text-white/20">(optional)</span>
+            Business Type
           </label>
-          <input
-            type="text"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            placeholder="e.g. hair salon, restaurant, plumber"
-            className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-[#f2ede4] text-sm placeholder-white/20 focus:outline-none focus:border-amber-600/60 transition-colors"
-          />
+          <select
+            value={categorySelect}
+            onChange={(e) => setCategorySelect(e.target.value)}
+            className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-[#f2ede4] text-sm focus:outline-none focus:border-amber-600/60 transition-colors"
+          >
+            {BUSINESS_TYPES.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ))}
+          </select>
         </div>
+
+        {isCustom && (
+          <div className="flex flex-col gap-1.5 flex-1">
+            <label className="text-xs text-[#f2ede4]/40 uppercase tracking-wide font-medium">
+              Custom Type
+            </label>
+            <input
+              type="text"
+              value={customCategory}
+              onChange={(e) => setCustomCategory(e.target.value)}
+              placeholder="e.g. tattoo parlor"
+              className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-[#f2ede4] text-sm placeholder-white/20 focus:outline-none focus:border-amber-600/60 transition-colors"
+            />
+          </div>
+        )}
 
         <div className="flex flex-col gap-1.5 sm:w-36">
           <label className="text-xs text-transparent select-none">Search</label>
@@ -292,13 +341,13 @@ export default function ProspectsPage() {
                 <span className="text-white/30"> of {prospects.length}</span>
               )}{" "}
               results
-              {/* Add to Resend button — re-enable when ready
-              {selectedWithEmail.length > 0 && (
-                <button onClick={handleAddToAudience} ...>
-                  Add {selectedWithEmail.length} to Resend
-                </button>
-              )} */}
             </div>
+            {/* Add to Resend button — re-enable when ready
+            {selectedWithEmail.length > 0 && (
+              <button onClick={handleAddToAudience} ...>
+                Add {selectedWithEmail.length} to Resend
+              </button>
+            )} */}
           </div>
 
           {filtered.length === 0 ? (
