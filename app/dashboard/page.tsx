@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Search, Users, BarChart2 } from "lucide-react";
+import InviteClient from "@/components/dashboard/InviteClient";
 
 const tools = [
   {
@@ -35,7 +36,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
         {tools.map(({ icon: Icon, title, description, href, status }) => {
           const isActive = status === "active";
           const inner = (
@@ -70,6 +71,8 @@ export default function DashboardPage() {
           );
         })}
       </div>
+
+      <InviteClient />
     </div>
   );
 }
