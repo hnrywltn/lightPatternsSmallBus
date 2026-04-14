@@ -388,15 +388,15 @@ export default function ProspectsPage() {
         onSubmit={handleSearch}
         className="bg-white/[0.03] border border-white/8 rounded-2xl p-6 mb-4 flex flex-col sm:flex-row gap-3"
       >
-        <div className="flex flex-col gap-1.5 w-40 shrink-0">
+        <div className="flex flex-col gap-1.5 flex-1">
           <label className="text-xs text-[#f2ede4]/40 uppercase tracking-wide font-medium">
-            Zip Code
+            Zip Codes <span className="normal-case text-white/20">(comma-separated)</span>
           </label>
           <input
             type="text"
             value={zip}
             onChange={(e) => setZip(e.target.value)}
-            placeholder="e.g. 10001"
+            placeholder="e.g. 10001, 10002, 10003"
             required
             className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-[#f2ede4] text-sm placeholder-white/20 focus:outline-none focus:border-amber-600/60 transition-colors"
           />

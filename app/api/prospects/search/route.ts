@@ -15,17 +15,20 @@ export interface Prospect {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
-  const zip = searchParams.get("zip");
+  const zipParam = searchParams.get("zip");
   const category = searchParams.get("category") || "local business";
 
-  if (!zip) {
+  if (!zipParam) {
     return NextResponse.json({ error: "zip is required" }, { status: 400 });
   }
 
-  const query = `${category}, ${zip}, US`;
+  const zips = zipParam.split(",").map((z) => z.trim()).filter(Boolean);
 
   const url = new URL("https://api.app.outscraper.com/maps/search-v2");
-  url.searchParams.set("query", query);
+  // Outscraper accepts multiple query params for batch requests
+  for (const zip of zips) {
+    url.searchParams.append("query", `${category}, ${zip}, US`);
+  }
   url.searchParams.set("limit", "500");
   url.searchParams.set("async", "false");
   url.searchParams.set(
@@ -45,20 +48,30 @@ export async function GET(request: NextRequest) {
   }
 
   const json = await res.json();
-  const raw: Record<string, unknown>[] = json?.data?.[0] ?? [];
+  // data is an array of arrays — one per query — flatten and deduplicate by place_id
+  const batches: Record<string, unknown>[][] = json?.data ?? [];
+  const raw = batches.flat();
 
-  const prospects: Prospect[] = raw.map((b) => ({
-    place_id: String(b.place_id ?? ""),
-    name: String(b.name ?? ""),
-    type: String(b.type ?? ""),
-    full_address: String(b.full_address ?? ""),
-    phone: String(b.phone ?? ""),
-    site: String(b.site ?? ""),
-    email: String(b.email ?? ""),
-    rating: Number(b.rating ?? 0),
-    reviews: Number(b.reviews ?? 0),
-    google_maps_url: String(b.google_maps_url ?? ""),
-  }));
+  const seen = new Set<string>();
+  const prospects: Prospect[] = [];
+
+  for (const b of raw) {
+    const id = String(b.place_id ?? "");
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    prospects.push({
+      place_id: id,
+      name: String(b.name ?? ""),
+      type: String(b.type ?? ""),
+      full_address: String(b.full_address ?? ""),
+      phone: String(b.phone ?? ""),
+      site: String(b.site ?? ""),
+      email: String(b.email ?? ""),
+      rating: Number(b.rating ?? 0),
+      reviews: Number(b.reviews ?? 0),
+      google_maps_url: String(b.google_maps_url ?? ""),
+    });
+  }
 
   return NextResponse.json({ prospects });
 }
