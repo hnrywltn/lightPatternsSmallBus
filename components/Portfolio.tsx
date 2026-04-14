@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+
 import Image from "next/image";
 
 const projects = [
@@ -75,24 +76,11 @@ function ProjectCard({
         className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
         sizes="(max-width: 1024px) 100vw, 60vw"
       />
-      {/* Dark gradient overlay so text is always readable */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
-      <div className="absolute inset-0 p-6 flex flex-col justify-between">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-widest text-white/70 bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full">
-            {project.category}
-          </span>
-          <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <ArrowUpRight className="w-4 h-4 text-white" />
-          </div>
-        </div>
-        <div>
-          <h3 className={`font-black text-white mb-1 ${large ? "text-2xl" : "text-lg"}`}>
-            {project.name}
-          </h3>
-          <p className={`text-white/60 ${large ? "text-sm" : "text-xs"}`}>
-            {project.description}
-          </p>
+      {/* Hover overlay */}
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+          <ArrowUpRight className="w-5 h-5 text-white" />
         </div>
       </div>
     </motion.div>
