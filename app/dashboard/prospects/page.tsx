@@ -1,10 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { Search, ExternalLink, Loader2, X } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Search, ExternalLink, Loader2, X, SlidersHorizontal } from "lucide-react";
 import type { Prospect } from "@/app/api/prospects/search/route";
 
 // type Status = "idle" | "adding" | "added" | "error";
+
+const MIN_REVIEWS_OPTIONS = [
+  { label: "Any", value: 0 },
+  { label: "5+", value: 5 },
+  { label: "10+", value: 10 },
+  { label: "25+", value: 25 },
+  { label: "50+", value: 50 },
+];
+
+const MIN_RATING_OPTIONS = [
+  { label: "Any", value: 0 },
+  { label: "3+", value: 3 },
+  { label: "3.5+", value: 3.5 },
+  { label: "4+", value: 4 },
+  { label: "4.5+", value: 4.5 },
+];
 
 export default function ProspectsPage() {
   const [zip, setZip] = useState("");
@@ -13,6 +29,13 @@ export default function ProspectsPage() {
   const [error, setError] = useState("");
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [totalFound, setTotalFound] = useState<number | null>(null);
+
+  // Filters
+  const [minReviews, setMinReviews] = useState(0);
+  const [minRating, setMinRating] = useState(0);
+  const [hasPhone, setHasPhone] = useState(false);
+  const [typeFilter, setTypeFilter] = useState("");
+
   // const [emails, setEmails] = useState<Record<string, string>>({});
   // const [selected, setSelected] = useState<Set<string>>(new Set());
   // const [statuses, setStatuses] = useState<Record<string, Status>>({});
@@ -23,6 +46,7 @@ export default function ProspectsPage() {
     setError("");
     setProspects([]);
     setTotalFound(null);
+    setTypeFilter("");
 
     const params = new URLSearchParams({ zip });
     if (category.trim()) params.set("category", category.trim());
@@ -40,13 +64,31 @@ export default function ProspectsPage() {
     setLoading(false);
   }
 
-  // function toggleSelect(id: string) { ... }
-  // function toggleAll() { ... }
-  // const eligible = ...
-  // const selectedWithEmail = ...
-  // async function handleAddToAudience() { ... }
+  // Unique business types from results for the type filter
+  const types = useMemo(() => {
+    const set = new Set(prospects.map((p) => p.type).filter(Boolean));
+    return Array.from(set).sort();
+  }, [prospects]);
+
+  const filtered = useMemo(() => {
+    return prospects.filter((p) => {
+      if (minReviews > 0 && p.reviews < minReviews) return false;
+      if (minRating > 0 && p.rating < minRating) return false;
+      if (hasPhone && !p.phone) return false;
+      if (typeFilter && p.type !== typeFilter) return false;
+      return true;
+    });
+  }, [prospects, minReviews, minRating, hasPhone, typeFilter]);
 
   const hasSearched = totalFound !== null;
+  const filtersActive = minReviews > 0 || minRating > 0 || hasPhone || typeFilter !== "";
+
+  function resetFilters() {
+    setMinReviews(0);
+    setMinRating(0);
+    setHasPhone(false);
+    setTypeFilter("");
+  }
 
   return (
     <div>
@@ -60,7 +102,7 @@ export default function ProspectsPage() {
       {/* Search form */}
       <form
         onSubmit={handleSearch}
-        className="bg-white/[0.03] border border-white/8 rounded-2xl p-6 mb-6 flex flex-col sm:flex-row gap-3"
+        className="bg-white/[0.03] border border-white/8 rounded-2xl p-6 mb-4 flex flex-col sm:flex-row gap-3"
       >
         <div className="flex flex-col gap-1.5 flex-1">
           <label className="text-xs text-[#f2ede4]/40 uppercase tracking-wide font-medium">
@@ -106,6 +148,94 @@ export default function ProspectsPage() {
         </div>
       </form>
 
+      {/* Filters — shown after search */}
+      {hasSearched && prospects.length > 0 && (
+        <div className="bg-white/[0.03] border border-white/8 rounded-2xl px-5 py-4 mb-6 flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2 text-xs text-[#f2ede4]/40">
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <span className="uppercase tracking-wide font-medium">Filter</span>
+          </div>
+
+          {/* Min reviews */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#f2ede4]/40">Reviews</span>
+            <div className="flex gap-1">
+              {MIN_REVIEWS_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setMinReviews(opt.value)}
+                  className={`text-xs px-2.5 py-1 rounded-lg transition-colors ${
+                    minReviews === opt.value
+                      ? "bg-amber-600 text-white"
+                      : "bg-white/5 text-[#f2ede4]/50 hover:text-[#f2ede4] hover:bg-white/8"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Min rating */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#f2ede4]/40">Rating</span>
+            <div className="flex gap-1">
+              {MIN_RATING_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setMinRating(opt.value)}
+                  className={`text-xs px-2.5 py-1 rounded-lg transition-colors ${
+                    minRating === opt.value
+                      ? "bg-amber-600 text-white"
+                      : "bg-white/5 text-[#f2ede4]/50 hover:text-[#f2ede4] hover:bg-white/8"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Has phone */}
+          <button
+            onClick={() => setHasPhone((v) => !v)}
+            className={`text-xs px-2.5 py-1 rounded-lg transition-colors ${
+              hasPhone
+                ? "bg-amber-600 text-white"
+                : "bg-white/5 text-[#f2ede4]/50 hover:text-[#f2ede4] hover:bg-white/8"
+            }`}
+          >
+            Has phone
+          </button>
+
+          {/* Type filter */}
+          {types.length > 1 && (
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="text-xs bg-white/5 border border-white/10 rounded-lg px-2.5 py-1 text-[#f2ede4]/60 focus:outline-none focus:border-amber-600/60 transition-colors"
+            >
+              <option value="">All types</option>
+              {types.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {/* Reset */}
+          {filtersActive && (
+            <button
+              onClick={resetFilters}
+              className="text-xs text-[#f2ede4]/30 hover:text-[#f2ede4]/60 transition-colors ml-auto"
+            >
+              Reset
+            </button>
+          )}
+        </div>
+      )}
+
       {error && (
         <div className="mb-4 flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
           <X className="w-4 h-4 shrink-0" />
@@ -118,9 +248,13 @@ export default function ProspectsPage() {
         <>
           <div className="flex items-center justify-between mb-4">
             <div className="text-sm text-[#f2ede4]/50">
-              <span className="text-[#f2ede4] font-medium">{prospects.length}</span> without a website
+              <span className="text-[#f2ede4] font-medium">{filtered.length}</span>
+              {filtersActive && (
+                <span className="text-white/30"> of {prospects.length}</span>
+              )}{" "}
+              without a website
               {totalFound !== null && (
-                <span className="text-white/30"> out of {totalFound} found</span>
+                <span className="text-white/30"> · {totalFound} total found</span>
               )}
             </div>
 
@@ -132,13 +266,14 @@ export default function ProspectsPage() {
             )} */}
           </div>
 
-          {prospects.length === 0 ? (
+          {filtered.length === 0 ? (
             <div className="text-center py-16 text-[#f2ede4]/30 text-sm">
-              No businesses without a website found in this area.
+              {prospects.length === 0
+                ? "No businesses without a website found in this area."
+                : "No results match the current filters."}
             </div>
           ) : (
             <div className="bg-white/[0.03] border border-white/8 rounded-2xl overflow-hidden">
-              {/* Table header */}
               <div className="grid grid-cols-[1fr_1fr_8rem_2.5rem] gap-4 px-5 py-3 border-b border-white/6 text-xs text-[#f2ede4]/30 uppercase tracking-wide font-medium">
                 <div>Business</div>
                 <div>Address</div>
@@ -146,9 +281,8 @@ export default function ProspectsPage() {
                 <div></div>
               </div>
 
-              {/* Rows */}
               <div className="divide-y divide-white/5">
-                {prospects.map((p) => (
+                {filtered.map((p) => (
                   <div
                     key={p.place_id}
                     className="grid grid-cols-[1fr_1fr_8rem_2.5rem] gap-4 px-5 py-4 items-center hover:bg-white/[0.02] transition-colors"
