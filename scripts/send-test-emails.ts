@@ -12,15 +12,17 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const TO = "hnrywltn@gmail.com";
 const FROM = "Light Patterns <hello@lightpatternsonline.com>";
 
+const TEST_UNSUB = "https://lightpatternsonline.com/unsubscribe?e=dGVzdEBleGFtcGxlLmNvbQ";
+
 const emails = [
-  launchAnnouncementEmail(),
-  coldOutreachNoWebsiteEmail({ businessName: "Henry's Barbershop", ownerName: "Henry Walton" }),
-  followUp1Email({ name: "Henry Walton" }),
-  followUp2Email({ name: "Henry Walton" }),
+  launchAnnouncementEmail({ unsubscribeUrl: TEST_UNSUB }),
+  coldOutreachNoWebsiteEmail({ businessName: "Henry's Barbershop", ownerName: "Henry Walton", unsubscribeUrl: TEST_UNSUB }),
+  followUp1Email({ name: "Henry Walton", unsubscribeUrl: TEST_UNSUB }),
+  followUp2Email({ name: "Henry Walton", unsubscribeUrl: TEST_UNSUB }),
   proposalSentEmail({ name: "Henry Walton", proposalUrl: "https://lightpatternsonline.com" }),
   projectKickoffEmail({ name: "Henry Walton", businessName: "Henry's Barbershop" }),
   siteLaunchedEmail({ name: "Henry Walton", siteUrl: "https://lightpatternsonline.com", businessName: "Henry's Barbershop" }),
-  monthlyCheckinEmail({ name: "Henry Walton", siteUrl: "https://lightpatternsonline.com", month: "April 2026", uptimePercent: "99.98%", pageViews: "1,240" }),
+  monthlyCheckinEmail({ name: "Henry Walton", siteUrl: "https://lightpatternsonline.com", month: "April 2026", uptimePercent: "99.98%", pageViews: "1,240", unsubscribeUrl: TEST_UNSUB }),
 ];
 
 async function run() {

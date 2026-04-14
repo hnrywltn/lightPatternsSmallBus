@@ -1,4 +1,4 @@
-export function launchAnnouncementEmail() {
+export function launchAnnouncementEmail({ unsubscribeUrl }: { unsubscribeUrl: string }) {
   return {
     subject: "Light Patterns is live — beautiful websites for small businesses",
     html: `
@@ -61,7 +61,7 @@ export function launchAnnouncementEmail() {
         <!-- Footer -->
         <tr><td style="padding:24px 40px 0;text-align:center;">
           <p style="margin:0 0 4px;font-size:12px;color:#c0b9b0;">Light Patterns — lightpatternsonline.com</p>
-          <p style="margin:0;font-size:11px;color:#d0c9c0;">You're receiving this because you're part of our launch list. <a href="" style="color:#d0c9c0;">Unsubscribe</a></p>
+          <p style="margin:0;font-size:11px;color:#d0c9c0;">You're receiving this because you're part of our launch list. <a href="${unsubscribeUrl}" style="color:#d0c9c0;">Unsubscribe</a></p>
         </td></tr>
 
       </table>

@@ -4,9 +4,10 @@ type Params = {
   month: string; // e.g. "April 2026"
   uptimePercent?: string; // e.g. "99.98%"
   pageViews?: string; // e.g. "1,240"
+  unsubscribeUrl: string;
 };
 
-export function monthlyCheckinEmail({ name, siteUrl, month, uptimePercent, pageViews }: Params) {
+export function monthlyCheckinEmail({ name, siteUrl, month, uptimePercent, pageViews, unsubscribeUrl }: Params) {
   const firstName = name.split(" ")[0];
 
   return {
@@ -81,7 +82,7 @@ export function monthlyCheckinEmail({ name, siteUrl, month, uptimePercent, pageV
         <!-- Footer -->
         <tr><td style="padding:24px 40px 0;text-align:center;">
           <p style="margin:0 0 4px;font-size:12px;color:#c0b9b0;">Light Patterns — lightpatternsonline.com</p>
-          <p style="margin:0;font-size:11px;color:#d0c9c0;">You're receiving this as part of your subscription. <a href="" style="color:#d0c9c0;">Unsubscribe</a></p>
+          <p style="margin:0;font-size:11px;color:#d0c9c0;">You're receiving this as part of your subscription. <a href="${unsubscribeUrl}" style="color:#d0c9c0;">Unsubscribe</a></p>
         </td></tr>
 
       </table>
