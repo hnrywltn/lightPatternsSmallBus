@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Mail, Search, Users, BarChart2 } from "lucide-react";
 
 const tools = [
@@ -6,7 +7,7 @@ const tools = [
     title: "Prospect Finder",
     description: "Search for businesses with no website by city and category.",
     href: "/dashboard/prospects",
-    status: "coming soon",
+    status: "active",
   },
   {
     icon: Mail,
@@ -42,27 +43,39 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {tools.map(({ icon: Icon, title, description, status }) => (
-          <div
-            key={title}
-            className="relative bg-white/[0.03] border border-white/8 rounded-2xl p-6 flex flex-col gap-4"
-          >
-            <div className="w-10 h-10 rounded-xl bg-amber-600/10 border border-amber-600/20 flex items-center justify-center">
-              <Icon className="w-5 h-5 text-amber-500" />
-            </div>
+        {tools.map(({ icon: Icon, title, description, href, status }) => {
+          const isActive = status === "active";
+          const inner = (
+            <>
+              <div className="w-10 h-10 rounded-xl bg-amber-600/10 border border-amber-600/20 flex items-center justify-center">
+                <Icon className="w-5 h-5 text-amber-500" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-sm font-medium text-[#f2ede4] mb-1">{title}</h2>
+                <p className="text-xs text-[#f2ede4]/40 leading-relaxed">{description}</p>
+              </div>
+              {status === "coming soon" && (
+                <span className="self-start text-[10px] font-medium uppercase tracking-wider text-amber-600/60 bg-amber-600/10 px-2 py-0.5 rounded-full">
+                  Coming soon
+                </span>
+              )}
+            </>
+          );
 
-            <div className="flex-1">
-              <h2 className="text-sm font-medium text-[#f2ede4] mb-1">{title}</h2>
-              <p className="text-xs text-[#f2ede4]/40 leading-relaxed">{description}</p>
-            </div>
+          const cls = `relative bg-white/[0.03] border border-white/8 rounded-2xl p-6 flex flex-col gap-4 transition-colors ${
+            isActive ? "hover:bg-white/[0.05] hover:border-white/12 cursor-pointer" : ""
+          }`;
 
-            {status === "coming soon" && (
-              <span className="self-start text-[10px] font-medium uppercase tracking-wider text-amber-600/60 bg-amber-600/10 px-2 py-0.5 rounded-full">
-                Coming soon
-              </span>
-            )}
-          </div>
-        ))}
+          return isActive ? (
+            <Link key={title} href={href} className={cls}>
+              {inner}
+            </Link>
+          ) : (
+            <div key={title} className={cls}>
+              {inner}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
