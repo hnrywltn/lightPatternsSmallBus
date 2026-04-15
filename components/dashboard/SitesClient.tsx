@@ -579,6 +579,7 @@ function SiteRow({
   const [activityLoaded, setActivityLoaded] = useState(false);
   const [newActivity, setNewActivity] = useState("");
   const [addingActivity, setAddingActivity] = useState(false);
+  const [creatingCustomer, setCreatingCustomer] = useState(false);
 
   async function sendInvite() {
     if (!site.contactEmail) return;
@@ -614,6 +615,16 @@ function SiteRow({
     const data = await res.json();
     if (res.ok) setActivityLog(data.activity);
     setActivityLoaded(true);
+  }
+
+  async function createStripeCustomer() {
+    setCreatingCustomer(true);
+    const res = await fetch(`/api/admin/sites/${site.id}/stripe-customer`, { method: "POST" });
+    const data = await res.json();
+    setCreatingCustomer(false);
+    if (res.ok) {
+      await onUpdate({ ...site, stripeCustomerId: data.customerId });
+    }
   }
 
   async function addActivity(e: React.FormEvent) {
@@ -883,6 +894,16 @@ function SiteRow({
               <Pencil className="w-3 h-3" />
               Edit
             </button>
+            {!site.stripeCustomerId && (
+              <button
+                onClick={createStripeCustomer}
+                disabled={creatingCustomer}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/8 border border-white/10 text-[#f2ede4]/60 hover:text-[#f2ede4] disabled:opacity-40 transition-colors"
+              >
+                {creatingCustomer ? <Loader2 className="w-3 h-3 animate-spin" /> : <CreditCard className="w-3 h-3" />}
+                Create Stripe Customer
+              </button>
+            )}
             <a
               href={`/client/dashboard?preview=${site.id}`}
               target="_blank"
