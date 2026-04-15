@@ -30,6 +30,7 @@ export async function GET(req: NextRequest) {
         s.notes,
         s.user_id,
         s.stripe_customer_id,
+        s.stripe_subscription_status,
         s.created_at,
         s.updated_at,
         u.email AS user_email,

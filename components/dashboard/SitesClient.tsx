@@ -39,6 +39,7 @@ export interface Site {
   notes: string;
   userId: string | null;
   stripeCustomerId: string | null;
+  stripeSubscriptionStatus: string | null;
   // joined from users table
   userEmail?: string;
   userName?: string;
@@ -67,6 +68,7 @@ function rowToSite(row: Record<string, unknown>): Site {
     notes: (row.notes as string) ?? "",
     userId: (row.user_id as string) ?? null,
     stripeCustomerId: (row.stripe_customer_id as string) ?? null,
+    stripeSubscriptionStatus: (row.stripe_subscription_status as string) ?? null,
     userEmail: (row.user_email as string) ?? undefined,
     userName: (row.user_name as string) ?? undefined,
   };
@@ -145,6 +147,7 @@ const EMPTY_FORM: Omit<Site, "id" | "userEmail" | "userName"> = {
   notes: "",
   userId: null,
   stripeCustomerId: null,
+  stripeSubscriptionStatus: null,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -262,6 +265,7 @@ function SiteModal({
           notes: initial.notes,
           userId: initial.userId,
           stripeCustomerId: initial.stripeCustomerId,
+          stripeSubscriptionStatus: initial.stripeSubscriptionStatus,
         }
       : { ...EMPTY_FORM }
   );
@@ -670,8 +674,13 @@ function SiteRow({
           {site.tier}
         </div>
 
-        <div>
+        <div className="flex flex-col gap-1">
           <StatusBadge status={site.status} />
+          {site.stripeSubscriptionStatus && (
+            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border w-fit ${STRIPE_STATUS_STYLES[site.stripeSubscriptionStatus] ?? "bg-white/5 text-white/40 border-white/10"}`}>
+              {site.stripeSubscriptionStatus}
+            </span>
+          )}
         </div>
 
         <div className="text-xs text-[#f2ede4]/60">
