@@ -78,7 +78,7 @@ export default function Navbar({ forceDark = false }: { forceDark?: boolean }) {
             Sign in
           </a>
           <a
-            href="#pricing"
+            href="#contact"
             className="text-sm px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium transition-colors shadow-lg shadow-amber-600/20"
           >
             Get started
@@ -115,7 +115,7 @@ export default function Navbar({ forceDark = false }: { forceDark?: boolean }) {
                 </a>
               ))}
               <a
-                href="#pricing"
+                href="#contact"
                 className="mt-2 text-center px-4 py-2.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium transition-colors"
               >
                 Get started
