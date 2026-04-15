@@ -12,6 +12,8 @@ import {
   MessageSquare,
   CheckCircle,
   Loader2,
+  MailOpen,
+  Wallet,
 } from "lucide-react";
 
 const articles = [
@@ -174,27 +176,140 @@ Stripe will charge the card on file immediately and then on that date each month
     id: "prospect-finder",
     icon: Search,
     title: "Prospect Finder",
-    summary: "How to find businesses, build outreach lists, and send cold emails.",
+    summary: "How to find businesses with no website and add them to your outreach list.",
     content: [
       {
         heading: "Finding businesses",
-        body: `Go to **Prospect Finder** from the dashboard. Enter a business type and location (e.g. "plumber, Oakland CA") and click Search. The tool pulls businesses from Google Maps data via Outscraper and filters for ones without websites — your ideal prospects.`,
+        body: `Go to **Prospect Finder** from the dashboard. Enter one or more zip codes and a business type, then click Search. Results come from Google Maps via Outscraper and show name, address, phone, rating, and any existing website.
+
+The default filter shows businesses with **no website** — these are your warmest leads since they clearly need what you're selling.`,
       },
       {
-        heading: "Building a list",
-        body: `Check the boxes next to businesses you want to target and click **Add to audience**. This adds them to your Resend outreach audience so you can send emails to them.
-
-Use the filters to narrow results — no-website businesses are highlighted since they're the warmest leads.`,
+        heading: "Filters",
+        body: `Use the filter bar to narrow results:
+- **Website** — default is "No". Switch to "Yes" if you want to target sites you'd redesign, or "Any" to see everything.
+- **Email** — set to "Yes" to only show businesses with a known email address.
+- **Reviews / Rating** — higher review counts mean more established businesses. A business with 50+ reviews and no website is a great lead.
+- **Type** — if you searched a broad category, this lets you focus on a specific subcategory.`,
       },
       {
-        heading: "Sending outreach",
-        body: `After building a list, click **Send campaign** to send a cold outreach email to the selected businesses. The email is a professionally written intro explaining what Light Patterns does and why having a website matters for their business.
+        heading: "Adding emails",
+        body: `Many businesses won't have an email in the data. Click the pencil icon in the Email column to add one manually. This is worth doing for high-quality leads before saving them to Outreach.`,
+      },
+      {
+        heading: "Saving to Outreach",
+        body: `Check the boxes next to businesses you want to track, then click **Save to Outreach**. This stores them in your Outreach list in the database — permanently, across sessions.
 
-Monitor open rates and replies in Resend (resend.com → Broadcasts). Follow up manually with anyone who opens but doesn't reply.`,
+The **Add to list** button still works for a quick in-session list if you want to send immediately without saving long-term.`,
       },
       {
         heading: "Converting a prospect to a client",
-        body: `Once a prospect agrees to move forward, go to Sites → Add Site, fill in their details, and send an invite. That kicks off the full onboarding flow.`,
+        body: `Once someone agrees to move forward, go to Sites → Add Site, fill in their details, and send an invite. In the Outreach page, mark that prospect's status as **Converted** so your stats stay accurate.`,
+      },
+    ],
+  },
+  {
+    id: "outreach",
+    icon: MailOpen,
+    title: "Outreach",
+    summary: "Managing your prospect list, sending emails, and tracking engagement.",
+    content: [
+      {
+        heading: "How prospects get here",
+        body: `Prospects are added to the Outreach page in two ways:
+- **Save to Outreach** in the Prospect Finder — select rows and click the button
+- They're stored in the database so they persist permanently, unlike the in-session list in the Prospect Finder
+
+Once saved, a prospect stays in your list until you remove them manually.`,
+      },
+      {
+        heading: "Sending emails",
+        body: `Select one or more prospects using the checkboxes, then click **Send** in the bulk action bar. Only prospects with an email address count toward the send total — the button shows how many will actually receive it.
+
+Emails go out using the same cold outreach template as the Prospect Finder. Each send is recorded, and the prospect's status automatically updates to **Contacted**.`,
+      },
+      {
+        heading: "Email status badges",
+        body: `After sending, each prospect shows an email engagement badge that updates automatically via Resend webhooks:
+- **Sent** — email left our server
+- **Delivered** — accepted by the recipient's mail server
+- **Opened** — recipient opened the email (requires open tracking to be enabled in Resend)
+- **Clicked** — recipient clicked a link
+- **Bounced** — email couldn't be delivered (bad address or full inbox)
+- **Complained** — marked as spam
+
+Status only ever upgrades — if someone clicks, it stays "Clicked" even if a late "Delivered" webhook arrives.`,
+      },
+      {
+        heading: "Prospect status",
+        body: `Hover over a prospect's status badge to change it. The statuses are:
+- **New** — just added, not yet contacted
+- **Contacted** — email has been sent (set automatically on send)
+- **Replied** — they responded — set this manually when you hear back
+- **Converted** — became a client — set this when you create their site record
+- **Dead** — not interested or unresponsive after follow-up
+
+These drive your stats. Keeping them accurate makes the open rate, reply rate, and conversion rate at the top meaningful.`,
+      },
+      {
+        heading: "Bulk actions",
+        body: `When rows are selected, the action bar appears at the top of the table. You can:
+- **Send** to everyone with an email
+- **Mark replied / converted / dead** — updates status on all selected at once
+- **Remove** — permanently deletes them from the list
+
+Use bulk status updates after a follow-up campaign when you want to write off a batch of non-responders.`,
+      },
+      {
+        heading: "Stats bar",
+        body: `The numbers at the top update in real time:
+- **Prospects** — total in your list
+- **Sent / Delivered** — raw send counts
+- **Open Rate** — opens ÷ delivered (not opens ÷ sent, which would be misleadingly low)
+- **Click Rate** — clicks ÷ delivered
+- **Replied / Converted** — manually tracked counts
+
+A healthy cold email open rate is 30–50%. Below 20% usually means the subject line needs work or you're hitting spam filters.`,
+      },
+    ],
+  },
+  {
+    id: "billing-payouts",
+    icon: Wallet,
+    title: "Your Stripe balance & payouts",
+    summary: "Checking your account balance and sending money to your bank.",
+    content: [
+      {
+        heading: "Available vs. pending balance",
+        body: `Go to **Billing** from the dashboard. The two balance cards show:
+- **Available** — money that's cleared and ready to pay out to your bank right now
+- **Pending** — payments that have been collected but are still in Stripe's clearing window (typically 2 business days for US cards)
+
+Pending balance moves to available automatically — you don't need to do anything.`,
+      },
+      {
+        heading: "How payouts work by default",
+        body: `If you have automatic payouts enabled in Stripe (the default), Stripe sends your available balance to your linked bank account on a set schedule — usually every business day or weekly, depending on what you configured.
+
+You can check your payout schedule in the Stripe dashboard under **Settings → Payouts**.`,
+      },
+      {
+        heading: "Sending a manual payout",
+        body: `To send money to your bank immediately (instead of waiting for the automatic schedule), enter an amount in the **Send payout** field and click the button. The payout is created instantly and the estimated arrival date is shown in the confirmation.
+
+The minimum is $1.00. Stripe will reject the request if the amount exceeds your available balance — the error message from Stripe will appear inline.`,
+      },
+      {
+        heading: "Payout history",
+        body: `The table at the bottom shows your last 20 payouts with status, created date, estimated arrival, and method (standard or instant). Statuses:
+- **Paid** — arrived in your bank
+- **In Transit** — on its way, not yet arrived
+- **Pending** — created but not yet in motion
+- **Failed** — something went wrong (usually a bank account issue — check Stripe for details)`,
+      },
+      {
+        heading: "Bank account setup",
+        body: `Payouts always go to the bank account linked in your Stripe account. To change it, go to stripe.com → **Settings → Bank accounts and scheduling**. You can't change the payout destination from this dashboard — that's a Stripe security restriction.`,
       },
     ],
   },
