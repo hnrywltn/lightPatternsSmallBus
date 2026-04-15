@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
         s.user_id,
         s.stripe_customer_id,
         s.stripe_subscription_status,
+        s.build_fee_discount,
         s.created_at,
         s.updated_at,
         u.email AS user_email,
@@ -68,6 +69,7 @@ export async function POST(req: NextRequest) {
     notes,
     userId,
     stripeCustomerId,
+    buildFeeDiscount,
   } = body;
 
   if (!businessName?.trim()) {
@@ -80,8 +82,8 @@ export async function POST(req: NextRequest) {
         business_name, contact_name, contact_email, contact_phone,
         domain, tier, add_ons, status,
         date_initiated, date_published,
-        monthly_revenue, build_fee, notes, user_id, stripe_customer_id
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+        monthly_revenue, build_fee, build_fee_discount, notes, user_id, stripe_customer_id
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
       RETURNING *`,
       [
         businessName.trim(),
@@ -89,13 +91,14 @@ export async function POST(req: NextRequest) {
         contactEmail || null,
         contactPhone || null,
         domain || null,
-        tier || "Starter",
+        tier || "Essential",
         addOns || [],
         status || "in_progress",
         dateInitiated || null,
         datePublished || null,
         monthlyRevenue || 0,
         buildFee || 0,
+        buildFeeDiscount || 0,
         notes || null,
         userId || null,
         stripeCustomerId || null,

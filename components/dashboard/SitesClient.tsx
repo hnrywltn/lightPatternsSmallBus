@@ -38,6 +38,7 @@ export interface Site {
   buildFee: number;
   notes: string;
   userId: string | null;
+  buildFeeDiscount: number;
   stripeCustomerId: string | null;
   stripeSubscriptionStatus: string | null;
   // joined from users table
@@ -65,6 +66,7 @@ function rowToSite(row: Record<string, unknown>): Site {
       : "",
     monthlyRevenue: (row.monthly_revenue as number) ?? 0,
     buildFee: (row.build_fee as number) ?? 0,
+    buildFeeDiscount: (row.build_fee_discount as number) ?? 0,
     notes: (row.notes as string) ?? "",
     userId: (row.user_id as string) ?? null,
     stripeCustomerId: (row.stripe_customer_id as string) ?? null,
@@ -88,6 +90,7 @@ function siteToBody(s: Omit<Site, "id" | "userEmail" | "userName">) {
     datePublished: s.datePublished || null,
     monthlyRevenue: s.monthlyRevenue,
     buildFee: s.buildFee,
+    buildFeeDiscount: s.buildFeeDiscount,
     notes: s.notes,
     userId: s.userId,
     stripeCustomerId: s.stripeCustomerId,
@@ -143,6 +146,7 @@ const EMPTY_FORM: Omit<Site, "id" | "userEmail" | "userName"> = {
   datePublished: "",
   monthlyRevenue: 0,
   buildFee: 0,
+  buildFeeDiscount: 0,
   notes: "",
   userId: null,
   stripeCustomerId: null,
@@ -261,6 +265,7 @@ function SiteModal({
           datePublished: initial.datePublished,
           monthlyRevenue: initial.monthlyRevenue,
           buildFee: initial.buildFee,
+          buildFeeDiscount: initial.buildFeeDiscount,
           notes: initial.notes,
           userId: initial.userId,
           stripeCustomerId: initial.stripeCustomerId,
@@ -272,6 +277,15 @@ function SiteModal({
 
   function set<K extends keyof typeof form>(key: K, val: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [key]: val }));
+  }
+
+  function handleTierChange(tier: Tier) {
+    setForm((prev) => ({
+      ...prev,
+      tier,
+      buildFee: tier === "Essential" ? 1500 : 3000,
+      monthlyRevenue: tier === "Essential" ? 59 : 99,
+    }));
   }
 
   function toggleAddOn(ao: string) {
@@ -373,7 +387,7 @@ function SiteModal({
               <select
                 className={inputCls}
                 value={form.tier}
-                onChange={(e) => set("tier", e.target.value as Tier)}
+                onChange={(e) => handleTierChange(e.target.value as Tier)}
               >
                 {TIERS.map((t) => (
                   <option key={t}>{t}</option>
@@ -406,7 +420,7 @@ function SiteModal({
                 className={inputCls}
                 value={form.buildFee || ""}
                 onChange={(e) => set("buildFee", Number(e.target.value))}
-                placeholder="500"
+                placeholder="1500"
               />
             </div>
             <div>
@@ -417,9 +431,31 @@ function SiteModal({
                 className={inputCls}
                 value={form.monthlyRevenue || ""}
                 onChange={(e) => set("monthlyRevenue", Number(e.target.value))}
-                placeholder="79"
+                placeholder="59"
               />
             </div>
+            <div>
+              <label className={labelCls}>Build Fee Discount ($)</label>
+              <input
+                type="number"
+                min={0}
+                max={form.buildFee || undefined}
+                className={inputCls}
+                value={form.buildFeeDiscount || ""}
+                onChange={(e) => set("buildFeeDiscount", Number(e.target.value))}
+                placeholder="0"
+              />
+            </div>
+            {form.buildFeeDiscount > 0 && (
+              <div className="flex items-end pb-2">
+                <p className="text-xs text-[#f2ede4]/40">
+                  Client charged{" "}
+                  <span className="text-amber-400 font-medium">
+                    ${(form.buildFee - form.buildFeeDiscount).toLocaleString()}
+                  </span>
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Dates */}

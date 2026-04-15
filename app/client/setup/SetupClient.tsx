@@ -15,6 +15,7 @@ interface SetupClientProps {
   addOns: string[];
   monthlyRevenue: number;
   buildFee: number;
+  buildFeeDiscount: number;
   hasStripeCustomer: boolean;
 }
 
@@ -22,6 +23,8 @@ interface IntentData {
   type: "payment" | "setup";
   clientSecret: string;
   buildFee: number;
+  buildFeeDiscount: number;
+  finalAmount: number;
   tier: string;
   addOns: string[];
   monthlyRevenue: number;
@@ -87,7 +90,7 @@ function PaymentForm({
         ) : (
           <>
             {intentData.type === "payment"
-              ? `Pay ${formatCurrency(intentData.buildFee)} & save card`
+              ? `Pay ${formatCurrency(intentData.finalAmount)} & save card`
               : "Save payment method"}
             <ArrowRight className="w-4 h-4" />
           </>
@@ -106,6 +109,7 @@ export default function SetupClient({
   addOns,
   monthlyRevenue,
   buildFee,
+  buildFeeDiscount,
   hasStripeCustomer,
 }: SetupClientProps) {
   const router = useRouter();
@@ -180,10 +184,26 @@ export default function SetupClient({
                   </div>
                 ))}
                 {buildFee > 0 && (
-                  <div className="flex items-center justify-between py-3">
-                    <span className="text-sm text-white/80">One-time build fee</span>
-                    <span className="text-sm text-white/60 font-medium">{formatCurrency(buildFee)}</span>
-                  </div>
+                  <>
+                    <div className="flex items-center justify-between py-3">
+                      <span className="text-sm text-white/80">One-time build fee</span>
+                      <span className={`text-sm font-medium ${intentData?.buildFeeDiscount ? "text-white/30 line-through" : "text-white/60"}`}>
+                        {formatCurrency(buildFee)}
+                      </span>
+                    </div>
+                    {intentData?.buildFeeDiscount ? (
+                      <>
+                        <div className="flex items-center justify-between py-3">
+                          <span className="text-sm text-emerald-400">Discount</span>
+                          <span className="text-sm text-emerald-400 font-medium">−{formatCurrency(intentData.buildFeeDiscount)}</span>
+                        </div>
+                        <div className="flex items-center justify-between py-3 border-t border-white/8">
+                          <span className="text-sm text-white font-semibold">Total due today</span>
+                          <span className="text-sm text-white font-semibold">{formatCurrency(intentData.finalAmount)}</span>
+                        </div>
+                      </>
+                    ) : null}
+                  </>
                 )}
               </div>
 

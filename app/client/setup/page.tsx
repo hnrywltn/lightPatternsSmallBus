@@ -8,7 +8,7 @@ export default async function SetupPage() {
   if (!session) redirect("/client/login");
 
   const { rows } = await pool.query(
-    `SELECT s.build_fee, s.tier, s.add_ons, s.monthly_revenue, s.business_name, s.stripe_customer_id, u.name
+    `SELECT s.build_fee, s.build_fee_discount, s.tier, s.add_ons, s.monthly_revenue, s.business_name, s.stripe_customer_id, u.name
      FROM sites s
      JOIN users u ON u.id = s.user_id
      WHERE s.user_id = $1
@@ -29,6 +29,7 @@ export default async function SetupPage() {
       addOns={site.add_ons ?? []}
       monthlyRevenue={site.monthly_revenue ?? 0}
       buildFee={site.build_fee ?? 0}
+      buildFeeDiscount={site.build_fee_discount ?? 0}
       hasStripeCustomer={!!site.stripe_customer_id}
     />
   );

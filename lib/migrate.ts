@@ -90,6 +90,9 @@ async function migrate() {
       ALTER TABLE sites ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT
     `);
     await client.query(`
+      ALTER TABLE sites ADD COLUMN IF NOT EXISTS build_fee_discount INTEGER DEFAULT 0
+    `);
+    await client.query(`
       ALTER TABLE sites ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT
     `);
     await client.query(`
