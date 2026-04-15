@@ -29,6 +29,7 @@ export async function GET(req: NextRequest) {
         s.build_fee,
         s.notes,
         s.user_id,
+        s.stripe_customer_id,
         s.created_at,
         s.updated_at,
         u.email AS user_email,
@@ -65,6 +66,7 @@ export async function POST(req: NextRequest) {
     buildFee,
     notes,
     userId,
+    stripeCustomerId,
   } = body;
 
   if (!businessName?.trim()) {
@@ -77,8 +79,8 @@ export async function POST(req: NextRequest) {
         business_name, contact_name, contact_email, contact_phone,
         domain, tier, add_ons, status,
         date_initiated, date_published,
-        monthly_revenue, build_fee, notes, user_id
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+        monthly_revenue, build_fee, notes, user_id, stripe_customer_id
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
       RETURNING *`,
       [
         businessName.trim(),
@@ -95,6 +97,7 @@ export async function POST(req: NextRequest) {
         buildFee || 0,
         notes || null,
         userId || null,
+        stripeCustomerId || null,
       ]
     );
     return NextResponse.json({ site: rows[0] }, { status: 201 });

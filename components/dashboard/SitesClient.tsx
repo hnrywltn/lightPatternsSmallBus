@@ -12,6 +12,8 @@ import {
   Globe,
   Loader2,
   Send,
+  CreditCard,
+  RefreshCw,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -35,6 +37,7 @@ export interface Site {
   buildFee: number;
   notes: string;
   userId: string | null;
+  stripeCustomerId: string | null;
   // joined from users table
   userEmail?: string;
   userName?: string;
@@ -62,6 +65,7 @@ function rowToSite(row: Record<string, unknown>): Site {
     buildFee: (row.build_fee as number) ?? 0,
     notes: (row.notes as string) ?? "",
     userId: (row.user_id as string) ?? null,
+    stripeCustomerId: (row.stripe_customer_id as string) ?? null,
     userEmail: (row.user_email as string) ?? undefined,
     userName: (row.user_name as string) ?? undefined,
   };
@@ -83,6 +87,7 @@ function siteToBody(s: Omit<Site, "id" | "userEmail" | "userName">) {
     buildFee: s.buildFee,
     notes: s.notes,
     userId: s.userId,
+    stripeCustomerId: s.stripeCustomerId,
   };
 }
 
@@ -138,6 +143,7 @@ const EMPTY_FORM: Omit<Site, "id" | "userEmail" | "userName"> = {
   buildFee: 0,
   notes: "",
   userId: null,
+  stripeCustomerId: null,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -254,6 +260,7 @@ function SiteModal({
           buildFee: initial.buildFee,
           notes: initial.notes,
           userId: initial.userId,
+          stripeCustomerId: initial.stripeCustomerId,
         }
       : { ...EMPTY_FORM }
   );
@@ -458,6 +465,17 @@ function SiteModal({
             </div>
           </div>
 
+          {/* Stripe */}
+          <div>
+            <label className={labelCls}>Stripe Customer ID</label>
+            <input
+              className={inputCls}
+              value={form.stripeCustomerId ?? ""}
+              onChange={(e) => set("stripeCustomerId", e.target.value || null)}
+              placeholder="cus_…"
+            />
+          </div>
+
           {/* Notes */}
           <div>
             <label className={labelCls}>Notes</label>
@@ -510,6 +528,31 @@ function SiteModal({
 
 // ─── Row ─────────────────────────────────────────────────────────────────────
 
+type StripeSubStatus = "active" | "trialing" | "past_due" | "canceled" | "unpaid" | "incomplete" | "incomplete_expired" | "paused";
+
+const STRIPE_STATUS_STYLES: Record<string, string> = {
+  active: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  trialing: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  past_due: "bg-red-500/10 text-red-400 border-red-500/20",
+  unpaid: "bg-red-500/10 text-red-400 border-red-500/20",
+  canceled: "bg-white/5 text-[#f2ede4]/30 border-white/10",
+  incomplete: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  incomplete_expired: "bg-white/5 text-[#f2ede4]/30 border-white/10",
+  paused: "bg-white/5 text-[#f2ede4]/30 border-white/10",
+};
+
+interface StripeData {
+  customer: { id: string; email: string | null; name: string | null };
+  subscription: {
+    id: string;
+    status: StripeSubStatus;
+    billingCycleAnchor: number;
+    cancelAt: number | null;
+    cancelAtPeriodEnd: boolean;
+    items: { id: string; name: string; amount: number | null; interval: string | undefined }[];
+  } | null;
+}
+
 function SiteRow({
   site,
   onUpdate,
@@ -524,6 +567,9 @@ function SiteRow({
   const [deleting, setDeleting] = useState(false);
   const [inviting, setInviting] = useState(false);
   const [inviteSent, setInviteSent] = useState(false);
+  const [stripeData, setStripeData] = useState<StripeData | null>(null);
+  const [stripeFetching, setStripeFetching] = useState(false);
+  const [stripeError, setStripeError] = useState("");
 
   async function sendInvite() {
     if (!site.contactEmail) return;
@@ -537,6 +583,20 @@ function SiteRow({
     if (res.ok) {
       setInviteSent(true);
       setTimeout(() => setInviteSent(false), 4000);
+    }
+  }
+
+  async function fetchStripe() {
+    if (!site.stripeCustomerId) return;
+    setStripeFetching(true);
+    setStripeError("");
+    const res = await fetch(`/api/admin/stripe/${site.stripeCustomerId}`);
+    const data = await res.json();
+    setStripeFetching(false);
+    if (!res.ok) {
+      setStripeError(data.error ?? "Failed to fetch Stripe data.");
+    } else {
+      setStripeData(data as StripeData);
     }
   }
 
@@ -653,6 +713,83 @@ function SiteRow({
               </Field>
             )}
           </div>
+
+          {/* Stripe panel */}
+          {site.stripeCustomerId && (
+            <div className="mb-4 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <CreditCard className="w-3.5 h-3.5 text-[#f2ede4]/30" />
+                  <span className="text-[10px] uppercase tracking-wide font-medium text-[#f2ede4]/30">
+                    Stripe
+                  </span>
+                  <a
+                    href={`https://dashboard.stripe.com/customers/${site.stripeCustomerId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-[10px] text-[#f2ede4]/20 hover:text-amber-400 transition-colors flex items-center gap-1"
+                  >
+                    {site.stripeCustomerId}
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); fetchStripe(); }}
+                  disabled={stripeFetching}
+                  className="flex items-center gap-1 text-[10px] text-[#f2ede4]/30 hover:text-[#f2ede4] transition-colors disabled:opacity-40"
+                >
+                  <RefreshCw className={`w-3 h-3 ${stripeFetching ? "animate-spin" : ""}`} />
+                  {stripeData ? "Refresh" : "Load"}
+                </button>
+              </div>
+
+              {stripeError && (
+                <p className="text-xs text-red-400">{stripeError}</p>
+              )}
+
+              {stripeData && !stripeError && (
+                <div className="flex flex-wrap gap-x-6 gap-y-2">
+                  {stripeData.subscription ? (
+                    <>
+                      <div>
+                        <div className="text-[10px] text-[#f2ede4]/25 mb-1">Subscription</div>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border ${STRIPE_STATUS_STYLES[stripeData.subscription.status] ?? "bg-white/5 text-white/40 border-white/10"}`}>
+                          {stripeData.subscription.status}
+                        </span>
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-[#f2ede4]/25 mb-1">
+                          {stripeData.subscription.cancelAt ? "Cancels" : "Anchor"}
+                        </div>
+                        <span className="text-xs text-[#f2ede4]/60">
+                          {new Date(
+                            (stripeData.subscription.cancelAt ?? stripeData.subscription.billingCycleAnchor) * 1000
+                          ).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        </span>
+                      </div>
+                      {stripeData.subscription.items.length > 0 && (
+                        <div>
+                          <div className="text-[10px] text-[#f2ede4]/25 mb-1">Plan</div>
+                          <span className="text-xs text-[#f2ede4]/60">
+                            {stripeData.subscription.items.map((item) =>
+                              `${item.name}${item.amount != null ? ` · $${(item.amount / 100).toFixed(0)}/${item.interval}` : ""}`
+                            ).join(", ")}
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-xs text-[#f2ede4]/30 italic">No active subscription</p>
+                  )}
+                </div>
+              )}
+
+              {!stripeData && !stripeError && !stripeFetching && (
+                <p className="text-xs text-[#f2ede4]/20 italic">Click Load to fetch subscription status.</p>
+              )}
+            </div>
+          )}
 
           <div className="flex gap-3">
             <button

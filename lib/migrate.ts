@@ -76,6 +76,11 @@ async function migrate() {
       )
     `);
 
+    // Add stripe_customer_id if not already present
+    await client.query(`
+      ALTER TABLE sites ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT
+    `);
+
     await client.query("COMMIT");
     console.log("Migration complete.");
   } catch (err) {
