@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { Resend } from "resend";
 import pool from "@/lib/db";
+import stripe from "@/lib/stripe";
 import { clientInviteEmail } from "@/lib/emails/client-invite";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
@@ -111,6 +112,31 @@ export async function POST(req: NextRequest) {
         resolvedSiteId = newSite[0].id as string;
       }
       // If no site data and no match, invite goes out without a site link (shouldn't happen with new UI)
+    }
+
+    // Create a Stripe customer if the site doesn't have one yet
+    if (resolvedSiteId) {
+      const { rows: siteRows } = await client.query(
+        `SELECT stripe_customer_id, contact_name, business_name FROM sites WHERE id = $1`,
+        [resolvedSiteId]
+      );
+      const site = siteRows[0];
+      if (site && !site.stripe_customer_id) {
+        try {
+          const customer = await stripe.customers.create({
+            email: normalizedEmail,
+            name: site.contact_name || site.business_name || undefined,
+            metadata: { site_id: resolvedSiteId },
+          });
+          await client.query(
+            `UPDATE sites SET stripe_customer_id = $1 WHERE id = $2`,
+            [customer.id, resolvedSiteId]
+          );
+        } catch (stripeErr) {
+          // Non-fatal — log and continue, invite still goes out
+          console.error("Stripe customer creation failed:", stripeErr);
+        }
+      }
     }
 
     // Upsert the invite, refreshing token/expiry if one already exists for this email
