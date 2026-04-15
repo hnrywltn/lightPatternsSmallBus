@@ -874,6 +874,16 @@ function SiteRow({
               <Pencil className="w-3 h-3" />
               Edit
             </button>
+            <a
+              href={`/client/dashboard?preview=${site.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/8 border border-white/10 text-[#f2ede4]/50 hover:text-[#f2ede4] transition-colors"
+            >
+              <ExternalLink className="w-3 h-3" />
+              View Portal
+            </a>
             {site.contactEmail && !site.userEmail && (
               <button
                 onClick={sendInvite}
@@ -891,23 +901,10 @@ function SiteRow({
               </button>
             )}
             {site.userEmail && (
-              <>
-                <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 text-emerald-400/60">
-                  <Check className="w-3 h-3" />
-                  Portal linked · {site.userEmail}
-                </span>
-                <button
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    const res = await fetch(`/api/admin/impersonate/${site.id}`, { method: "POST" });
-                    if (res.ok) window.open("/client/dashboard", "_blank");
-                  }}
-                  className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/8 border border-white/10 text-[#f2ede4]/50 hover:text-[#f2ede4] transition-colors"
-                >
-                  <ExternalLink className="w-3 h-3" />
-                  View Portal
-                </button>
-              </>
+              <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 text-emerald-400/60">
+                <Check className="w-3 h-3" />
+                Portal linked · {site.userEmail}
+              </span>
             )}
             <button
               disabled={deleting}
