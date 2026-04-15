@@ -20,7 +20,7 @@ import {
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export type SiteStatus = "active" | "in_progress" | "inactive" | "paused";
-export type Tier = "Starter" | "Growth" | "Pro";
+export type Tier = "Essential" | "Premium";
 
 export interface Site {
   id: string;
@@ -96,7 +96,7 @@ function siteToBody(s: Omit<Site, "id" | "userEmail" | "userName">) {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const TIERS: Tier[] = ["Starter", "Growth", "Pro"];
+const TIERS: Tier[] = ["Essential", "Premium"];
 
 const ADD_ON_OPTIONS = [
   "SEO Package",
@@ -126,9 +126,8 @@ const STATUS_STYLES: Record<SiteStatus, string> = {
 };
 
 const TIER_STYLES: Record<Tier, string> = {
-  Starter: "text-[#f2ede4]/50",
-  Growth: "text-amber-400",
-  Pro: "text-violet-400",
+  Essential: "text-[#f2ede4]/50",
+  Premium: "text-amber-400",
 };
 
 const EMPTY_FORM: Omit<Site, "id" | "userEmail" | "userName"> = {
@@ -137,7 +136,7 @@ const EMPTY_FORM: Omit<Site, "id" | "userEmail" | "userName"> = {
   contactEmail: "",
   contactPhone: "",
   domain: "",
-  tier: "Starter",
+  tier: "Essential",
   addOns: [],
   status: "in_progress",
   dateInitiated: new Date().toISOString().slice(0, 10),
