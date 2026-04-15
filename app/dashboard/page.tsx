@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, Users, BarChart2, Globe } from "lucide-react";
+import { Search, Users, BarChart2, Globe, BookOpen } from "lucide-react";
 import InviteClient from "@/components/dashboard/InviteClient";
 
 const tools = [
@@ -30,6 +30,13 @@ const tools = [
     description: "Open rates, reply rates, and conversion tracking.",
     href: "/dashboard/analytics",
     status: "coming soon",
+  },
+  {
+    icon: BookOpen,
+    title: "Guide",
+    description: "How to use the dashboard — clients, billing, Stripe, and more.",
+    href: "/dashboard/guide",
+    status: "active",
   },
 ];
 

@@ -1,10 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Lightbulb, LogOut } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+import { Lightbulb, LogOut, BookOpen } from "lucide-react";
 
 export default function DashboardNav() {
   const router = useRouter();
+  const pathname = usePathname();
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -24,6 +25,18 @@ export default function DashboardNav() {
         </a>
 
         <div className="flex items-center gap-4">
+          <a
+            href="/dashboard/guide"
+            className={`flex items-center gap-1.5 text-xs transition-colors ${
+              pathname === "/dashboard/guide"
+                ? "text-amber-400"
+                : "text-[#f2ede4]/40 hover:text-[#f2ede4]"
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            Guide
+          </a>
+          <span className="text-[#f2ede4]/10">|</span>
           <span className="text-xs text-[#f2ede4]/30">Admin</span>
           <button
             onClick={handleLogout}
