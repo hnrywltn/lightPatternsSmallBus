@@ -9,6 +9,9 @@ import {
   Rocket,
   Search,
   ChevronRight,
+  MessageSquare,
+  CheckCircle,
+  Loader2,
 } from "lucide-react";
 
 const articles = [
@@ -199,8 +202,30 @@ Monitor open rates and replies in Resend (resend.com → Broadcasts). Follow up 
 
 export default function GuidePage() {
   const [activeId, setActiveId] = useState(articles[0].id);
+  const [feedback, setFeedback] = useState("");
+  const [feedbackState, setFeedbackState] = useState<"idle" | "sending" | "sent">("idle");
+
   const active = articles.find((a) => a.id === activeId)!;
   const Icon = active.icon;
+
+  function handleArticleChange(id: string) {
+    setActiveId(id);
+    setFeedback("");
+    setFeedbackState("idle");
+  }
+
+  async function submitFeedback(e: React.FormEvent) {
+    e.preventDefault();
+    if (!feedback.trim()) return;
+    setFeedbackState("sending");
+    await fetch("/api/admin/guide-feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ article: active.title, feedback }),
+    });
+    setFeedbackState("sent");
+    setFeedback("");
+  }
 
   return (
     <div>
@@ -215,7 +240,7 @@ export default function GuidePage() {
           {articles.map(({ id, icon: ItemIcon, title }) => (
             <button
               key={id}
-              onClick={() => setActiveId(id)}
+              onClick={() => handleArticleChange(id)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors w-full ${
                 activeId === id
                   ? "bg-amber-600/10 border border-amber-600/20 text-amber-400"
@@ -261,6 +286,38 @@ export default function GuidePage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Feedback */}
+          <div className="mt-10 pt-8 border-t border-white/6">
+            <div className="flex items-center gap-2 mb-3">
+              <MessageSquare className="w-3.5 h-3.5 text-[#f2ede4]/25" />
+              <p className="text-xs text-[#f2ede4]/25 font-medium">Feedback on this article</p>
+            </div>
+            {feedbackState === "sent" ? (
+              <div className="flex items-center gap-2 text-emerald-400 text-sm">
+                <CheckCircle className="w-4 h-4" />
+                Sent — thanks.
+              </div>
+            ) : (
+              <form onSubmit={submitFeedback} className="flex flex-col gap-3">
+                <textarea
+                  rows={3}
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  placeholder="Something unclear, missing, or wrong? Let me know…"
+                  className="w-full bg-white/5 border border-white/8 rounded-xl px-3 py-2.5 text-sm text-[#f2ede4] placeholder-white/20 focus:outline-none focus:border-amber-600/40 resize-none transition-colors"
+                />
+                <button
+                  type="submit"
+                  disabled={!feedback.trim() || feedbackState === "sending"}
+                  className="self-start flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/8 border border-white/10 text-xs text-[#f2ede4]/50 hover:text-[#f2ede4] disabled:opacity-40 transition-colors"
+                >
+                  {feedbackState === "sending" && <Loader2 className="w-3 h-3 animate-spin" />}
+                  Send feedback
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>
