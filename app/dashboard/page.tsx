@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, Users, BarChart2, Globe, BookOpen } from "lucide-react";
+import { Search, Users, BarChart2, Globe, BookOpen, CreditCard } from "lucide-react";
 import InviteClient from "@/components/dashboard/InviteClient";
 
 const tools = [
@@ -15,6 +15,13 @@ const tools = [
     title: "Sites",
     description: "Track every site you've published — tier, add-ons, status, and billing.",
     href: "/dashboard/sites",
+    status: "active",
+  },
+  {
+    icon: CreditCard,
+    title: "Billing",
+    description: "View your Stripe balance, payout history, and send manual payouts.",
+    href: "/dashboard/billing",
     status: "active",
   },
   {
