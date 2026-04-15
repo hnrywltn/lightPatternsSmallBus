@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { getClientSession } from "@/lib/clientAuth";
 import pool from "@/lib/db";
 import ClientDashboardClient from "./ClientDashboardClient";
@@ -6,6 +7,10 @@ import ClientDashboardClient from "./ClientDashboardClient";
 export default async function ClientDashboardPage() {
   const session = await getClientSession();
   if (!session) redirect("/client/login");
+
+  const cookieStore = await cookies();
+  const adminSession = cookieStore.get("lp_session")?.value;
+  const isAdminPreview = !!process.env.ADMIN_SESSION_TOKEN && adminSession === process.env.ADMIN_SESSION_TOKEN;
 
   const { rows } = await pool.query(
     `SELECT
@@ -31,6 +36,7 @@ export default async function ClientDashboardPage() {
 
   return (
     <ClientDashboardClient
+      isAdminPreview={isAdminPreview}
       client={{
         name: row.name,
         email: row.email,

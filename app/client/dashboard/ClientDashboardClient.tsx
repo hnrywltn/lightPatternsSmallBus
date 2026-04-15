@@ -25,6 +25,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface ClientProps {
+  isAdminPreview?: boolean;
   name: string;
   email: string;
   siteId: string | null;
@@ -282,7 +283,7 @@ function CancelModal({ onClose, onConfirm, loading }: { onClose: () => void; onC
 
 // ─── Main dashboard ───────────────────────────────────────────────────────────
 
-export default function ClientDashboardClient({ client }: { client: ClientProps }) {
+export default function ClientDashboardClient({ client, isAdminPreview }: { client: ClientProps; isAdminPreview?: boolean }) {
   const router = useRouter();
   const [billing, setBilling] = useState<BillingData | null>(null);
   const [billingLoading, setBillingLoading] = useState(true);
@@ -337,6 +338,15 @@ export default function ClientDashboardClient({ client }: { client: ClientProps 
 
   return (
     <div className="min-h-screen bg-[#05050a] text-white">
+      {/* Admin preview bar */}
+      {isAdminPreview && (
+        <div className="bg-amber-600 px-6 py-2 flex items-center justify-between text-sm">
+          <span className="text-white font-medium">Admin preview — viewing as {client.email}</span>
+          <a href="/dashboard/sites" className="text-white/80 hover:text-white font-medium transition-colors">
+            ← Back to admin
+          </a>
+        </div>
+      )}
       {/* Nav */}
       <nav className="border-b border-white/8 px-6 sm:px-8 py-4 flex items-center justify-between">
         <span className="font-bold text-base tracking-tight">Light Patterns</span>
