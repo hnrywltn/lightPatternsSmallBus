@@ -90,6 +90,28 @@
   .footer-logo em { font-style: italic; color: #e8c4bc; }
   .footer-addr { font-size: 13px; color: rgba(253,250,248,0.3); text-align: center; line-height: 1.8; font-weight: 300; }
   .footer-copy { font-size: 12px; color: rgba(253,250,248,0.2); }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+
+    .hero { grid-template-columns: 1fr; }
+    .hero-left { padding: 60px 24px; }
+    .hero-title { font-size: 52px; }
+    .hero-right { min-height: 320px; }
+
+    .services { padding: 64px 20px; }
+    .s-title { font-size: 36px; }
+    .services-list { grid-template-columns: 1fr 1fr; }
+    .svc:nth-child(4), .svc:nth-child(8) { border-right: 1px solid rgba(30,21,16,0.08); }
+    .svc:nth-child(odd) { border-right: none; }
+
+    .experience { padding: 64px 20px; }
+    .exp-title { font-size: 36px; }
+    .exp-features { grid-template-columns: 1fr; gap: 24px; }
+
+    footer { flex-direction: column; gap: 16px; padding: 40px 20px; text-align: center; }
+  }
 </style>
 </head>
 <body>

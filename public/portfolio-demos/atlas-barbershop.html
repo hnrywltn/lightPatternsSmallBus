@@ -75,6 +75,27 @@
   .footer-logo { font-family: 'Playfair Display', serif; font-size: 20px; color: #f2ede4; }
   .footer-addr { font-size: 13px; color: rgba(242,237,228,0.3); text-align: center; line-height: 1.7; }
   .footer-copy { font-size: 12px; color: rgba(242,237,228,0.2); }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+
+    .hero { padding: 0 20px; }
+    .hero-line { display: none; }
+    .hero-title { font-size: 48px; }
+    .hero-hours { position: static; text-align: left; margin-top: 40px; }
+
+    .services { padding: 80px 20px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .section-title { font-size: 32px; }
+
+    .about { grid-template-columns: 1fr; gap: 40px; padding: 80px 20px; }
+    .about-img { height: 280px; }
+    .about-title { font-size: 32px; }
+    .about-stat { gap: 28px; }
+
+    footer { flex-direction: column; gap: 16px; padding: 40px 20px; text-align: center; }
+  }
 </style>
 </head>
 <body>

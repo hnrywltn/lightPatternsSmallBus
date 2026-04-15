@@ -103,6 +103,29 @@
   .footer-logo span { color: #e07b2a; }
   .footer-addr { font-size: 13px; color: rgba(240,236,228,0.25); text-align: center; line-height: 1.7; }
   .footer-copy { font-size: 12px; color: rgba(240,236,228,0.15); }
+
+  @media (max-width: 768px) {
+    nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+
+    .hero { padding: 80px 20px 48px; }
+    .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+    .hero-title { font-size: 72px; }
+    .hero-perks { flex-wrap: wrap; gap: 16px; }
+    .hero-right { grid-template-columns: 1fr 1fr; }
+    .hero-img-block { grid-column: span 2; }
+
+    .classes { padding: 64px 20px; }
+    .classes-header { flex-direction: column; gap: 12px; }
+    .classes-title { font-size: 40px; }
+    .classes-grid { grid-template-columns: 1fr; }
+
+    .membership { padding: 64px 20px; }
+    .mem-title { font-size: 40px; }
+    .mem-grid { grid-template-columns: 1fr; }
+
+    footer { flex-direction: column; gap: 16px; padding: 40px 20px; text-align: center; }
+  }
 </style>
 </head>
 <body>

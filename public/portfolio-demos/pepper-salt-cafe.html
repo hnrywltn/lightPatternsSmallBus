@@ -79,6 +79,26 @@
   .footer-logo span { font-style: italic; color: #8b5e3c; }
   .footer-addr { font-size: 13px; color: rgba(44,36,23,0.4); text-align: center; line-height: 1.7; }
   .footer-copy { font-size: 12px; color: rgba(44,36,23,0.3); }
+
+  @media (max-width: 768px) {
+    nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+
+    .hero { grid-template-columns: 1fr; gap: 40px; padding: 100px 20px 60px; min-height: auto; }
+    .hero-title { font-size: 40px; }
+    .hero-img { height: 280px; }
+
+    .menu { padding: 64px 20px; }
+    .menu-title { font-size: 32px; }
+    .menu-grid { grid-template-columns: 1fr; }
+
+    .about { grid-template-columns: 1fr; gap: 40px; padding: 64px 20px; }
+    .about-title { font-size: 32px; }
+    .about-img-side { grid-template-columns: 1fr; }
+    .about-img-block:first-child { grid-column: auto; height: 160px; }
+
+    footer { flex-direction: column; gap: 16px; padding: 40px 20px; text-align: center; }
+  }
 </style>
 </head>
 <body>

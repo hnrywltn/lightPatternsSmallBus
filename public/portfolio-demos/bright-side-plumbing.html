@@ -86,6 +86,27 @@
   .footer-logo-name { font-size: 16px; font-weight: 700; color: #fff; }
   .footer-addr { font-size: 13px; color: rgba(255,255,255,0.3); text-align: center; line-height: 1.7; }
   .footer-copy { font-size: 12px; color: rgba(255,255,255,0.2); }
+
+  @media (max-width: 768px) {
+    nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+
+    .hero { grid-template-columns: 1fr; gap: 40px; padding: 100px 20px 60px; min-height: auto; }
+    .hero-title { font-size: 38px; }
+    .hero-trust { flex-wrap: wrap; gap: 12px; }
+    .hero-ctas { flex-wrap: wrap; }
+
+    .services { padding: 64px 20px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .section-title { font-size: 30px; }
+
+    .why { grid-template-columns: 1fr; gap: 40px; padding: 64px 20px; }
+    .why-img { height: 240px; font-size: 56px; }
+    .why-title { font-size: 30px; }
+
+    footer { flex-direction: column; gap: 16px; padding: 40px 20px; text-align: center; }
+    .footer-addr { text-align: center; }
+  }
 </style>
 </head>
 <body>
