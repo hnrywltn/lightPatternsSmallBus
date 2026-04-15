@@ -153,8 +153,35 @@ export async function POST(req: NextRequest) {
 
     await client.query("COMMIT");
 
+    // Fetch site data for the email
+    let siteEmailData: {
+      contactName?: string;
+      businessName?: string;
+      tier?: string;
+      addOns?: string[];
+      monthlyRevenue?: number;
+      buildFee?: number;
+    } = {};
+    if (resolvedSiteId) {
+      const { rows: siteInfo } = await pool.query(
+        `SELECT contact_name, business_name, tier, add_ons, monthly_revenue, build_fee FROM sites WHERE id = $1`,
+        [resolvedSiteId]
+      );
+      if (siteInfo[0]) {
+        const s = siteInfo[0];
+        siteEmailData = {
+          contactName: s.contact_name,
+          businessName: s.business_name,
+          tier: s.tier,
+          addOns: s.add_ons ?? [],
+          monthlyRevenue: s.monthly_revenue ?? 0,
+          buildFee: s.build_fee ?? 0,
+        };
+      }
+    }
+
     if (resend) {
-      const template = clientInviteEmail({ email: normalizedEmail, token });
+      const template = clientInviteEmail({ email: normalizedEmail, token, ...siteEmailData });
       await resend.emails.send({
         from: "Light Patterns <hello@lightpatternsonline.com>",
         to: normalizedEmail,

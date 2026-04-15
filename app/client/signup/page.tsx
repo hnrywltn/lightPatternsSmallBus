@@ -42,7 +42,7 @@ function SignupForm() {
       return;
     }
 
-    router.push("/client/dashboard");
+    router.push("/client/setup");
   }
 
   return (
