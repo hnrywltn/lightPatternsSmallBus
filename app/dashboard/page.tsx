@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, Users, BarChart2 } from "lucide-react";
+import { Search, Users, BarChart2, Globe } from "lucide-react";
 import InviteClient from "@/components/dashboard/InviteClient";
 
 const tools = [
@@ -8,6 +8,13 @@ const tools = [
     title: "Prospect Finder",
     description: "Search for businesses with no website, build a list, and send cold outreach.",
     href: "/dashboard/prospects",
+    status: "active",
+  },
+  {
+    icon: Globe,
+    title: "Sites",
+    description: "Track every site you've published — tier, add-ons, status, and billing.",
+    href: "/dashboard/sites",
     status: "active",
   },
   {
