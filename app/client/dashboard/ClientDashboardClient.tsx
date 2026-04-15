@@ -186,18 +186,21 @@ function UpdateCardForm({ onSuccess, onClose }: { onSuccess: () => void; onClose
 
 // ─── Update card modal ────────────────────────────────────────────────────────
 
-function UpdateCardModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
+function UpdateCardModal({ onClose, onSuccess, siteId }: { onClose: () => void; onSuccess: () => void; siteId?: string | null }) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("/api/client/stripe/setup-intent", { method: "POST" })
+    const url = siteId
+      ? `/api/client/stripe/setup-intent?siteId=${siteId}`
+      : "/api/client/stripe/setup-intent";
+    fetch(url, { method: "POST" })
       .then((r) => r.json())
       .then((d) => {
         if (d.clientSecret) setClientSecret(d.clientSecret);
         else setError(d.error ?? "Failed to initialize.");
       });
-  }, []);
+  }, [siteId]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
@@ -598,6 +601,7 @@ export default function ClientDashboardClient({ client, isAdminPreview }: { clie
         <UpdateCardModal
           onClose={() => setShowUpdateCard(false)}
           onSuccess={handleCardUpdated}
+          siteId={client.siteId}
         />
       )}
 
