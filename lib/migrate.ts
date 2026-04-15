@@ -53,6 +53,28 @@ async function migrate() {
       )
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS sites (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        business_name TEXT NOT NULL,
+        contact_name TEXT,
+        contact_email TEXT,
+        contact_phone TEXT,
+        domain TEXT,
+        tier TEXT NOT NULL DEFAULT 'Starter',
+        add_ons TEXT[] DEFAULT '{}',
+        status TEXT NOT NULL DEFAULT 'in_progress',
+        date_initiated DATE,
+        date_published DATE,
+        monthly_revenue INTEGER DEFAULT 0,
+        build_fee INTEGER DEFAULT 0,
+        notes TEXT,
+        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
     await client.query("COMMIT");
     console.log("Migration complete.");
   } catch (err) {
