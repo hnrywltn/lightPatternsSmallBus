@@ -99,6 +99,37 @@ async function migrate() {
       ALTER TABLE sites ADD COLUMN IF NOT EXISTS stripe_subscription_status TEXT
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS prospects (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        place_id TEXT UNIQUE NOT NULL,
+        name TEXT NOT NULL,
+        email TEXT,
+        phone TEXT,
+        full_address TEXT,
+        type TEXT,
+        status TEXT NOT NULL DEFAULT 'new',
+        notes TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS outreach_sends (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        prospect_id UUID NOT NULL REFERENCES prospects(id) ON DELETE CASCADE,
+        resend_id TEXT UNIQUE,
+        status TEXT NOT NULL DEFAULT 'sent',
+        sent_at TIMESTAMPTZ DEFAULT NOW(),
+        delivered_at TIMESTAMPTZ,
+        opened_at TIMESTAMPTZ,
+        clicked_at TIMESTAMPTZ,
+        bounced_at TIMESTAMPTZ,
+        complained_at TIMESTAMPTZ
+      )
+    `);
+
     await client.query("COMMIT");
     console.log("Migration complete.");
   } catch (err) {

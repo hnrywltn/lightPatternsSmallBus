@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, Users, BarChart2, Globe, BookOpen, CreditCard } from "lucide-react";
+import { Search, Users, BarChart2, Globe, BookOpen, CreditCard, Send } from "lucide-react";
 import InviteClient from "@/components/dashboard/InviteClient";
 
 const tools = [
@@ -8,6 +8,13 @@ const tools = [
     title: "Prospect Finder",
     description: "Search for businesses with no website, build a list, and send cold outreach.",
     href: "/dashboard/prospects",
+    status: "active",
+  },
+  {
+    icon: Send,
+    title: "Outreach",
+    description: "Manage your prospect list, track email engagement, and monitor conversions.",
+    href: "/dashboard/outreach",
     status: "active",
   },
   {
@@ -34,7 +41,7 @@ const tools = [
   {
     icon: BarChart2,
     title: "Analytics",
-    description: "Open rates, reply rates, and conversion tracking.",
+    description: "Revenue trends, tier breakdown, and pipeline health.",
     href: "/dashboard/analytics",
     status: "coming soon",
   },

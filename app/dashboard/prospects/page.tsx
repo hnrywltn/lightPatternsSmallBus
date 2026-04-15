@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
-import { Search, ExternalLink, Loader2, X, SlidersHorizontal, Pencil, Check, ListPlus, Users, Send } from "lucide-react";
+import { Search, ExternalLink, Loader2, X, SlidersHorizontal, Pencil, Check, ListPlus, Users, Send, BookmarkPlus } from "lucide-react";
 import type { Prospect } from "@/app/api/prospects/search/route";
 
 const BUSINESS_TYPES = [
@@ -171,6 +171,8 @@ export default function ProspectsPage() {
   // Send state: record of email -> 'sending' | 'sent' | 'error'
   const [sendStatuses, setSendStatuses] = useState<Record<string, "sending" | "sent" | "error">>({});
   const [sending, setSending] = useState(false);
+  const [savingToOutreach, setSavingToOutreach] = useState(false);
+  const [savedToOutreachMsg, setSavedToOutreachMsg] = useState("");
 
   // Load persisted data on mount
   useEffect(() => {
@@ -274,6 +276,34 @@ export default function ProspectsPage() {
 
     setSelected(new Set());
     setShowList(true);
+  }
+
+  async function saveToOutreach() {
+    const toSave = filtered
+      .filter((p) => selected.has(p.place_id))
+      .map((p) => ({
+        place_id: p.place_id,
+        name: p.name,
+        email: emails[p.place_id] ?? p.email ?? "",
+        phone: p.phone,
+        full_address: p.full_address,
+        type: p.type,
+      }));
+    if (!toSave.length) return;
+    setSavingToOutreach(true);
+    setSavedToOutreachMsg("");
+    const res = await fetch("/api/admin/outreach/prospects", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prospects: toSave }),
+    });
+    const data = await res.json();
+    setSavingToOutreach(false);
+    if (res.ok) {
+      setSavedToOutreachMsg(`${data.upserted} saved to Outreach.`);
+      setSelected(new Set());
+      setTimeout(() => setSavedToOutreachMsg(""), 3000);
+    }
   }
 
   function removeFromList(place_id: string) {
@@ -602,13 +632,26 @@ export default function ProspectsPage() {
             </div>
 
             {selected.size > 0 && (
-              <button
-                onClick={addToList}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium transition-colors shadow-lg shadow-amber-600/20"
-              >
-                <ListPlus className="w-3.5 h-3.5" />
-                Add {selected.size} to list
-              </button>
+              <div className="flex items-center gap-2">
+                {savedToOutreachMsg && (
+                  <span className="text-xs text-emerald-400">{savedToOutreachMsg}</span>
+                )}
+                <button
+                  onClick={saveToOutreach}
+                  disabled={savingToOutreach}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-[#f2ede4]/70 text-xs font-medium transition-colors"
+                >
+                  {savingToOutreach ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <BookmarkPlus className="w-3.5 h-3.5" />}
+                  Save to Outreach
+                </button>
+                <button
+                  onClick={addToList}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium transition-colors shadow-lg shadow-amber-600/20"
+                >
+                  <ListPlus className="w-3.5 h-3.5" />
+                  Add {selected.size} to list
+                </button>
+              </div>
             )}
           </div>
 
