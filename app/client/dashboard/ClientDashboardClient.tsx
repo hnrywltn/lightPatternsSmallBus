@@ -409,18 +409,6 @@ export default function ClientDashboardClient({ client, isAdminPreview }: { clie
               <Loader2 className="w-4 h-4 animate-spin" />
               Loading billing info…
             </div>
-          ) : !client.stripeCustomerId || !sub ? (
-            <div className="flex flex-col gap-1">
-              {client.tier && (
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-xl font-bold text-white">{client.tier} Plan</span>
-                  {client.monthlyRevenue > 0 && (
-                    <span className="text-white/40 text-sm">${client.monthlyRevenue}/mo</span>
-                  )}
-                </div>
-              )}
-              <p className="text-white/30 text-sm">Billing details will appear here once your subscription is active.</p>
-            </div>
           ) : (
             <>
               {/* Plan + status */}
@@ -428,27 +416,31 @@ export default function ClientDashboardClient({ client, isAdminPreview }: { clie
                 <div>
                   <div className="flex items-baseline gap-2 flex-wrap">
                     <span className="text-xl font-bold text-white">
-                      {sub.items[0]?.name ?? `${client.tier ?? "Your"} Plan`}
+                      {sub?.items[0]?.name ?? `${client.tier ?? "Your"} Plan`}
                     </span>
-                    {sub.items[0]?.amount != null && (
+                    {sub?.items[0]?.amount != null ? (
                       <span className="text-white/40 text-sm">
                         {fmtAmount(sub.items[0].amount)}/{sub.items[0].interval}
                       </span>
-                    )}
+                    ) : client.monthlyRevenue > 0 ? (
+                      <span className="text-white/40 text-sm">${client.monthlyRevenue}/mo</span>
+                    ) : null}
                   </div>
-                  {sub.cancelAtPeriodEnd && sub.cancelAt && (
+                  {sub?.cancelAtPeriodEnd && sub.cancelAt && (
                     <p className="text-red-400 text-xs mt-1">
                       Cancels {fmtDate(sub.cancelAt)} — your site will go offline after this date.
                     </p>
                   )}
                 </div>
-                <span className={`text-xs font-medium px-2.5 py-1 rounded-full border shrink-0 ${STATUS_STYLES[sub.status] ?? "bg-white/5 text-white/30 border-white/10"}`}>
-                  {sub.status.replace("_", " ")}
-                </span>
+                {sub && (
+                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full border shrink-0 ${STATUS_STYLES[sub.status] ?? "bg-white/5 text-white/30 border-white/10"}`}>
+                    {sub.status.replace("_", " ")}
+                  </span>
+                )}
               </div>
 
               {/* Add-ons */}
-              {sub.items.length > 1 && (
+              {sub && sub.items.length > 1 && (
                 <div className="flex flex-wrap gap-2">
                   {sub.items.slice(1).map((item, i) => (
                     <span key={i} className="text-xs px-2.5 py-1 rounded-full bg-amber-600/10 border border-amber-600/20 text-amber-400">
@@ -490,7 +482,7 @@ export default function ClientDashboardClient({ client, isAdminPreview }: { clie
               )}
 
               {/* Cancel */}
-              {!sub.cancelAtPeriodEnd && (
+              {sub && !sub.cancelAtPeriodEnd && (
                 <button
                   onClick={() => setShowCancel(true)}
                   className="self-start text-xs text-white/25 hover:text-red-400 transition-colors"
@@ -502,10 +494,15 @@ export default function ClientDashboardClient({ client, isAdminPreview }: { clie
           )}
         </div>
 
-        {/* Invoice history */}
-        {billing && billing.invoices.length > 0 && (
-          <div className="bg-white/[0.03] border border-white/8 rounded-2xl p-6">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-white/30 mb-4">Invoices</p>
+        {/* Invoice history — always shown */}
+        <div className="bg-white/[0.03] border border-white/8 rounded-2xl p-6">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-white/30 mb-4">Invoices</p>
+          {billingLoading ? (
+            <div className="flex items-center gap-2 text-white/30 text-sm">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Loading…
+            </div>
+          ) : billing && billing.invoices.length > 0 ? (
             <div className="flex flex-col divide-y divide-white/5">
               {billing.invoices.map((inv) => (
                 <div key={inv.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
@@ -539,8 +536,10 @@ export default function ClientDashboardClient({ client, isAdminPreview }: { clie
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-sm text-white/25 italic">No invoices yet.</p>
+          )}
+        </div>
 
         {/* Activity */}
         {activity.length > 0 && (
