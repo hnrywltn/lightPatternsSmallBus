@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
   const isDashboard = pathname.startsWith("/dashboard");
   const isLogin = pathname === "/login";
 
-  if (isDashboard && adminSession !== validAdminToken) {
+  if (isDashboard && (!validAdminToken || adminSession !== validAdminToken)) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
   if (isLogin && adminSession === validAdminToken) {

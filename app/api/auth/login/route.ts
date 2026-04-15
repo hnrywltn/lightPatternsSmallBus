@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   const validPassword = process.env.ADMIN_PASSWORD;
   const sessionToken = process.env.ADMIN_SESSION_TOKEN;
 
-  if (username !== validUsername || password !== validPassword) {
+  if (!validUsername || !validPassword || !sessionToken || username !== validUsername || password !== validPassword) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }
 
