@@ -14,6 +14,7 @@ import {
   Send,
   CreditCard,
   RefreshCw,
+  Clock,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -570,6 +571,10 @@ function SiteRow({
   const [stripeData, setStripeData] = useState<StripeData | null>(null);
   const [stripeFetching, setStripeFetching] = useState(false);
   const [stripeError, setStripeError] = useState("");
+  const [activityLog, setActivityLog] = useState<{ id: string; description: string; created_at: string }[]>([]);
+  const [activityLoaded, setActivityLoaded] = useState(false);
+  const [newActivity, setNewActivity] = useState("");
+  const [addingActivity, setAddingActivity] = useState(false);
 
   async function sendInvite() {
     if (!site.contactEmail) return;
@@ -600,11 +605,40 @@ function SiteRow({
     }
   }
 
+  async function fetchActivity() {
+    const res = await fetch(`/api/admin/sites/${site.id}/activity`);
+    const data = await res.json();
+    if (res.ok) setActivityLog(data.activity);
+    setActivityLoaded(true);
+  }
+
+  async function addActivity(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newActivity.trim()) return;
+    setAddingActivity(true);
+    const res = await fetch(`/api/admin/sites/${site.id}/activity`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ description: newActivity.trim() }),
+    });
+    const data = await res.json();
+    setAddingActivity(false);
+    if (res.ok) {
+      setActivityLog((prev) => [data.entry, ...prev]);
+      setNewActivity("");
+    }
+  }
+
   return (
     <>
       <div
         className="grid grid-cols-[1fr_10rem_7rem_6rem_7rem_7rem_2.5rem] gap-4 px-5 py-4 items-center hover:bg-white/[0.02] transition-colors cursor-pointer"
-        onClick={() => setExpanded((v) => !v)}
+        onClick={() => {
+          setExpanded((v) => {
+            if (!v && !activityLoaded) fetchActivity();
+            return !v;
+          });
+        }}
       >
         {/* Business + contact */}
         <div className="min-w-0">
@@ -790,6 +824,47 @@ function SiteRow({
               )}
             </div>
           )}
+
+          {/* Activity log */}
+          <div className="mb-4 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
+            <div className="flex items-center gap-2 mb-3">
+              <Clock className="w-3.5 h-3.5 text-[#f2ede4]/30" />
+              <span className="text-[10px] uppercase tracking-wide font-medium text-[#f2ede4]/30">Activity log</span>
+            </div>
+            <form onSubmit={addActivity} className="flex gap-2 mb-3" onClick={(e) => e.stopPropagation()}>
+              <input
+                value={newActivity}
+                onChange={(e) => setNewActivity(e.target.value)}
+                placeholder="Log an update visible to the client…"
+                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-[#f2ede4] placeholder-white/20 focus:outline-none focus:border-amber-600/40"
+              />
+              <button
+                type="submit"
+                disabled={addingActivity || !newActivity.trim()}
+                className="px-3 py-1.5 rounded-lg bg-amber-600/10 border border-amber-600/20 text-amber-400 text-xs font-medium hover:bg-amber-600/20 disabled:opacity-40 transition-colors flex items-center gap-1.5"
+              >
+                {addingActivity ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+                Add
+              </button>
+            </form>
+            {activityLog.length === 0 ? (
+              <p className="text-xs text-[#f2ede4]/20 italic">No activity logged yet.</p>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {activityLog.map((entry) => (
+                  <div key={entry.id} className="flex items-start gap-2.5">
+                    <div className="w-1 h-1 rounded-full bg-amber-500/50 mt-1.5 shrink-0" />
+                    <div>
+                      <p className="text-xs text-[#f2ede4]/60 leading-snug">{entry.description}</p>
+                      <p className="text-[10px] text-[#f2ede4]/25 mt-0.5">
+                        {new Date(entry.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className="flex gap-3">
             <button

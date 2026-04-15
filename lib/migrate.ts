@@ -76,6 +76,15 @@ async function migrate() {
       )
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS site_activity (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        site_id UUID NOT NULL REFERENCES sites(id) ON DELETE CASCADE,
+        description TEXT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
     // Add stripe_customer_id if not already present
     await client.query(`
       ALTER TABLE sites ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT

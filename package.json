@@ -10,6 +10,8 @@
     "migrate": "npx tsx lib/migrate.ts"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^6.2.0",
+    "@stripe/stripe-js": "^9.2.0",
     "bcryptjs": "^3.0.3",
     "framer-motion": "^12.38.0",
     "jose": "^6.2.2",
