@@ -27,6 +27,7 @@ async function migrate() {
         token TEXT UNIQUE NOT NULL,
         expires_at TIMESTAMPTZ NOT NULL,
         accepted_at TIMESTAMPTZ,
+        site_id UUID REFERENCES sites(id) ON DELETE SET NULL,
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);

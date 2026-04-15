@@ -11,6 +11,7 @@ import {
   Check,
   Globe,
   Loader2,
+  Send,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -232,9 +233,10 @@ function SiteModal({
   onClose,
 }: {
   initial?: Site;
-  onSave: (data: Omit<Site, "id" | "userEmail" | "userName">) => Promise<void>;
+  onSave: (data: Omit<Site, "id" | "userEmail" | "userName">, sendInvite: boolean) => Promise<void>;
   onClose: () => void;
 }) {
+  const [sendInvite, setSendInvite] = useState(false);
   const [form, setForm] = useState<Omit<Site, "id" | "userEmail" | "userName">>(
     initial
       ? {
@@ -273,7 +275,7 @@ function SiteModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    await onSave(form);
+    await onSave(form, sendInvite);
     setSaving(false);
   }
 
@@ -468,6 +470,21 @@ function SiteModal({
             />
           </div>
 
+          {/* Send invite — only on new sites with a contact email */}
+          {!initial && form.contactEmail && (
+            <label className="flex items-center gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={sendInvite}
+                onChange={(e) => setSendInvite(e.target.checked)}
+                className="accent-amber-600 w-3.5 h-3.5"
+              />
+              <span className="text-xs text-[#f2ede4]/50">
+                Send portal invite to <span className="text-[#f2ede4]/80">{form.contactEmail}</span>
+              </span>
+            </label>
+          )}
+
           <div className="flex justify-end gap-3 pt-1">
             <button
               type="button"
@@ -482,7 +499,7 @@ function SiteModal({
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white text-sm font-medium transition-colors shadow-lg shadow-amber-600/20"
             >
               {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-              {initial ? "Save Changes" : "Add Site"}
+              {initial ? "Save Changes" : sendInvite ? "Add Site & Send Invite" : "Add Site"}
             </button>
           </div>
         </form>
@@ -505,6 +522,23 @@ function SiteRow({
   const [expanded, setExpanded] = useState(false);
   const [editing, setEditing] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [inviting, setInviting] = useState(false);
+  const [inviteSent, setInviteSent] = useState(false);
+
+  async function sendInvite() {
+    if (!site.contactEmail) return;
+    setInviting(true);
+    const res = await fetch("/api/admin/invites", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: site.contactEmail, siteId: site.id }),
+    });
+    setInviting(false);
+    if (res.ok) {
+      setInviteSent(true);
+      setTimeout(() => setInviteSent(false), 4000);
+    }
+  }
 
   return (
     <>
@@ -628,6 +662,28 @@ function SiteRow({
               <Pencil className="w-3 h-3" />
               Edit
             </button>
+            {site.contactEmail && !site.userEmail && (
+              <button
+                onClick={sendInvite}
+                disabled={inviting || inviteSent}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-amber-600/10 hover:bg-amber-600/20 border border-amber-600/20 text-amber-400 disabled:opacity-60 transition-colors"
+              >
+                {inviting ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : inviteSent ? (
+                  <Check className="w-3 h-3" />
+                ) : (
+                  <Send className="w-3 h-3" />
+                )}
+                {inviteSent ? "Invite Sent" : `Send Invite to ${site.contactEmail}`}
+              </button>
+            )}
+            {site.userEmail && (
+              <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 text-emerald-400/60">
+                <Check className="w-3 h-3" />
+                Portal linked · {site.userEmail}
+              </span>
+            )}
             <button
               disabled={deleting}
               onClick={async () => {
@@ -647,13 +703,14 @@ function SiteRow({
       {editing && (
         <SiteModal
           initial={site}
-          onSave={async (data) => {
+          onSave={async (data, _sendInvite) => {
             await onUpdate({ ...site, ...data });
             setEditing(false);
           }}
           onClose={() => setEditing(false)}
         />
       )}
+
     </>
   );
 }
@@ -703,7 +760,7 @@ export default function SitesClient() {
 
   useEffect(() => { fetchSites(); }, []);
 
-  async function addSite(data: Omit<Site, "id" | "userEmail" | "userName">) {
+  async function addSite(data: Omit<Site, "id" | "userEmail" | "userName">, sendInvite: boolean) {
     const res = await fetch("/api/admin/sites", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -711,8 +768,18 @@ export default function SitesClient() {
     });
     const json = await res.json();
     if (!res.ok) { setError(json.error); return; }
-    setSites((prev) => [rowToSite(json.site as Record<string, unknown>), ...prev]);
+    const newSite = rowToSite(json.site as Record<string, unknown>);
+    setSites((prev) => [newSite, ...prev]);
     setAdding(false);
+
+    // Send invite if requested and contact email exists
+    if (sendInvite && data.contactEmail) {
+      await fetch("/api/admin/invites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.contactEmail, siteId: newSite.id }),
+      });
+    }
   }
 
   async function updateSite(updated: Site) {

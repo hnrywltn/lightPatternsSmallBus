@@ -58,6 +58,14 @@ export async function POST(req: NextRequest) {
       [invite.id]
     );
 
+    // Link the site to this user if the invite had one
+    if (invite.site_id) {
+      await client.query(
+        "UPDATE sites SET user_id = $1 WHERE id = $2",
+        [user.id, invite.site_id]
+      );
+    }
+
     await client.query("COMMIT");
     await setClientSession(user.id, user.email);
     return NextResponse.json({ ok: true });

@@ -8,7 +8,7 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 
 function isAdminAuthed(req: NextRequest) {
   const session = req.cookies.get("lp_session")?.value;
-  return session === process.env.ADMIN_SESSION_TOKEN;
+  return !!process.env.ADMIN_SESSION_TOKEN && session === process.env.ADMIN_SESSION_TOKEN;
 }
 
 export async function POST(req: NextRequest) {
@@ -16,30 +16,116 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { email } = await req.json();
+  const body = await req.json();
+  const { email, siteId, siteData } = body as {
+    email: string;
+    // Option A: link to an existing site by id (from Sites page Send Invite)
+    siteId?: string;
+    // Option B: full site fields to create a new site (from Invite form)
+    siteData?: {
+      businessName: string;
+      contactName?: string;
+      contactPhone?: string;
+      domain?: string;
+      tier?: string;
+      addOns?: string[];
+      status?: string;
+      dateInitiated?: string;
+      datePublished?: string;
+      monthlyRevenue?: number;
+      buildFee?: number;
+      notes?: string;
+    };
+  };
+
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: "Valid email is required." }, { status: 400 });
   }
 
   const normalizedEmail = email.toLowerCase().trim();
 
+  const client = await pool.connect();
   try {
-    // Check if already a user
-    const { rows: users } = await pool.query("SELECT id FROM users WHERE email = $1", [normalizedEmail]);
-    if (users.length > 0) {
-      return NextResponse.json({ error: "A user with this email already exists." }, { status: 400 });
+    await client.query("BEGIN");
+
+    // Make sure this email isn't already a full user account
+    const { rows: existingUsers } = await client.query(
+      "SELECT id FROM users WHERE email = $1",
+      [normalizedEmail]
+    );
+    if (existingUsers.length > 0) {
+      await client.query("ROLLBACK");
+      return NextResponse.json(
+        { error: "A client account with this email already exists." },
+        { status: 400 }
+      );
     }
 
-    // Upsert invite — if one exists, refresh the token and expiry
-    const token = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 48); // 48 hours
+    // Resolve the site_id we'll link to
+    let resolvedSiteId: string | null = null;
 
-    await pool.query(`
-      INSERT INTO invites (email, token, expires_at)
-      VALUES ($1, $2, $3)
-      ON CONFLICT (email) DO UPDATE
-        SET token = $2, expires_at = $3, accepted_at = NULL
-    `, [normalizedEmail, token, expiresAt]);
+    if (siteId) {
+      // Caller gave us an explicit site id (Sites page "Send Invite")
+      const { rows } = await client.query("SELECT id FROM sites WHERE id = $1", [siteId]);
+      if (rows.length === 0) {
+        await client.query("ROLLBACK");
+        return NextResponse.json({ error: "Site not found." }, { status: 404 });
+      }
+      resolvedSiteId = siteId;
+    } else {
+      // Check if a site already has this contact email
+      const { rows: byCE } = await client.query(
+        "SELECT id FROM sites WHERE contact_email = $1 LIMIT 1",
+        [normalizedEmail]
+      );
+
+      if (byCE.length > 0) {
+        // Link invite to the existing site
+        resolvedSiteId = byCE[0].id as string;
+      } else if (siteData?.businessName?.trim()) {
+        // Create a new site row from the form data
+        const { rows: newSite } = await client.query(
+          `INSERT INTO sites (
+            business_name, contact_name, contact_email, contact_phone,
+            domain, tier, add_ons, status,
+            date_initiated, date_published,
+            monthly_revenue, build_fee, notes
+          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+          RETURNING id`,
+          [
+            siteData.businessName.trim(),
+            siteData.contactName || null,
+            normalizedEmail,
+            siteData.contactPhone || null,
+            siteData.domain || null,
+            siteData.tier || "Starter",
+            siteData.addOns || [],
+            siteData.status || "in_progress",
+            siteData.dateInitiated || null,
+            siteData.datePublished || null,
+            siteData.monthlyRevenue || 0,
+            siteData.buildFee || 0,
+            siteData.notes || null,
+          ]
+        );
+        resolvedSiteId = newSite[0].id as string;
+      }
+      // If no site data and no match, invite goes out without a site link (shouldn't happen with new UI)
+    }
+
+    // Upsert the invite, refreshing token/expiry if one already exists for this email
+    const token = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 48); // 48 h
+
+    await client.query(
+      `INSERT INTO invites (email, token, expires_at, site_id)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (email) DO UPDATE
+         SET token = $2, expires_at = $3, site_id = $4, accepted_at = NULL`,
+      [normalizedEmail, token, expiresAt, resolvedSiteId]
+    );
+
+    await client.query("COMMIT");
 
     if (resend) {
       const template = clientInviteEmail({ email: normalizedEmail, token });
@@ -50,10 +136,16 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, siteId: resolvedSiteId });
   } catch (err) {
+    await client.query("ROLLBACK");
     console.error("Invite error:", err);
-    return NextResponse.json({ error: "Database error. Make sure DATABASE_URL is configured." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Database error. Make sure DATABASE_URL is configured." },
+      { status: 500 }
+    );
+  } finally {
+    client.release();
   }
 }
 
@@ -64,9 +156,11 @@ export async function GET(req: NextRequest) {
 
   try {
     const { rows } = await pool.query(`
-      SELECT email, accepted_at, expires_at, created_at
-      FROM invites
-      ORDER BY created_at DESC
+      SELECT i.email, i.accepted_at, i.expires_at, i.created_at, i.site_id,
+             s.business_name
+      FROM invites i
+      LEFT JOIN sites s ON s.id = i.site_id
+      ORDER BY i.created_at DESC
     `);
     return NextResponse.json({ invites: rows });
   } catch (err) {
