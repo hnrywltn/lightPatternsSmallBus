@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Check, Mail, TrendingUp, Building2, NotebookPen } from "lucide-react";
+import { Check, Mail, TrendingUp, NotebookPen } from "lucide-react";
 
 const plans = [
   {
@@ -96,23 +96,6 @@ const addons = [
       "Backlink building",
       "Local SEO optimization",
       "Monthly ranking report",
-    ],
-  },
-  {
-    icon: Building2,
-    name: "Virtual Office",
-    price: 89,
-    priceLabel: "/mo",
-    badge: "Coming soon",
-    description:
-      "A real business address and phone presence — without the overhead of physical office space.",
-    features: [
-      "Registered business mailing address",
-      "Mail scanning & forwarding",
-      "Live receptionist answering service",
-      "Local or toll-free business number",
-      "Voicemail-to-email transcription",
-      "Package acceptance & notification",
     ],
   },
 ];
