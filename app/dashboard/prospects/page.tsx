@@ -328,7 +328,7 @@ export default function ProspectsPage() {
     const res = await fetch("/api/prospects/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contacts: toSend.map((c) => ({ name: c.name, email: c.email })) }),
+      body: JSON.stringify({ contacts: toSend }),
     });
     const data = await res.json();
 
