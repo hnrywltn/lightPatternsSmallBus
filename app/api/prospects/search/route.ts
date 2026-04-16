@@ -41,8 +41,17 @@ export async function GET(request: NextRequest) {
   });
 
   if (!res.ok) {
+    let detail = "";
+    try {
+      detail = await res.text();
+    } catch {
+      /* ignore */
+    }
+    console.error(
+      `[prospects/search] Outscraper ${res.status}: ${detail}`
+    );
     return NextResponse.json(
-      { error: "Outscraper request failed" },
+      { error: "Outscraper request failed", status: res.status, detail },
       { status: 502 }
     );
   }
