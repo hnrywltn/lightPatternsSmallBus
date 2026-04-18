@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, X, Pencil, Trash2, Loader2, Check, UserPlus } from "lucide-react";
+import { Plus, X, Pencil, Trash2, Loader2, Check, UserPlus, Mail } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -219,12 +219,174 @@ function ReferrerModal({
   );
 }
 
+// ─── Invite modal ─────────────────────────────────────────────────────────────
+
+const INVITE_DEFAULTS = {
+  name: "",
+  email: "",
+  phone: "",
+  commissionType: "flat" as CommissionType,
+  commissionAmount: 500,
+  referralCode: "",
+  notes: "",
+};
+
+function InviteReferrerModal({ onClose, onSent }: { onClose: () => void; onSent: () => void }) {
+  const [form, setForm] = useState(INVITE_DEFAULTS);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+
+  function set(field: string, value: string | number) {
+    setForm((f) => ({ ...f, [field]: value }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSending(true);
+    setError("");
+    const res = await fetch("/api/admin/referrers/invite", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data.error || "Failed to send invite.");
+      setSending(false);
+      return;
+    }
+    onSent();
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="bg-[#0f0d0a] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+          <div>
+            <h2 className="text-sm font-semibold text-[#f2ede4]">Invite Referrer</h2>
+            <p className="text-xs text-[#f2ede4]/40 mt-0.5">
+              Creates their account and sends them a program invite email.
+            </p>
+          </div>
+          <button onClick={onClose} className="text-[#f2ede4]/40 hover:text-[#f2ede4] transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs text-[#f2ede4]/50 mb-1.5">Email *</label>
+              <input
+                required
+                type="email"
+                value={form.email}
+                onChange={(e) => set("email", e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-[#f2ede4] placeholder-[#f2ede4]/20 focus:outline-none focus:border-amber-600/50"
+                placeholder="jane@example.com"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs text-[#f2ede4]/50 mb-1.5">Name</label>
+              <input
+                value={form.name}
+                onChange={(e) => set("name", e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-[#f2ede4] placeholder-[#f2ede4]/20 focus:outline-none focus:border-amber-600/50"
+                placeholder="Jane Smith"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs text-[#f2ede4]/50 mb-1.5">Phone</label>
+              <input
+                value={form.phone}
+                onChange={(e) => set("phone", e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-[#f2ede4] placeholder-[#f2ede4]/20 focus:outline-none focus:border-amber-600/50"
+                placeholder="(555) 000-0000"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs text-[#f2ede4]/50 mb-1.5">Referral Code</label>
+              <input
+                value={form.referralCode}
+                onChange={(e) => set("referralCode", e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-[#f2ede4] placeholder-[#f2ede4]/20 focus:outline-none focus:border-amber-600/50 font-mono"
+                placeholder="JANE25"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs text-[#f2ede4]/50 mb-1.5">Commission Type</label>
+              <select
+                value={form.commissionType}
+                onChange={(e) => set("commissionType", e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-[#f2ede4] focus:outline-none focus:border-amber-600/50"
+              >
+                <option value="flat">Flat ($)</option>
+                <option value="percentage">Percentage (%)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs text-[#f2ede4]/50 mb-1.5">
+                Payout {form.commissionType === "flat" ? "($)" : "(%)"}
+              </label>
+              <input
+                type="number"
+                min={0}
+                value={form.commissionAmount}
+                onChange={(e) => set("commissionAmount", Number(e.target.value))}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-[#f2ede4] focus:outline-none focus:border-amber-600/50"
+              />
+            </div>
+
+            <div className="col-span-2">
+              <label className="block text-xs text-[#f2ede4]/50 mb-1.5">Notes</label>
+              <textarea
+                value={form.notes}
+                onChange={(e) => set("notes", e.target.value)}
+                rows={2}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-[#f2ede4] placeholder-[#f2ede4]/20 focus:outline-none focus:border-amber-600/50 resize-none"
+                placeholder="Any relevant notes..."
+              />
+            </div>
+          </div>
+
+          {error && <p className="text-xs text-red-400">{error}</p>}
+
+          <div className="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-xs text-[#f2ede4]/50 hover:text-[#f2ede4] transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={sending}
+              className="flex items-center gap-1.5 px-4 py-2 bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition-colors"
+            >
+              {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
+              {sending ? "Sending…" : "Send invite"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function ReferrersClient() {
   const [referrers, setReferrers] = useState<Referrer[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [justInvited, setJustInvited] = useState(false);
   const [editTarget, setEditTarget] = useState<Referrer | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -262,6 +424,13 @@ export default function ReferrersClient() {
     load();
   }
 
+  function handleInviteSent() {
+    setShowInviteModal(false);
+    setJustInvited(true);
+    load();
+    setTimeout(() => setJustInvited(false), 3000);
+  }
+
   const modalInitial = editTarget
     ? { ...editTarget, id: editTarget.id }
     : { ...EMPTY_FORM, id: undefined };
@@ -275,13 +444,22 @@ export default function ReferrersClient() {
             Manage your referral partners and their commission rates.
           </p>
         </div>
-        <button
-          onClick={() => { setEditTarget(null); setShowModal(true); }}
-          className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium rounded-lg transition-colors"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          Add referrer
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => { setEditTarget(null); setShowModal(true); }}
+            className="flex items-center gap-2 px-4 py-2 border border-white/10 text-[#f2ede4]/60 hover:text-[#f2ede4] hover:border-white/20 text-xs font-medium rounded-lg transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Add
+          </button>
+          <button
+            onClick={() => setShowInviteModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium rounded-lg transition-colors"
+          >
+            <Mail className="w-3.5 h-3.5" />
+            {justInvited ? "Invite sent!" : "Invite referrer"}
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -372,6 +550,13 @@ export default function ReferrersClient() {
           initial={modalInitial as typeof EMPTY_FORM & { id?: string }}
           onSave={handleSave}
           onClose={() => { setShowModal(false); setEditTarget(null); }}
+        />
+      )}
+
+      {showInviteModal && (
+        <InviteReferrerModal
+          onClose={() => setShowInviteModal(false)}
+          onSent={handleInviteSent}
         />
       )}
 
