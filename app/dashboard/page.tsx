@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, Users, BarChart2, Globe, BookOpen, CreditCard, Send } from "lucide-react";
+import { Search, Users, BarChart2, Globe, BookOpen, CreditCard, Send, UserPlus } from "lucide-react";
 import InviteClient from "@/components/dashboard/InviteClient";
 
 const tools = [
@@ -29,6 +29,13 @@ const tools = [
     title: "Billing",
     description: "View your Stripe balance, payout history, and send manual payouts.",
     href: "/dashboard/billing",
+    status: "active",
+  },
+  {
+    icon: UserPlus,
+    title: "Referrers",
+    description: "Manage referral partners and their commission rates.",
+    href: "/dashboard/referrers",
     status: "active",
   },
   {

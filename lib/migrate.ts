@@ -130,6 +130,22 @@ async function migrate() {
       )
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS referrers (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        phone TEXT,
+        commission_type TEXT NOT NULL DEFAULT 'flat',
+        commission_amount INTEGER NOT NULL DEFAULT 0,
+        referral_code TEXT UNIQUE,
+        status TEXT NOT NULL DEFAULT 'active',
+        notes TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
     await client.query("COMMIT");
     console.log("Migration complete.");
   } catch (err) {

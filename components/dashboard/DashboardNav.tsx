@@ -1,13 +1,14 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { Lightbulb, LogOut, BookOpen, LayoutDashboard, Search, Send, CreditCard } from "lucide-react";
+import { Lightbulb, LogOut, BookOpen, LayoutDashboard, Search, Send, CreditCard, Users } from "lucide-react";
 
 const NAV_LINKS = [
-  { href: "/dashboard",           label: "Home",      icon: LayoutDashboard },
-  { href: "/dashboard/prospects", label: "Prospects", icon: Search },
-  { href: "/dashboard/outreach",  label: "Outreach",  icon: Send },
-  { href: "/dashboard/billing",   label: "Billing",   icon: CreditCard },
+  { href: "/dashboard",             label: "Home",      icon: LayoutDashboard },
+  { href: "/dashboard/prospects",   label: "Prospects", icon: Search },
+  { href: "/dashboard/outreach",    label: "Outreach",  icon: Send },
+  { href: "/dashboard/referrers",   label: "Referrers", icon: Users },
+  { href: "/dashboard/billing",     label: "Billing",   icon: CreditCard },
 ];
 
 export default function DashboardNav() {
