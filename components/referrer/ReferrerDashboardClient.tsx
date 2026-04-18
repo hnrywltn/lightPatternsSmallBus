@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Lightbulb, Loader2, Send, UserPlus, X, Check } from "lucide-react";
+import { Lightbulb, Loader2, Send, UserPlus, X, Check, HelpCircle } from "lucide-react";
 
 interface ReferrerSite {
   id: string;
@@ -39,9 +39,68 @@ function formatCommission(type: "flat" | "percentage", amount: number) {
   return type === "flat" ? `$${amount.toLocaleString()}` : `${amount}%`;
 }
 
-// ─── Send Referral Modal ──────────────────────────────────────────────────────
+// ─── How It Works Modal ───────────────────────────────────────────────────────
 
-function SendReferralModal({ onClose }: { onClose: () => void }) {
+function HowItWorksModal({ commission, onClose }: { commission: string; onClose: () => void }) {
+  const steps = [
+    {
+      number: "01",
+      title: "Refer a business",
+      body: `Know a local business that could use a website? Enter their name and email and we'll send them a warm, personal intro email mentioning you by name. No cold sales pitch — just a friendly heads up.`,
+    },
+    {
+      number: "02",
+      title: "We take it from there",
+      body: "If they're interested, we'll reach out, get them set up, and build their site. You don't need to do anything else — we'll handle the whole process.",
+    },
+    {
+      number: "03",
+      title: `You earn ${commission} when their site goes live`,
+      body: "Once their site is published and active, we'll reach out to arrange your payout. Every referral that converts counts.",
+    },
+    {
+      number: "04",
+      title: "Grow the network, earn a bonus",
+      body: "Know someone who'd be a great referral partner? Invite them to join the program. If we approve them and they earn their first payout, you get a one-time $100 bonus.",
+    },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="bg-[#0f0d0a] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+          <h2 className="text-sm font-semibold text-[#f2ede4]">How it works</h2>
+          <button onClick={onClose} className="text-[#f2ede4]/40 hover:text-[#f2ede4] transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="p-6 space-y-6">
+          {steps.map((step) => (
+            <div key={step.number} className="flex gap-4">
+              <span className="text-xs font-bold text-amber-600/60 tabular-nums mt-0.5 shrink-0 w-6">{step.number}</span>
+              <div>
+                <p className="text-sm font-medium text-[#f2ede4] mb-1">{step.title}</p>
+                <p className="text-xs text-[#f2ede4]/50 leading-relaxed">{step.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="px-6 pb-6">
+          <button
+            onClick={onClose}
+            className="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium rounded-lg transition-colors"
+          >
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Refer a Business Modal ───────────────────────────────────────────────────
+
+function ReferBusinessModal({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
@@ -67,7 +126,7 @@ function SendReferralModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-[#0f0d0a] border border-white/10 rounded-2xl w-full max-w-sm shadow-2xl">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
-          <h2 className="text-sm font-semibold text-[#f2ede4]">Send a Referral</h2>
+          <h2 className="text-sm font-semibold text-[#f2ede4]">Refer a Business</h2>
           <button onClick={onClose} className="text-[#f2ede4]/40 hover:text-[#f2ede4] transition-colors">
             <X className="w-4 h-4" />
           </button>
@@ -79,13 +138,14 @@ function SendReferralModal({ onClose }: { onClose: () => void }) {
                 <Check className="w-5 h-5 text-emerald-400" />
               </div>
               <p className="text-sm text-[#f2ede4]">Email sent to {email}</p>
-              <p className="text-xs text-[#f2ede4]/40 mt-1">We'll be in touch with them.</p>
-              <button onClick={onClose} className="mt-4 text-xs text-amber-400 hover:text-amber-300 transition-colors">
-                Done
-              </button>
+              <p className="text-xs text-[#f2ede4]/40 mt-1">We'll take it from here.</p>
+              <button onClick={onClose} className="mt-4 text-xs text-amber-400 hover:text-amber-300 transition-colors">Done</button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
+              <p className="text-xs text-[#f2ede4]/50 leading-relaxed">
+                We&apos;ll send them a warm intro email from Light Patterns mentioning you by name. If they become a client and their site goes live, you earn your referral payout.
+              </p>
               <div>
                 <label className="block text-xs text-[#f2ede4]/50 mb-1.5">Their name</label>
                 <input required value={name} onChange={e => setName(e.target.value)}
@@ -115,9 +175,9 @@ function SendReferralModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-// ─── Refer a Friend Modal ─────────────────────────────────────────────────────
+// ─── Invite a Fellow Referrer Modal ───────────────────────────────────────────
 
-function ReferFriendModal({ onClose }: { onClose: () => void }) {
+function InviteReferrerModal({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
@@ -143,10 +203,7 @@ function ReferFriendModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-[#0f0d0a] border border-white/10 rounded-2xl w-full max-w-sm shadow-2xl">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
-          <div>
-            <h2 className="text-sm font-semibold text-[#f2ede4]">Refer a Friend</h2>
-            <p className="text-xs text-[#f2ede4]/40 mt-0.5">Earn a $100 bonus when they get their first payout.</p>
-          </div>
+          <h2 className="text-sm font-semibold text-[#f2ede4]">Invite a Fellow Referrer</h2>
           <button onClick={onClose} className="text-[#f2ede4]/40 hover:text-[#f2ede4] transition-colors">
             <X className="w-4 h-4" />
           </button>
@@ -158,19 +215,24 @@ function ReferFriendModal({ onClose }: { onClose: () => void }) {
                 <Check className="w-5 h-5 text-emerald-400" />
               </div>
               <p className="text-sm text-[#f2ede4]">Application submitted</p>
-              <p className="text-xs text-[#f2ede4]/40 mt-1">We'll review {name} and reach out to them if approved.</p>
+              <p className="text-xs text-[#f2ede4]/40 mt-1 leading-relaxed">
+                We&apos;ll review {name} and send them an invite if approved. You&apos;ll earn a $100 bonus when they get their first payout.
+              </p>
               <button onClick={onClose} className="mt-4 text-xs text-amber-400 hover:text-amber-300 transition-colors">Done</button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
+              <p className="text-xs text-[#f2ede4]/50 leading-relaxed">
+                Know someone who&apos;d be a great referral partner? Submit their info and we&apos;ll review them. If approved, they&apos;ll get an invite to join the program — and you&apos;ll earn a one-time <span className="text-amber-400">$100 bonus</span> when they land their first payout.
+              </p>
               <div>
-                <label className="block text-xs text-[#f2ede4]/50 mb-1.5">Friend's name</label>
+                <label className="block text-xs text-[#f2ede4]/50 mb-1.5">Their name</label>
                 <input required value={name} onChange={e => setName(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-[#f2ede4] placeholder-[#f2ede4]/20 focus:outline-none focus:border-amber-600/50"
                   placeholder="Jane Smith" />
               </div>
               <div>
-                <label className="block text-xs text-[#f2ede4]/50 mb-1.5">Friend's email</label>
+                <label className="block text-xs text-[#f2ede4]/50 mb-1.5">Their email</label>
                 <input required type="email" value={email} onChange={e => setEmail(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-[#f2ede4] placeholder-[#f2ede4]/20 focus:outline-none focus:border-amber-600/50"
                   placeholder="jane@example.com" />
@@ -200,6 +262,7 @@ export default function ReferrerDashboardClient() {
   const [loading, setLoading] = useState(true);
   const [showReferral, setShowReferral] = useState(false);
   const [showFriend, setShowFriend] = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   useEffect(() => {
     fetch("/api/referrer/me")
@@ -252,19 +315,26 @@ export default function ReferrerDashboardClient() {
           <div>
             <h1 className="text-2xl font-semibold text-[#f2ede4]">Hey, {firstName} 👋</h1>
             <p className="text-sm text-[#f2ede4]/40 mt-1">
-              You earn <span className="text-amber-400 font-medium">{commission}</span> for every business you refer whose site goes live.
+              You earn <span className="text-amber-400 font-medium">{commission}</span> for every business you refer whose site goes live.{" "}
+              <button
+                onClick={() => setShowHowItWorks(true)}
+                className="inline-flex items-center gap-1 text-[#f2ede4]/30 hover:text-amber-400 transition-colors"
+              >
+                <HelpCircle className="w-3.5 h-3.5" />
+                How it works
+              </button>
             </p>
           </div>
           <div className="flex gap-2">
             <button onClick={() => setShowFriend(true)}
               className="flex items-center gap-1.5 px-4 py-2 border border-white/10 text-[#f2ede4]/60 hover:text-[#f2ede4] hover:border-white/20 text-xs font-medium rounded-lg transition-colors">
               <UserPlus className="w-3.5 h-3.5" />
-              Refer a friend
+              Invite a fellow referrer
             </button>
             <button onClick={() => setShowReferral(true)}
               className="flex items-center gap-1.5 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium rounded-lg transition-colors">
               <Send className="w-3.5 h-3.5" />
-              Send referral
+              Refer a business
             </button>
           </div>
         </div>
@@ -293,7 +363,7 @@ export default function ReferrerDashboardClient() {
               <button onClick={() => setShowReferral(true)}
                 className="mt-4 flex items-center gap-1.5 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium rounded-lg transition-colors mx-auto">
                 <Send className="w-3.5 h-3.5" />
-                Send referral
+                Refer a business
               </button>
             </div>
           ) : (
@@ -329,8 +399,9 @@ export default function ReferrerDashboardClient() {
         </div>
       </div>
 
-      {showReferral && <SendReferralModal onClose={() => setShowReferral(false)} />}
-      {showFriend && <ReferFriendModal onClose={() => setShowFriend(false)} />}
+      {showHowItWorks && <HowItWorksModal commission={commission} onClose={() => setShowHowItWorks(false)} />}
+      {showReferral && <ReferBusinessModal onClose={() => setShowReferral(false)} />}
+      {showFriend && <InviteReferrerModal onClose={() => setShowFriend(false)} />}
     </div>
   );
 }
