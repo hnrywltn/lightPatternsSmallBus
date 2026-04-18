@@ -41,9 +41,16 @@ export interface Site {
   buildFeeDiscount: number;
   stripeCustomerId: string | null;
   stripeSubscriptionStatus: string | null;
+  referrerId: string | null;
   // joined from users table
   userEmail?: string;
   userName?: string;
+}
+
+export interface ReferrerOption {
+  id: string;
+  name: string;
+  email: string;
 }
 
 // DB rows use snake_case — map to camelCase
@@ -71,6 +78,7 @@ function rowToSite(row: Record<string, unknown>): Site {
     userId: (row.user_id as string) ?? null,
     stripeCustomerId: (row.stripe_customer_id as string) ?? null,
     stripeSubscriptionStatus: (row.stripe_subscription_status as string) ?? null,
+    referrerId: (row.referrer_id as string) ?? null,
     userEmail: (row.user_email as string) ?? undefined,
     userName: (row.user_name as string) ?? undefined,
   };
@@ -94,6 +102,7 @@ function siteToBody(s: Omit<Site, "id" | "userEmail" | "userName">) {
     notes: s.notes,
     userId: s.userId,
     stripeCustomerId: s.stripeCustomerId,
+    referrerId: s.referrerId,
   };
 }
 
@@ -151,6 +160,7 @@ const EMPTY_FORM: Omit<Site, "id" | "userEmail" | "userName"> = {
   userId: null,
   stripeCustomerId: null,
   stripeSubscriptionStatus: null,
+  referrerId: null,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -270,10 +280,23 @@ function SiteModal({
           userId: initial.userId,
           stripeCustomerId: initial.stripeCustomerId,
           stripeSubscriptionStatus: initial.stripeSubscriptionStatus,
+          referrerId: initial.referrerId,
         }
       : { ...EMPTY_FORM }
   );
   const [saving, setSaving] = useState(false);
+  const [referrers, setReferrers] = useState<ReferrerOption[]>([]);
+  const [referrerSearch, setReferrerSearch] = useState("");
+
+  useEffect(() => {
+    fetch("/api/admin/referrers")
+      .then(r => r.json())
+      .then(data => setReferrers(
+        (data.referrers ?? [])
+          .filter((r: Record<string, unknown>) => r.status === "active")
+          .map((r: Record<string, unknown>) => ({ id: r.id, name: r.name, email: r.email }))
+      ));
+  }, []);
 
   function set<K extends keyof typeof form>(key: K, val: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [key]: val }));
@@ -514,6 +537,34 @@ function SiteModal({
               onChange={(e) => set("stripeCustomerId", e.target.value || null)}
               placeholder="cus_…"
             />
+          </div>
+
+          {/* Referrer */}
+          <div>
+            <label className={labelCls}>Referrer</label>
+            <input
+              className={`${inputCls} mb-1.5`}
+              placeholder="Search referrers…"
+              value={referrerSearch}
+              onChange={e => setReferrerSearch(e.target.value)}
+            />
+            <select
+              className={inputCls}
+              value={form.referrerId ?? ""}
+              onChange={e => set("referrerId", e.target.value || null)}
+            >
+              <option value="">— None —</option>
+              {referrers
+                .filter(r =>
+                  !referrerSearch ||
+                  r.name.toLowerCase().includes(referrerSearch.toLowerCase()) ||
+                  r.email.toLowerCase().includes(referrerSearch.toLowerCase())
+                )
+                .map(r => (
+                  <option key={r.id} value={r.id}>{r.name} ({r.email})</option>
+                ))
+              }
+            </select>
           </div>
 
           {/* Notes */}

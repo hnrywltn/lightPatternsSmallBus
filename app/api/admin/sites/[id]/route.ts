@@ -33,6 +33,7 @@ export async function PUT(
     notes,
     userId,
     stripeCustomerId,
+    referrerId,
   } = body;
 
   if (!businessName?.trim()) {
@@ -58,8 +59,9 @@ export async function PUT(
         notes = $14,
         user_id = $15,
         stripe_customer_id = $16,
+        referrer_id = $17,
         updated_at = NOW()
-      WHERE id = $17
+      WHERE id = $18
       RETURNING *`,
       [
         businessName.trim(),
@@ -78,6 +80,7 @@ export async function PUT(
         notes || null,
         userId || null,
         stripeCustomerId || null,
+        referrerId || null,
         id,
       ]
     );

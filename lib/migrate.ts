@@ -147,7 +147,16 @@ async function migrate() {
     `);
 
     await client.query(`
+      ALTER TABLE sites ADD COLUMN IF NOT EXISTS referrer_id UUID REFERENCES referrers(id) ON DELETE SET NULL
+    `);
+    await client.query(`
       ALTER TABLE referrers ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES users(id) ON DELETE SET NULL
+    `);
+    await client.query(`
+      ALTER TABLE referrers ADD COLUMN IF NOT EXISTS referred_by_referrer_id UUID REFERENCES referrers(id) ON DELETE SET NULL
+    `);
+    await client.query(`
+      ALTER TABLE referrers ADD COLUMN IF NOT EXISTS referrer_bonus_paid_at TIMESTAMPTZ
     `);
     await client.query(`
       ALTER TABLE referrers ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT

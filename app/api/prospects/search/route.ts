@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
   const zips = zipParam.split(",").map((z) => z.trim()).filter(Boolean);
 
-  const url = new URL("https://api.app.outscraper.com/maps/search-v2");
+  const url = new URL("https://api.outscraper.com/maps/search-v2");
   // Outscraper accepts multiple query params for batch requests
   for (const zip of zips) {
     url.searchParams.append("query", `${category}, ${zip}, US`);
