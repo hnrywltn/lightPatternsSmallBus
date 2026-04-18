@@ -147,6 +147,13 @@ async function migrate() {
     `);
 
     await client.query(`
+      ALTER TABLE referrers ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES users(id) ON DELETE SET NULL
+    `);
+    await client.query(`
+      ALTER TABLE referrers ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT
+    `);
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS referrer_invites (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         referrer_id UUID NOT NULL UNIQUE REFERENCES referrers(id) ON DELETE CASCADE,
