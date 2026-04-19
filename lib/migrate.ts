@@ -163,6 +163,10 @@ async function migrate() {
     `);
 
     await client.query(`
+      ALTER TABLE sites ADD COLUMN IF NOT EXISTS commission_paid_at TIMESTAMPTZ
+    `);
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS referral_sends (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         referrer_id UUID NOT NULL REFERENCES referrers(id) ON DELETE CASCADE,
