@@ -53,5 +53,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to send email." }, { status: 500 });
   }
 
+  await pool.query(
+    "INSERT INTO referral_sends (referrer_id, recipient_name, recipient_email) VALUES ($1, $2, $3)",
+    [session.sub, recipientName.trim(), recipientEmail.trim().toLowerCase()]
+  );
+
   return NextResponse.json({ ok: true });
 }

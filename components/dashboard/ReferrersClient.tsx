@@ -3,7 +3,16 @@
 import { useState, useEffect } from "react";
 import { Plus, X, Pencil, Trash2, Loader2, Check, UserPlus, Mail } from "lucide-react";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+interface ReferralSend {
+  id: string;
+  recipient_name: string;
+  recipient_email: string;
+  sent_at: string;
+  referrer_name: string;
+  referrer_email: string;
+}
 
 export type CommissionType = "flat" | "percentage";
 export type ReferrerStatus = "active" | "inactive";
@@ -383,6 +392,7 @@ function InviteReferrerModal({ onClose, onSent }: { onClose: () => void; onSent:
 
 export default function ReferrersClient() {
   const [referrers, setReferrers] = useState<Referrer[]>([]);
+  const [sends, setSends] = useState<ReferralSend[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -393,9 +403,13 @@ export default function ReferrersClient() {
 
   async function load() {
     setLoading(true);
-    const res = await fetch("/api/admin/referrers");
-    const data = await res.json();
-    setReferrers((data.referrers ?? []).map(rowToReferrer));
+    const [refRes, sendsRes] = await Promise.all([
+      fetch("/api/admin/referrers"),
+      fetch("/api/admin/referrers/sends"),
+    ]);
+    const [refData, sendsData] = await Promise.all([refRes.json(), sendsRes.json()]);
+    setReferrers((refData.referrers ?? []).map(rowToReferrer));
+    setSends(sendsData.sends ?? []);
     setLoading(false);
   }
 
@@ -544,6 +558,41 @@ export default function ReferrersClient() {
           </table>
         </div>
       )}
+
+      {/* Referral sends */}
+      <div className="mt-10">
+        <h2 className="text-sm font-semibold text-[#f2ede4] mb-4">Referrals sent</h2>
+        {sends.length === 0 ? (
+          <div className="bg-white/[0.03] border border-white/8 rounded-2xl px-5 py-8 text-center">
+            <p className="text-sm text-[#f2ede4]/30">No referral emails sent yet.</p>
+          </div>
+        ) : (
+          <div className="bg-white/[0.03] border border-white/8 rounded-2xl overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-white/8">
+                  <th className="text-left px-5 py-3 text-xs font-medium text-[#f2ede4]/40">Recipient</th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-[#f2ede4]/40 hidden md:table-cell">Email</th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-[#f2ede4]/40">Sent by</th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-[#f2ede4]/40 hidden lg:table-cell">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sends.map((s, i) => (
+                  <tr key={s.id} className={`border-b border-white/5 ${i === sends.length - 1 ? "border-b-0" : ""}`}>
+                    <td className="px-5 py-3.5 text-[#f2ede4] font-medium">{s.recipient_name}</td>
+                    <td className="px-5 py-3.5 text-[#f2ede4]/60 hidden md:table-cell">{s.recipient_email}</td>
+                    <td className="px-5 py-3.5 text-[#f2ede4]/60">{s.referrer_name}</td>
+                    <td className="px-5 py-3.5 text-[#f2ede4]/40 hidden lg:table-cell">
+                      {new Date(s.sent_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       {showModal && (
         <ReferrerModal

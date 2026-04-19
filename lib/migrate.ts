@@ -163,6 +163,16 @@ async function migrate() {
     `);
 
     await client.query(`
+      CREATE TABLE IF NOT EXISTS referral_sends (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        referrer_id UUID NOT NULL REFERENCES referrers(id) ON DELETE CASCADE,
+        recipient_name TEXT NOT NULL,
+        recipient_email TEXT NOT NULL,
+        sent_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS referrer_invites (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         referrer_id UUID NOT NULL UNIQUE REFERENCES referrers(id) ON DELETE CASCADE,
