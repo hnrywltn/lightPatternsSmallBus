@@ -12,6 +12,7 @@ import {
   AlertCircle,
   User,
   DollarSign,
+  CreditCard,
 } from "lucide-react";
 
 interface Balance {
@@ -41,6 +42,7 @@ interface PendingCommission {
   commissionType: "flat" | "percentage";
   commissionAmount: number;
   commissionDue: number;
+  stripeConnectId: string | null;
 }
 
 function fmt(dollars: number) {
@@ -191,14 +193,19 @@ export default function BillingClient() {
         const res = await fetch("/api/admin/billing/pending-commissions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ siteId: commission.siteId }),
+          body: JSON.stringify({
+            siteId: commission.siteId,
+            transfer: !!commission.stripeConnectId,
+            amountDollars: dollars,
+          }),
         });
         const data = await res.json();
         if (!res.ok) {
-          setPayoutError(data.error ?? "Failed to mark commission paid.");
+          setPayoutError(data.error ?? "Failed to process commission payment.");
         } else {
+          const via = commission.stripeConnectId ? "transferred via Stripe" : "marked as paid";
           setPayoutSuccess(
-            `Commission of ${fmt(dollars)} for ${commission.referrerName} (${commission.businessName}) marked as paid.`
+            `${fmt(dollars)} for ${commission.referrerName} (${commission.businessName}) ${via}.`
           );
           setPayoutAmount("");
           setPayTo("myself");
@@ -313,7 +320,10 @@ export default function BillingClient() {
                   <tr key={c.siteId} className={i < pendingCommissions.length - 1 ? "border-b border-white/5" : ""}>
                     <td className="px-5 py-3.5">
                       <p className="font-medium text-[#f2ede4]">{c.referrerName}</p>
-                      <p className="text-[11px] text-[#f2ede4]/40">{c.referrerEmail}</p>
+                      <p className="text-[11px] text-[#f2ede4]/40 flex items-center gap-1">
+                        {c.stripeConnectId && <CreditCard className="w-2.5 h-2.5 text-emerald-400" />}
+                        {c.referrerEmail}
+                      </p>
                     </td>
                     <td className="px-5 py-3.5 text-xs text-[#f2ede4]/60 hidden sm:table-cell">{c.businessName}</td>
                     <td className="px-5 py-3.5">
@@ -380,8 +390,13 @@ export default function BillingClient() {
               </select>
             </div>
             {selectedCommission && (
-              <p className="text-[11px] text-[#f2ede4]/40 mt-1.5">
-                {selectedCommission.referrerEmail} · Commission will be marked as paid in the queue above.
+              <p className="text-[11px] mt-1.5">
+                <span className="text-[#f2ede4]/40">{selectedCommission.referrerEmail}</span>
+                {selectedCommission.stripeConnectId ? (
+                  <span className="text-emerald-400 ml-2">· Will transfer via Stripe Connect</span>
+                ) : (
+                  <span className="text-amber-400/70 ml-2">· No Stripe account — will mark as paid only</span>
+                )}
               </p>
             )}
           </div>

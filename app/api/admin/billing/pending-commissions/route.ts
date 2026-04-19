@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
+import stripe from "@/lib/stripe";
 
 function isAdminAuthed(req: NextRequest) {
   const session = req.cookies.get("lp_session")?.value;
@@ -23,7 +24,8 @@ export async function GET(req: NextRequest) {
         r.name AS referrer_name,
         r.email AS referrer_email,
         r.commission_type,
-        r.commission_amount
+        r.commission_amount,
+        r.stripe_connect_id
       FROM sites s
       JOIN referrers r ON r.id = s.referrer_id
       WHERE s.status = 'active'
@@ -48,6 +50,7 @@ export async function GET(req: NextRequest) {
         commissionType: row.commission_type,
         commissionAmount: row.commission_amount,
         commissionDue,
+        stripeConnectId: row.stripe_connect_id ?? null,
       };
     });
 
@@ -64,23 +67,54 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { siteId } = await req.json();
+    const { siteId, transfer, amountDollars } = await req.json();
     if (!siteId) {
       return NextResponse.json({ error: "siteId is required." }, { status: 400 });
     }
 
-    const { rowCount } = await pool.query(
-      `UPDATE sites SET commission_paid_at = NOW() WHERE id = $1 AND commission_paid_at IS NULL`,
+    // Look up the commission to get referrer's stripe_connect_id
+    const { rows } = await pool.query(
+      `SELECT s.id, s.commission_paid_at, r.stripe_connect_id, r.name AS referrer_name
+       FROM sites s JOIN referrers r ON r.id = s.referrer_id
+       WHERE s.id = $1`,
       [siteId]
     );
 
-    if (rowCount === 0) {
-      return NextResponse.json({ error: "Commission already paid or site not found." }, { status: 404 });
+    if (!rows.length) {
+      return NextResponse.json({ error: "Site not found." }, { status: 404 });
     }
 
-    return NextResponse.json({ ok: true });
+    const row = rows[0];
+
+    if (row.commission_paid_at) {
+      return NextResponse.json({ error: "Commission already paid." }, { status: 409 });
+    }
+
+    let transferId: string | null = null;
+
+    if (transfer && row.stripe_connect_id && amountDollars > 0) {
+      const cents = Math.round(amountDollars * 100);
+      const stripeTransfer = await stripe.transfers.create({
+        amount: cents,
+        currency: "usd",
+        destination: row.stripe_connect_id,
+        metadata: { site_id: siteId, referrer_name: row.referrer_name },
+      });
+      transferId = stripeTransfer.id;
+    }
+
+    await pool.query(
+      `UPDATE sites SET commission_paid_at = NOW() WHERE id = $1`,
+      [siteId]
+    );
+
+    return NextResponse.json({ ok: true, transferId });
   } catch (err) {
     console.error("Mark commission paid error:", err);
+    const stripeErr = err as { type?: string; message?: string };
+    if (stripeErr.type?.startsWith("Stripe")) {
+      return NextResponse.json({ error: stripeErr.message ?? "Stripe transfer failed." }, { status: 400 });
+    }
     return NextResponse.json({ error: "Database error." }, { status: 500 });
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, X, Pencil, Trash2, Loader2, Check, UserPlus, Mail } from "lucide-react";
+import { Plus, X, Pencil, Trash2, Loader2, Check, UserPlus, Mail, ExternalLink, CreditCard } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -28,6 +28,7 @@ export interface Referrer {
   status: ReferrerStatus;
   notes: string;
   createdAt: string;
+  stripeConnectId: string | null;
 }
 
 function rowToReferrer(row: Record<string, unknown>): Referrer {
@@ -42,6 +43,7 @@ function rowToReferrer(row: Record<string, unknown>): Referrer {
     status: (row.status as ReferrerStatus) ?? "active",
     notes: (row.notes as string) ?? "",
     createdAt: row.created_at as string,
+    stripeConnectId: (row.stripe_connect_id as string) ?? null,
   };
 }
 
@@ -400,6 +402,7 @@ export default function ReferrersClient() {
   const [editTarget, setEditTarget] = useState<Referrer | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [stripeSetupId, setStripeSetupId] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -436,6 +439,20 @@ export default function ReferrersClient() {
     setDeleteId(null);
     setDeleting(false);
     load();
+  }
+
+  async function handleStripeSetup(id: string) {
+    setStripeSetupId(id);
+    try {
+      const res = await fetch(`/api/admin/referrers/${id}/stripe-connect`, { method: "POST" });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        window.open(data.url, "_blank", "noopener,noreferrer");
+        load();
+      }
+    } finally {
+      setStripeSetupId(null);
+    }
   }
 
   function handleInviteSent() {
@@ -497,6 +514,7 @@ export default function ReferrersClient() {
                 <th className="text-left px-5 py-3 text-xs font-medium text-[#f2ede4]/40">Commission</th>
                 <th className="text-left px-5 py-3 text-xs font-medium text-[#f2ede4]/40 hidden lg:table-cell">Code</th>
                 <th className="text-left px-5 py-3 text-xs font-medium text-[#f2ede4]/40">Status</th>
+                <th className="text-left px-5 py-3 text-xs font-medium text-[#f2ede4]/40 hidden sm:table-cell">Payout</th>
                 <th className="px-5 py-3" />
               </tr>
             </thead>
@@ -535,6 +553,27 @@ export default function ReferrersClient() {
                     >
                       {r.status}
                     </span>
+                  </td>
+                  <td className="px-5 py-3.5 hidden sm:table-cell">
+                    {r.stripeConnectId ? (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">
+                        <CreditCard className="w-3 h-3" />
+                        Connected
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => handleStripeSetup(r.id)}
+                        disabled={stripeSetupId === r.id}
+                        className="inline-flex items-center gap-1 text-[11px] font-medium text-[#f2ede4]/40 hover:text-amber-400 disabled:opacity-40 transition-colors"
+                      >
+                        {stripeSetupId === r.id ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <ExternalLink className="w-3 h-3" />
+                        )}
+                        Setup
+                      </button>
+                    )}
                   </td>
                   <td className="px-5 py-3.5">
                     <div className="flex items-center justify-end gap-2">
