@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { Resend } from "resend";
 import pool from "@/lib/db";
 import stripe from "@/lib/stripe";
 import { setReferrerSession } from "@/lib/referrerAuth";
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function POST(req: NextRequest) {
   const { token, name, password } = await req.json();
@@ -78,6 +81,18 @@ export async function POST(req: NextRequest) {
       );
     } catch (stripeErr) {
       console.error("Stripe customer creation failed:", stripeErr);
+    }
+
+    // Notify admin (non-fatal)
+    if (resend) {
+      resend.emails.send({
+        from: "Light Patterns <admin@lightpatternsonline.com>",
+        to: "admin@lightpatternsonline.com",
+        subject: `${resolvedName} just created their referrer account`,
+        html: `<p style="font-family:sans-serif;font-size:14px;color:#333;">
+          <strong>${resolvedName}</strong> (${invite.email}) has signed up as a referral partner and created their account.
+        </p>`,
+      }).catch(err => console.error("Admin notification failed:", err));
     }
 
     await setReferrerSession(invite.referrer_id, invite.email);

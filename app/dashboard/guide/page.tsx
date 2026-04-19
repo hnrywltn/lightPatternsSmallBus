@@ -14,6 +14,7 @@ import {
   Loader2,
   MailOpen,
   Wallet,
+  Users,
 } from "lucide-react";
 
 const articles = [
@@ -270,6 +271,70 @@ Use bulk status updates after a follow-up campaign when you want to write off a 
 - **Replied / Converted** — manually tracked counts
 
 A healthy cold email open rate is 30–50%. Below 20% usually means the subject line needs work or you're hitting spam filters.`,
+      },
+    ],
+  },
+  {
+    id: "referrers",
+    icon: Users,
+    title: "Referrers",
+    summary: "How the referral program works, how to manage referrers, and how payouts are tracked.",
+    content: [
+      {
+        heading: "Inviting a referrer",
+        body: `Go to **Referrers** from the nav and click **Invite Referrer**. Fill in their name, email, phone, and commission details — everything except email is optional. The default payout is $500 flat.
+
+When you send the invite, three things happen automatically:
+1. A referrer record is created in the database
+2. A 7-day invite token is generated and stored
+3. A branded email goes out to the referrer explaining the program, their payout amount, and a link to create their account`,
+      },
+      {
+        heading: "Commission types",
+        body: `Referrers can be set up on either:
+- **Flat ($)** — a fixed dollar amount per converted referral (e.g. $500 per site that goes live)
+- **Percentage (%)** — a percentage of the build fee
+
+You set this when inviting or editing a referrer. It's shown in their invite email and on their dashboard.`,
+      },
+      {
+        heading: "Attaching a referrer to a site",
+        body: `When creating or editing a site, scroll down to the **Referrer** field in the modal. Use the search box to filter by name or email, then select the referrer from the dropdown.
+
+Attribution happens at site creation — the referrer is linked to the site record, not to a client account. This means you can assign a referrer before the client has even signed up.`,
+      },
+      {
+        heading: "The referrer's account",
+        body: `When a referrer clicks the invite link, they land on a signup page where they set their name and password. After creating their account:
+- A Stripe customer is created for them automatically
+- They're logged into their referrer dashboard at \`/referrer/dashboard\`
+- Their session is separate from any client portal session
+
+The referrer dashboard shows their stats (total referrals, sites live, total earned), a list of sites attributed to them, and buttons to refer businesses or invite fellow referrers.`,
+      },
+      {
+        heading: "How referrers send referrals",
+        body: `From their dashboard, referrers can click **Refer a Business** and enter the business's name and email. This triggers a warm, personal email from hello@lightpatternsonline.com that mentions the referrer by name — it's not a cold sales email.
+
+If that business becomes a client, you attach the referrer to their site record manually (see above). The referrer's dashboard will then show that site in their referral list.`,
+      },
+      {
+        heading: "Fellow referrer invitations",
+        body: `Referrers can also submit a friend to join the program using **Invite a Fellow Referrer** on their dashboard. This does not send the friend an invite automatically — it sends you a notification email at admin@lightpatternsonline.com with **Approve** and **Deny** buttons.
+
+- **Approve** — activates the pending referrer and sends them an invite email immediately
+- **Deny** — marks them as denied, no email is sent
+
+If approved, the original referrer earns a one-time **$100 bonus** when their friend gets their first payout. You track and pay this manually — the \`referrer_bonus_paid_at\` field on the referrer record marks when it was settled.`,
+      },
+      {
+        heading: "Managing referrers",
+        body: `The Referrers page shows all referrers in a table with name, email, phone, commission, referral code, and status. From the table you can:
+- Click the **pencil icon** to edit any referrer's details (name, email, commission, status, notes)
+- Click the **trash icon** to delete a referrer — this also removes any invite tokens and unlinks them from any sites
+- Set status to **Inactive** to soft-disable a referrer without deleting them
+
+Pending referrers (submitted by a fellow referrer and awaiting your approval) will appear with a **Pending** status badge until you action the notification email.`,
       },
     ],
   },
