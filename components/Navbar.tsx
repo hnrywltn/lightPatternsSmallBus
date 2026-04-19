@@ -115,6 +115,13 @@ export default function Navbar({ forceDark = false }: { forceDark?: boolean }) {
                 </a>
               ))}
               <a
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="text-[#f2ede4]/70 hover:text-[#f2ede4] transition-colors"
+              >
+                Sign in
+              </a>
+              <a
                 href="#contact"
                 className="mt-2 text-center px-4 py-2.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium transition-colors"
               >
