@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Lightbulb, LogOut, BookOpen, LayoutDashboard, Search, Send, CreditCard, Users } from "lucide-react";
+import { Lightbulb, LogOut, BookOpen, LayoutDashboard, Search, Send, CreditCard, Users, Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/dashboard",             label: "Home",      icon: LayoutDashboard },
@@ -14,6 +15,7 @@ const NAV_LINKS = [
 export default function DashboardNav() {
   const router = useRouter();
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -37,7 +39,8 @@ export default function DashboardNav() {
             </span>
           </a>
 
-          <div className="flex items-center gap-1">
+          {/* Desktop nav links */}
+          <div className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map(({ href, label, icon: Icon }) => (
               <a
                 key={href}
@@ -55,7 +58,8 @@ export default function DashboardNav() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* Desktop right side */}
+        <div className="hidden md:flex items-center gap-4">
           <a
             href="/dashboard/guide"
             className={`flex items-center gap-1.5 text-xs transition-colors ${
@@ -77,7 +81,58 @@ export default function DashboardNav() {
             Sign out
           </button>
         </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="md:hidden text-[#f2ede4]/60 hover:text-[#f2ede4] transition-colors"
+          onClick={() => setOpen((v) => !v)}
+        >
+          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
+
+      {/* Mobile menu */}
+      {open && (
+        <div className="md:hidden border-t border-white/8 bg-[#0c0a07]">
+          <div className="px-6 py-3 flex flex-col gap-1">
+            {NAV_LINKS.map(({ href, label, icon: Icon }) => (
+              <a
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive(href)
+                    ? "bg-white/8 text-[#f2ede4]"
+                    : "text-[#f2ede4]/50 hover:text-[#f2ede4] hover:bg-white/5"
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {label}
+              </a>
+            ))}
+            <a
+              href="/dashboard/guide"
+              onClick={() => setOpen(false)}
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                pathname === "/dashboard/guide"
+                  ? "bg-white/8 text-amber-400"
+                  : "text-[#f2ede4]/50 hover:text-[#f2ede4] hover:bg-white/5"
+              }`}
+            >
+              <BookOpen className="w-4 h-4" />
+              Guide
+            </a>
+            <div className="h-px bg-white/8 my-1" />
+            <button
+              onClick={() => { setOpen(false); handleLogout(); }}
+              className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-[#f2ede4]/50 hover:text-[#f2ede4] hover:bg-white/5 transition-colors text-left"
+            >
+              <LogOut className="w-4 h-4" />
+              Sign out
+            </button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

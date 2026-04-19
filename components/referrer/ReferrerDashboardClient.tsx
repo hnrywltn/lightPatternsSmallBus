@@ -311,8 +311,8 @@ export default function ReferrerDashboardClient() {
 
       <div className="max-w-4xl mx-auto px-6 py-10">
         {/* Header */}
-        <div className="flex items-start justify-between mb-10">
-          <div>
+        <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-10">
+          <div className="flex-1">
             <h1 className="text-2xl font-semibold text-[#f2ede4]">Hey, {firstName} 👋</h1>
             <p className="text-sm text-[#f2ede4]/40 mt-1">
               You earn <span className="text-amber-400 font-medium">{commission}</span> for every business you refer whose site goes live.{" "}
@@ -325,30 +325,32 @@ export default function ReferrerDashboardClient() {
               </button>
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 shrink-0">
             <button onClick={() => setShowFriend(true)}
-              className="flex items-center gap-1.5 px-4 py-2 border border-white/10 text-[#f2ede4]/60 hover:text-[#f2ede4] hover:border-white/20 text-xs font-medium rounded-lg transition-colors">
+              className="flex items-center gap-1.5 px-3 sm:px-4 py-2 border border-white/10 text-[#f2ede4]/60 hover:text-[#f2ede4] hover:border-white/20 text-xs font-medium rounded-lg transition-colors">
               <UserPlus className="w-3.5 h-3.5" />
-              Invite a fellow referrer
+              <span className="hidden sm:inline">Invite a fellow referrer</span>
+              <span className="sm:hidden">Invite</span>
             </button>
             <button onClick={() => setShowReferral(true)}
-              className="flex items-center gap-1.5 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium rounded-lg transition-colors">
+              className="flex items-center gap-1.5 px-3 sm:px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium rounded-lg transition-colors">
               <Send className="w-3.5 h-3.5" />
-              Refer a business
+              <span className="hidden sm:inline">Refer a business</span>
+              <span className="sm:hidden">Refer</span>
             </button>
           </div>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-10">
+        <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-10">
           {[
             { label: "Total referrals", value: sites.length },
             { label: "Sites live", value: liveSites.length },
             { label: "Earned", value: liveSites.length > 0 ? (referrer.commission_type === "flat" ? `$${(liveSites.length * referrer.commission_amount).toLocaleString()}` : `${liveSites.length} × ${commission}`) : "—" },
           ].map(({ label, value }) => (
-            <div key={label} className="bg-white/[0.03] border border-white/8 rounded-2xl p-5">
-              <p className="text-xs text-[#f2ede4]/40 mb-1">{label}</p>
-              <p className="text-2xl font-semibold text-[#f2ede4]">{value}</p>
+            <div key={label} className="bg-white/[0.03] border border-white/8 rounded-2xl p-3 sm:p-5">
+              <p className="text-[10px] sm:text-xs text-[#f2ede4]/40 mb-1">{label}</p>
+              <p className="text-xl sm:text-2xl font-semibold text-[#f2ede4]">{value}</p>
             </div>
           ))}
         </div>

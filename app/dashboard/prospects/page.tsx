@@ -410,7 +410,8 @@ export default function ProspectsPage() {
 
       {/* Saved list panel */}
       {showList && (
-        <div className="bg-white/[0.03] border border-white/8 rounded-2xl mb-6 overflow-hidden">
+        <div className="bg-white/[0.03] border border-white/8 rounded-2xl mb-6 overflow-x-auto">
+          <div className="min-w-[520px]">
           <div className="px-5 py-4 border-b border-white/6 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <h2 className="text-sm font-medium text-[#f2ede4]">Saved List</h2>
@@ -459,6 +460,7 @@ export default function ProspectsPage() {
               })}
             </div>
           )}
+          </div>
         </div>
       )}
 
@@ -662,7 +664,8 @@ export default function ProspectsPage() {
                 : "No results match the current filters."}
             </div>
           ) : (
-            <div className="bg-white/[0.03] border border-white/8 rounded-2xl overflow-hidden">
+            <div className="bg-white/[0.03] border border-white/8 rounded-2xl overflow-x-auto">
+              <div className="min-w-[620px]">
               <div className="grid grid-cols-[2rem_1fr_1fr_7rem_9rem_2.5rem] gap-4 px-5 py-3 border-b border-white/6 text-xs text-[#f2ede4]/30 uppercase tracking-wide font-medium">
                 <div className="flex items-center">
                   <input
@@ -741,6 +744,7 @@ export default function ProspectsPage() {
                     </div>
                   );
                 })}
+              </div>
               </div>
             </div>
           )}

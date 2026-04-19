@@ -330,7 +330,8 @@ export default function OutreachClient() {
             : "No prospects match the current filter."}
         </div>
       ) : (
-        <div className="bg-white/[0.03] border border-white/8 rounded-2xl overflow-hidden">
+        <div className="bg-white/[0.03] border border-white/8 rounded-2xl overflow-x-auto">
+          <div className="min-w-[650px]">
           {/* Table header */}
           <div className="grid grid-cols-[2rem_1fr_1fr_6rem_7rem_7rem_2.5rem] gap-3 px-5 py-3 border-b border-white/8 text-[11px] text-[#f2ede4]/30 uppercase tracking-wide font-medium">
             <div className="flex items-center">
@@ -405,6 +406,7 @@ export default function OutreachClient() {
                 </div>
               </div>
             ))}
+          </div>
           </div>
         </div>
       )}

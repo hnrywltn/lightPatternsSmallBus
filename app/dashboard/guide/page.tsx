@@ -414,9 +414,22 @@ export default function GuidePage() {
         <p className="text-sm text-[#f2ede4]/40 mt-1">How to use the dashboard.</p>
       </div>
 
+      {/* Mobile article selector */}
+      <div className="md:hidden mb-4">
+        <select
+          value={activeId}
+          onChange={(e) => handleArticleChange(e.target.value)}
+          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-[#f2ede4] focus:outline-none focus:border-amber-600/50"
+        >
+          {articles.map(({ id, title }) => (
+            <option key={id} value={id}>{title}</option>
+          ))}
+        </select>
+      </div>
+
       <div className="flex gap-6 items-start">
-        {/* Sidebar */}
-        <div className="w-56 shrink-0 flex flex-col gap-1">
+        {/* Sidebar — desktop only */}
+        <div className="hidden md:flex w-56 shrink-0 flex-col gap-1">
           {articles.map(({ id, icon: ItemIcon, title }) => (
             <button
               key={id}
@@ -435,7 +448,7 @@ export default function GuidePage() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0 bg-white/[0.03] border border-white/8 rounded-2xl p-8">
+        <div className="flex-1 min-w-0 bg-white/[0.03] border border-white/8 rounded-2xl p-6 md:p-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-8 h-8 rounded-lg bg-amber-600/10 border border-amber-600/20 flex items-center justify-center shrink-0">
               <Icon className="w-4 h-4 text-amber-400" />

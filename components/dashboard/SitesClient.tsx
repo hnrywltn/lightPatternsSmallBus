@@ -1237,26 +1237,28 @@ export default function SitesClient() {
           )}
         </div>
       ) : (
-        <div className="bg-white/[0.03] border border-white/8 rounded-2xl overflow-hidden">
-          <div className="grid grid-cols-[1fr_10rem_7rem_6rem_7rem_7rem_2.5rem] gap-4 px-5 py-3 border-b border-white/6 text-[10px] text-[#f2ede4]/25 uppercase tracking-wide font-medium">
-            <div>Business</div>
-            <div>Tier</div>
-            <div>Status</div>
-            <div>Monthly</div>
-            <div>Published</div>
-            <div>Initiated</div>
-            <div />
-          </div>
+        <div className="bg-white/[0.03] border border-white/8 rounded-2xl overflow-x-auto">
+          <div className="min-w-[750px]">
+            <div className="grid grid-cols-[1fr_10rem_7rem_6rem_7rem_7rem_2.5rem] gap-4 px-5 py-3 border-b border-white/6 text-[10px] text-[#f2ede4]/25 uppercase tracking-wide font-medium">
+              <div>Business</div>
+              <div>Tier</div>
+              <div>Status</div>
+              <div>Monthly</div>
+              <div>Published</div>
+              <div>Initiated</div>
+              <div />
+            </div>
 
-          <div className="divide-y divide-white/5">
-            {filtered.map((site) => (
-              <SiteRow
-                key={site.id}
-                site={site}
-                onUpdate={updateSite}
-                onDelete={deleteSite}
-              />
-            ))}
+            <div className="divide-y divide-white/5">
+              {filtered.map((site) => (
+                <SiteRow
+                  key={site.id}
+                  site={site}
+                  onUpdate={updateSite}
+                  onDelete={deleteSite}
+                />
+              ))}
+            </div>
           </div>
         </div>
       )}
