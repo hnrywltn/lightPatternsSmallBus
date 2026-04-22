@@ -27,7 +27,7 @@ export function referrerWarmOutreachEmail({
         <!-- Header -->
         <tr>
           <td style="background:#0c0a07;padding:28px 40px;">
-            <span style="font-size:20px;font-weight:700;color:#ffffff;letter-spacing:-0.01em;">Light Patterns</span>
+            <div style="display:inline-block;background:#ffffff;padding:8px 20px;border-radius:8px;"><img src="https://lightpatternsonline.com/logo.png" alt="Light Patterns" style="height:32px;width:auto;display:block;" /></div>
           </td>
         </tr>
 

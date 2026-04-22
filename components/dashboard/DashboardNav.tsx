@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Lightbulb, LogOut, BookOpen, LayoutDashboard, Search, Send, CreditCard, Users, Menu, X } from "lucide-react";
+import { LogOut, BookOpen, LayoutDashboard, Search, Send, CreditCard, Users, Menu, X } from "lucide-react";
+import Image from "next/image";
 
 const NAV_LINKS = [
   { href: "/dashboard",             label: "Home",      icon: LayoutDashboard },
@@ -30,13 +31,14 @@ export default function DashboardNav() {
     <nav className="border-b border-white/8 bg-[#0c0a07]">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between h-14">
         <div className="flex items-center gap-6">
-          <a href="/dashboard" className="flex items-center gap-2 shrink-0">
-            <div className="w-7 h-7 rounded-lg bg-amber-600 flex items-center justify-center shadow-lg shadow-amber-600/30">
-              <Lightbulb className="w-3.5 h-3.5 text-white" />
-            </div>
-            <span className="font-semibold tracking-tight text-[#f2ede4] text-sm">
-              Light Patterns
-            </span>
+          <a href="/dashboard" className="flex items-center shrink-0">
+            <Image
+              src="/logo.png"
+              alt="Light Patterns"
+              width={837}
+              height={750}
+              className="h-7 w-auto brightness-[3]"
+            />
           </a>
 
           {/* Desktop nav links */}

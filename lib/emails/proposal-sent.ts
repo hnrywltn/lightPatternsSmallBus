@@ -19,7 +19,7 @@ export function proposalSentEmail({ name, proposalUrl }: Params) {
 
         <!-- Header -->
         <tr><td style="background:#0c0a07;border-radius:16px 16px 0 0;padding:40px 40px 32px;">
-          <p style="margin:0 0 20px;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#f59e0b;">Light Patterns</p>
+          <div style="display:inline-block;background:#ffffff;padding:8px 20px;border-radius:8px;margin:0 0 20px;"><img src="https://lightpatternsonline.com/logo.png" alt="Light Patterns" style="height:32px;width:auto;display:block;" /></div>
           <h1 style="margin:0 0 12px;font-size:26px;font-weight:900;color:#f2ede4;letter-spacing:-0.02em;line-height:1.2;">
             Your proposal is ready, ${firstName}.
           </h1>

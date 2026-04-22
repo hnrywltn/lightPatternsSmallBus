@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Lightbulb } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import Image from "next/image";
 
 const links = [
   { label: "How It Works", href: "#how-it-works" },
@@ -39,13 +40,15 @@ export default function Navbar({ forceDark = false }: { forceDark?: boolean }) {
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-amber-600 flex items-center justify-center shadow-lg shadow-amber-600/30">
-            <Lightbulb className="w-4 h-4 text-white" />
-          </div>
-          <span className={`font-semibold tracking-tight transition-colors duration-300 ${onAmber ? "text-amber-950" : "text-[#f2ede4]"}`}>
-            Light Patterns
-          </span>
+        <a href="/" className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="Light Patterns"
+            width={837}
+            height={750}
+            className={`h-9 w-auto transition-all duration-300 ${!onAmber ? "brightness-[3]" : ""}`}
+            priority
+          />
         </a>
 
         {/* Desktop links — hidden on hero (left-side nav handles it) */}
