@@ -25,7 +25,7 @@ export function contactNotificationEmail({ name, phone, email, business, goals }
           <table width="100%" cellpadding="0" cellspacing="0">
             <tr>
               <td>
-                <div style="display:inline-block;background:#ffffff;padding:8px 20px;border-radius:8px;margin:0 0 4px;"><img src="https://lightpatternsonline.com/logo.png" alt="Light Patterns" style="height:32px;width:auto;display:block;" /></div>
+                <div style="display:inline-block;background:#ffffff;padding:8px 20px;border-radius:8px;margin:0 0 4px;"><img src="https://lightpatternsonline.com/logo-vertical.png" alt="Light Patterns" style="height:48px;width:auto;display:block;" /></div>
                 <h1 style="margin:0;font-size:24px;font-weight:900;color:#f2ede4;letter-spacing:-0.02em;">New inquiry</h1>
               </td>
               <td align="right" valign="middle">

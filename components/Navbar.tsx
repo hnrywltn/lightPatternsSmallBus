@@ -42,11 +42,11 @@ export default function Navbar({ forceDark = false }: { forceDark?: boolean }) {
         {/* Logo */}
         <a href="/" className="flex items-center">
           <Image
-            src="/logo.png"
+            src={onAmber ? "/logo-vertical.png" : "/logo-vertical-dark.png"}
             alt="Light Patterns"
-            width={837}
-            height={750}
-            className={`h-9 w-auto transition-all duration-300 ${!onAmber ? "brightness-[3]" : ""}`}
+            width={1056}
+            height={1056}
+            className="h-11 w-auto transition-all duration-300"
             priority
           />
         </a>

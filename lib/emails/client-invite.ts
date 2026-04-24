@@ -54,7 +54,7 @@ export function clientInviteEmail({
         <!-- Header -->
         <tr>
           <td style="background:#0c0a07;padding:28px 40px;">
-            <div style="display:inline-block;background:#ffffff;padding:8px 20px;border-radius:8px;"><img src="https://lightpatternsonline.com/logo.png" alt="Light Patterns" style="height:32px;width:auto;display:block;" /></div>
+            <div style="display:inline-block;background:#ffffff;padding:8px 20px;border-radius:8px;"><img src="https://lightpatternsonline.com/logo-vertical.png" alt="Light Patterns" style="height:48px;width:auto;display:block;" /></div>
           </td>
         </tr>
 

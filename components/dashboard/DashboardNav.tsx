@@ -33,11 +33,11 @@ export default function DashboardNav() {
         <div className="flex items-center gap-6">
           <a href="/dashboard" className="flex items-center shrink-0">
             <Image
-              src="/logo.png"
+              src="/logo-vertical-dark.png"
               alt="Light Patterns"
-              width={837}
-              height={750}
-              className="h-7 w-auto brightness-[3]"
+              width={1056}
+              height={1056}
+              className="h-9 w-auto"
             />
           </a>
 

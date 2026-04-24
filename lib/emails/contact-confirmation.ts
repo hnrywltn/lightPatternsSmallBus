@@ -18,7 +18,7 @@ export function contactConfirmationEmail({ name }: Params) {
 
         <!-- Header -->
         <tr><td style="background:#0c0a07;border-radius:16px 16px 0 0;padding:40px 40px 32px;">
-          <div style="display:inline-block;background:#ffffff;padding:8px 20px;border-radius:8px;margin:0 0 20px;"><img src="https://lightpatternsonline.com/logo.png" alt="Light Patterns" style="height:32px;width:auto;display:block;" /></div>
+          <div style="display:inline-block;background:#ffffff;padding:8px 20px;border-radius:8px;margin:0 0 20px;"><img src="https://lightpatternsonline.com/logo-vertical.png" alt="Light Patterns" style="height:48px;width:auto;display:block;" /></div>
           <h1 style="margin:0 0 12px;font-size:28px;font-weight:900;color:#f2ede4;letter-spacing:-0.02em;line-height:1.2;">
             Thanks, ${firstName}.<br/>We'll be in touch soon.
           </h1>
